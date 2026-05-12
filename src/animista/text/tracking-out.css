@@ -1,0 +1,16 @@
+.tracking-out-contract {animation: 500ms tracking-out-contract ;}
+.tracking-out-expand-fwd {animation: 500ms tracking-out-expand-fwd ;}
+.tracking-out-expand {animation: 500ms tracking-out-expand ;}
+.tracking-out-contract-bck-bottom {animation: 500ms tracking-out-contract-bck-bottom ;}
+.tracking-out-contract-bck-top {animation: 500ms tracking-out-contract-bck-top ;}
+.tracking-out-contract-bck {animation: 500ms tracking-out-contract-bck ;}
+.tracking-out-expand-fwd-bottom {animation: 500ms tracking-out-expand-fwd-bottom ;}
+.tracking-out-expand-fwd-top {animation: 500ms tracking-out-expand-fwd-top ;}
+@keyframes tracking-out-contract {0% { opacity: 1 }50% { opacity: 1 }100% { letter-spacing: -.5em; opacity: 0 }}
+@keyframes tracking-out-expand-fwd {0% { transform: translateZ(0); opacity: 1 }60% { opacity: .8 }100% { letter-spacing: 1em; transform: translateZ(300px); opacity: 0 }}
+@keyframes tracking-out-expand {0% { opacity: 1 }60% { opacity: .8 }100% { letter-spacing: 1em; opacity: 0 }}
+@keyframes tracking-out-contract-bck-bottom {0% { transform: translateZ(0) translateY(0); opacity: 1 }60% { opacity: 1 }100% { letter-spacing: -.5em; transform: translateZ(-500px) translateY(300px); opacity: 0 }}
+@keyframes tracking-out-contract-bck-top {0% { transform: translateZ(0) translateY(0); opacity: 1 }60% { opacity: 1 }100% { letter-spacing: -.5em; transform: translateZ(-500px) translateY(-300px); opacity: 0 }}
+@keyframes tracking-out-contract-bck {0% { transform: translateZ(0); opacity: 1 }60% { opacity: 1 }100% { letter-spacing: -.5em; transform: translateZ(-500px); opacity: 0 }}
+@keyframes tracking-out-expand-fwd-bottom {0% { transform: translateZ(0) translateY(0); opacity: 1 }60% { opacity: .8 }100% { letter-spacing: 1em; transform: translateZ(300px) translateY(200px); opacity: 0 }}
+@keyframes tracking-out-expand-fwd-top {0% { transform: translateZ(0) translateY(0); opacity: 1 }60% { opacity: .8 }100% { letter-spacing: 1em; transform: translateZ(300px) translateY(-200px); opacity: 0 }}
