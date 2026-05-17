@@ -4,9 +4,9 @@
 	"description": "WordPress plugin for adding animations to blocks",
 	"main": "dist/index.js",
 	"scripts": {
-		"build": "vite build",
+    "build": "vite build && vite build --watch",
 		"dev": "vite",
-		"watch": "vite build --watch"
+		"deploy": "vite build"
 	},
 	"devDependencies": {
 		"sass": "^1.77.0",
