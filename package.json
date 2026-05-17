@@ -5,7 +5,7 @@
 	"main": "dist/index.js",
 	"scripts": {
     "build": "vite build && vite build --watch",
-		"dev": "vite",
+		"start": "vite",
 		"deploy": "vite build"
 	},
 	"devDependencies": {
