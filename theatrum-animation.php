@@ -43,3 +43,4 @@ function theatrum_animation_enqueue_scripts()
   }
 }
 add_action('wp_enqueue_scripts', 'theatrum_animation_enqueue_scripts');
+add_action('enqueue_block_editor_assets', 'theatrum_animation_enqueue_scripts');
