@@ -1,0 +1,13 @@
+// @keyframes flip-scale-up-hor {0% { transform: scale(1) rotateX(0) }50% { transform: scale(2.5) rotateX(-90deg) }100% { transform: scale(1) rotateX(-180deg) }}
+// @keyframes flip-scale-up-diag-2 {0% { transform: scale(1) rotate3d(-1, 1, 0, 0deg) }50% { transform: scale(2.5) rotate3d(-1, 1, 0, 90deg) }100% { transform: scale(1) rotate3d(-1, 1, 0, 180deg) }}
+// @keyframes flip-scale-down-hor {0% { transform: scale(1) rotateX(0) }50% { transform: scale(.4) rotateX(90deg) }100% { transform: scale(1) rotateX(180deg) }}
+// @keyframes flip-scale-down-diag-2 {0% { transform: scale(1) rotate3d(-1, 1, 0, 0deg) }50% { transform: scale(.4) rotate3d(-1, 1, 0, -90deg) }100% { transform: scale(1) rotate3d(-1, 1, 0, -180deg) }}
+// @keyframes flip-scale-up-ver {0% { transform: scale(1) rotateY(0) }50% { transform: scale(2.5) rotateY(90deg) }100% { transform: scale(1) rotateY(180deg) }}
+// @keyframes flip-scale-down-ver {0% { transform: scale(1) rotateY(0) }50% { transform: scale(.4) rotateY(-90deg) }100% { transform: scale(1) rotateY(-180deg) }}
+// @keyframes flip-scale-up-diag-1 {0% { transform: scale(1) rotate3d(1, 1, 0, 0deg) }50% { transform: scale(2.5) rotate3d(1, 1, 0, 90deg) }100% { transform: scale(1) rotate3d(1, 1, 0, 180deg) }}
+// @keyframes flip-scale-down-diag-1 {0% { transform: scale(1) rotate3d(1, 1, 0, 0deg) }50% { transform: scale(.4) rotate3d(1, 1, 0, -90deg) }100% { transform: scale(1) rotate3d(1, 1, 0, -180deg) }}
+// @keyframes flip-scale-2-hor-top {0% { transform: translateY(0) rotateX(0) scale(1); transform-origin: 50% 0 }50% { transform: translateY(-50%) rotateX(-90deg) scale(2); transform-origin: 50% 50% }100% { transform: translateY(-100%) rotateX(-180deg) scale(1); transform-origin: 50% 100% }}
+// @keyframes flip-scale-2-ver-right {0% { transform: translateX(0) rotateY(0) scale(1); transform-origin: 100% 50% }50% { transform: translateX(50%) rotateY(-90deg) scale(2); transform-origin: 50% 50% }100% { transform: translateX(100%) rotateY(-180deg) scale(1); transform-origin: 0 50% }}
+// @keyframes flip-scale-2-hor-bottom {0% { transform: translateY(0) rotateX(0) scale(1); transform-origin: 50% 100% }50% { transform: translateY(50%) rotateX(90deg) scale(2); transform-origin: 50% 50% }100% { transform: translateY(100%) rotateX(180deg) scale(1); transform-origin: 50% 0 }}
+// @keyframes flip-scale-2-ver-left {0% { transform: translateX(0) rotateY(0) scale(1); transform-origin: 0 50% }50% { transform: translateX(-50%) rotateY(90deg) scale(2); transform-origin: 50% 50% }100% { transform: translateX(-100%) rotateY(180deg) scale(1); transform-origin: 100% 50% }}
+

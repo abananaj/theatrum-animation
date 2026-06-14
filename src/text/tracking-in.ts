@@ -1,0 +1,8 @@
+// @keyframes tracking-in-expand {0% { letter-spacing: -.5em; opacity: 0 }40% { opacity: .6 }100% { opacity: 1 }}
+// @keyframes tracking-in-contract-bck-top {0% { letter-spacing: 1em; transform: translateZ(400px) translateY(-300px); opacity: 0 }40% { opacity: .6 }100% { transform: translateZ(0) translateY(0); opacity: 1 }}
+// @keyframes tracking-in-expand-fwd {0% { letter-spacing: -.5em; transform: translateZ(-700px); opacity: 0 }40% { opacity: .6 }100% { transform: translateZ(0); opacity: 1 }}
+// @keyframes tracking-in-contract-bck-bottom {0% { letter-spacing: 1em; transform: translateZ(400px) translateY(300px); opacity: 0 }40% { opacity: .6 }100% { transform: translateZ(0) translateY(0); opacity: 1 }}
+// @keyframes tracking-in-expand-fwd-top {0% { letter-spacing: -.5em; transform: translateZ(-700px) translateY(-500px); opacity: 0 }40% { opacity: .6 }100% { transform: translateZ(0) translateY(0); opacity: 1 }}
+// @keyframes tracking-in-contract {0% { letter-spacing: 1em; opacity: 0 }40% { opacity: .6 }100% { letter-spacing: normal; opacity: 1 }}
+// @keyframes tracking-in-contract-bck {0% { letter-spacing: 1em; transform: translateZ(400px); opacity: 0 }40% { opacity: .6 }100% { transform: translateZ(0); opacity: 1 }}
+// @keyframes tracking-in-expand-fwd-bottom {0% { letter-spacing: -.5em; transform: translateZ(-700px) translateY(500px); opacity: 0 }40% { opacity: .6 }100% { transform: translateZ(0) translateY(0); opacity: 1 }}

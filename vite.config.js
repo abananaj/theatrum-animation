@@ -3,6 +3,7 @@ import { defineConfig } from "vite";
 export default defineConfig({
   build: {
     emptyOutDir: true,
+		cssCodeSplit: true,
     rollupOptions: {
       input: {
         main: "src/index.ts",

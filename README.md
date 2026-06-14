@@ -8,6 +8,58 @@ The animation should trigger when the block enters the viewport and should only 
 
 By default it should apply to all css properties and default to 5000ms linear ease, but the user should be able to customize the duration, easing, and which properties the animation applies to (ex: transform only, opacity only, etc.).
 
-Start with the defaults and we'll add the customization once it's working. 
+Start with the defaults and we'll add the customization once it's working.
 
-Use ts and scss for src files and vite to build. 
+Use ts and scss for src files and vite to build.
+
+## Basic ✨
+
+### Flip 
+
+### Rotate
+
+### Scale
+
+### Shadow
+
+### Slide
+
+## Entrances 🚪➡️
+
+## Exits 🚪⬅️
+
+## Text ⌨️
+
+## Backgrounds 🖼️
+
+### Pan
+
+### Color Change
+
+### Ken Burns
+
+## Attention ⚠️
+
+### Blink
+
+### Bounce
+
+### Flicker
+
+### Heartbeat
+
+### Jello
+
+### Ping
+
+### Pulsate
+
+### Scale Down
+
+### Scale Up
+
+### Shake
+
+### Vibrate
+
+### Wobble

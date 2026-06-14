@@ -1,2 +1,0 @@
-.ping {animation: 500ms ping;}
-@keyframes ping { 0% { transform: scale(.2); opacity: .8 }80% { transform: scale(1.2); opacity: 0 }100% { transform: scale(2.2); opacity: 0 }}

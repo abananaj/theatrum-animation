@@ -1,0 +1,16 @@
+// @keyframes tilt-in-top-1 {0% { transform: rotateY(30deg) translateY(-300px) skewY(-30deg); opacity: 0 }100% { transform: rotateY(0deg) translateY(0) skewY(0deg); opacity: 1 }}
+// @keyframes tilt-in-bottom-1 {0% { transform: rotateY(30deg) translateY(300px) skewY(-30deg); opacity: 0 }100% { transform: rotateY(0deg) translateY(0) skewY(0deg); opacity: 1 }}
+// @keyframes tilt-in-top-2 {0% { transform: rotateY(-30deg) translateY(-300px) skewY(30deg); opacity: 0 }100% { transform: rotateY(0deg) translateY(0) skewY(0deg); opacity: 1 }}
+// @keyframes tilt-in-bottom-2 {0% { transform: rotateY(-30deg) translateY(300px) skewY(30deg); opacity: 0 }100% { transform: rotateY(0deg) translateY(0) skewY(0deg); opacity: 1 }}
+// @keyframes tilt-in-tr {0% { transform: rotateY(-35deg) rotateX(20deg) translate(250px, -250px) skew(-12deg, -15deg); opacity: 0 }100% { transform: rotateY(0) rotateX(0deg) translate(0, 0) skew(0deg, 0deg); opacity: 1 }}
+// @keyframes tilt-in-bl {0% { transform: rotateY(35deg) rotateX(-20deg) translate(-250px, 250px) skew(-12deg, -15deg); opacity: 0 }100% { transform: rotateY(0) rotateX(0deg) translate(0, 0) skew(0deg, 0deg); opacity: 1 }}
+// @keyframes tilt-in-right-1 {0% { transform: rotateX(-30deg) translateX(300px) skewX(30deg); opacity: 0 }100% { transform: rotateX(0deg) translateX(0) skewX(0deg); opacity: 1 }}
+// @keyframes tilt-in-left-1 {0% { transform: rotateX(-30deg) translateX(-300px) skewX(-30deg); opacity: 0 }100% { transform: rotateX(0deg) translateX(0) skewX(0deg); opacity: 1 }}
+// @keyframes tilt-in-right-2 {0% { transform: rotateX(30deg) translateX(300px) skewX(-30deg); opacity: 0 }100% { transform: rotateX(0deg) translateX(0) skewX(0deg); opacity: 1 }}
+// @keyframes tilt-in-left-2 {0% { transform: rotateX(30deg) translateX(-300px) skewX(30deg); opacity: 0 }100% { transform: rotateX(0deg) translateX(0) skewX(0deg); opacity: 1 }}
+// @keyframes tilt-in-br {0% { transform: rotateY(-35deg) rotateX(-20deg) translate(250px, 250px) skew(12deg, 15deg); opacity: 0 }100% { transform: rotateY(0) rotateX(0deg) translate(0, 0) skew(0deg, 0deg); opacity: 1 }}
+// @keyframes tilt-in-tl {0% { transform: rotateY(35deg) rotateX(20deg) translate(-250px, -250px) skew(12deg, 15deg); opacity: 0 }100% { transform: rotateY(0) rotateX(0deg) translate(0, 0) skew(0deg, 0deg); opacity: 1 }}
+// @keyframes tilt-in-fwd-tl {0% { transform: rotateY(-20deg) rotateX(35deg) translate(-300px, -300px) skew(35deg, -10deg); opacity: 0 }100% { transform: rotateY(0) rotateX(0deg) translate(0, 0) skew(0deg, 0deg); opacity: 1 }}
+// @keyframes tilt-in-fwd-br {0% { transform: rotateY(20deg) rotateX(-35deg) translate(300px, 300px) skew(35deg, -10deg); opacity: 0 }100% { transform: rotateY(0) rotateX(0deg) translate(0, 0) skew(0deg, 0deg); opacity: 1 }}
+// @keyframes tilt-in-fwd-bl {0% { transform: rotateY(-20deg) rotateX(-35deg) translate(-300px, 300px) skew(-35deg, 10deg); opacity: 0 }100% { transform: rotateY(0) rotateX(0deg) translate(0, 0) skew(0deg, 0deg); opacity: 1 }}
+// @keyframes tilt-in-fwd-tr {0% { transform: rotateY(20deg) rotateX(35deg) translate(300px, -300px) skew(-35deg, 10deg); opacity: 0 }100% { transform: rotateY(0) rotateX(0deg) translate(0, 0) skew(0deg, 0deg); opacity: 1 }}

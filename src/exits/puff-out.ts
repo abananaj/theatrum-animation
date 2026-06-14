@@ -1,0 +1,11 @@
+// @keyframes puff-out-br {0% { transform: scale(1); transform-origin: 100% 100%; filter: blur(0); opacity: 1 }100% { transform: scale(2); transform-origin: 100% 100%; filter: blur(4px); opacity: 0 }}
+// @keyframes puff-out-br {0% { transform: scale(1); transform-origin: 100% 100%; filter: blur(0); opacity: 1 }100% { transform: scale(2); transform-origin: 100% 100%; filter: blur(4px); opacity: 0 }}
+// @keyframes puff-out-ver {0% { transform: scaleY(1); filter: blur(0); opacity: 1 }100% { transform: scaleY(2); filter: blur(4px); opacity: 0 }}
+// @keyframes puff-out-right {0% { transform: scale(1); transform-origin: 100% 50%; filter: blur(0); opacity: 1 }100% { transform: scale(2); transform-origin: 100% 50%; filter: blur(4px); opacity: 0 }}
+// @keyframes puff-out-hor {0% { transform: scaleX(1); filter: blur(0); opacity: 1 }100% { transform: scaleX(2); filter: blur(4px); opacity: 0 }}
+// @keyframes puff-out-tr {0% { transform: scale(1); transform-origin: 100% 0; filter: blur(0); opacity: 1 }100% { transform: scale(2); transform-origin: 100% 0; filter: blur(4px); opacity: 0 }}
+// @keyframes puff-out-tl {0% { transform: scale(1); transform-origin: 0 0; filter: blur(0); opacity: 1 }100% { transform: scale(2); transform-origin: 0 0; filter: blur(4px); opacity: 0 }}
+// @keyframes puff-out-top {0% { transform: scale(1); transform-origin: 50% 0; filter: blur(0); opacity: 1 }100% { transform: scale(2); transform-origin: 50% 0; filter: blur(4px); opacity: 0 }}
+// @keyframes puff-out-left {0% { transform: scale(1); transform-origin: 0 50%; filter: blur(0); opacity: 1 }100% { transform: scale(2); transform-origin: 0 50%; filter: blur(4px); opacity: 0 }}
+// @keyframes puff-out-center {0% { transform: scale(1); filter: blur(0); opacity: 1 }100% { transform: scale(2); filter: blur(4px); opacity: 0 }}
+// @keyframes puff-out-bl {0% { transform: scale(1); transform-origin: 0 100%; filter: blur(0); opacity: 1 }100% { transform: scale(2); transform-origin: 0 100%; filter: blur(4px); opacity: 0 }}

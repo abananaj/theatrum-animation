@@ -44,3 +44,35 @@ function theatrum_animation_enqueue_scripts()
 }
 add_action('wp_enqueue_scripts', 'theatrum_animation_enqueue_scripts');
 add_action('enqueue_block_editor_assets', 'theatrum_animation_enqueue_scripts');
+
+/*
+Plugin Sidebar Script Registration and Enqueueing
+*/
+register_post_meta( 'post', 'sidebar_plugin_meta_block_field', array(
+    'show_in_rest' => true,
+    'single' => true,
+    'type' => 'string',
+) );
+function sidebar_plugin_register() {
+    wp_register_script(
+        'plugin-sidebar-js',
+        plugins_url( 'inc/plugin-sidebar.js', __FILE__ ),
+        array(
+            'react',
+            'wp-plugins',
+            'wp-editor',
+            'wp-components'
+        )
+    );
+    wp_register_style(
+        'plugin-sidebar-css',
+        plugins_url( 'inc/plugin-sidebar.css', __FILE__ )
+    );
+}
+add_action( 'init', 'sidebar_plugin_register' );
+
+function sidebar_plugin_script_enqueue() {
+    wp_enqueue_script( 'plugin-sidebar-js' );
+    wp_enqueue_style( 'plugin-sidebar-css' );
+}
+add_action( 'enqueue_block_editor_assets', 'sidebar_plugin_script_enqueue' );

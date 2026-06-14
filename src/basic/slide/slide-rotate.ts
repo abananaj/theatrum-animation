@@ -1,0 +1,12 @@
+// @keyframes slide-rotate-hor-top {0% { transform: translateY(0) rotateX(0deg) }100% { transform: translateY(-150px) rotateX(-90deg) }}
+// @keyframes slide-rotate-ver-r-fwd {0% { transform: translateX(0) translateZ(0) rotateY(0); transform-origin: center left }100% { transform: translateX(150px) translateZ(130px) rotateY(-90deg); transform-origin: center left }}
+// @keyframes slide-rotate-ver-l-fwd {0% { transform: translateX(0) translateZ(0) rotateY(0); transform-origin: center right }100% { transform: translateX(-150px) translateZ(130px) rotateY(90deg); transform-origin: center right }}
+// @keyframes slide-rotate-ver-r-bck {0% { transform: translateX(0) translateZ(0) rotateY(0); transform-origin: center right }100% { transform: translateX(150px) translateZ(-230px) rotateY(-90deg); transform-origin: center right }}
+// @keyframes slide-rotate-ver-l-bck {0% { transform: translateX(0) translateZ(0) rotateY(0); transform-origin: center left }100% { transform: translateX(-150px) translateZ(-230px) rotateY(90deg); transform-origin: center left }}
+// @keyframes slide-rotate-ver-right {0% { transform: translateX(0) rotateY(0) }100% { transform: translateX(150px) rotateY(-90deg) }}
+// @keyframes slide-rotate-ver-left {0% { transform: translateX(0) rotateY(0) }100% { transform: translateX(-150px) rotateY(90deg) }}
+// @keyframes slide-rotate-hor-t-fwd {0% { transform: translateY(0) translateZ(0) rotateX(0deg); transform-origin: bottom center }100% { transform: translateY(-150px) translateZ(130px) rotateX(-90deg); transform-origin: bottom center }}
+// @keyframes slide-rotate-hor-b-fwd {0% { transform: translateY(0) translateZ(0) rotateX(0deg); transform-origin: top center }100% { transform: translateY(150px) translateZ(130px) rotateX(90deg); transform-origin: top center }}
+// @keyframes slide-rotate-hor-t-bck {0% { transform: translateY(0) translateZ(0) rotateX(0deg); transform-origin: top center }100% { transform: translateY(-150px) translateZ(-230px) rotateX(-90deg); transform-origin: top center }}
+// @keyframes slide-rotate-hor-b-bck {0% { transform: translateY(0) translateZ(0) rotateX(0deg); transform-origin: bottom center }100% { transform: translateY(150px) translateZ(-230px) rotateX(90deg); transform-origin: bottom center }}
+// @keyframes slide-rotate-hor-bottom {0% { transform: translateY(0) rotateX(0deg) }100% { transform: translateY(150px) rotateX(90deg) }}
