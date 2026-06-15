@@ -1,6 +1,6 @@
 import gsap from "gsap"
 import { type AnimationConfig } from "./config/animationConfigs"
-import slideIn from "./entrances/slide-in/slide-in"
+import slideIn from "./entrance/slide-in/slide-in"
 
 export type { AnimationConfig }
 
