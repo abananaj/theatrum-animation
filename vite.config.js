@@ -1,6 +1,8 @@
 import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
 export default defineConfig({
+  plugins: [react()],
   build: {
     emptyOutDir: true,
 		cssCodeSplit: true,
@@ -12,6 +14,8 @@ export default defineConfig({
         entryFileNames: "[name].js",
         assetFileNames: "[name].[ext]",
         dir: "dist",
+        format: "iife",
+        name: "TheatrumAnimation",
       },
       external: [/^@wordpress\//],
     },

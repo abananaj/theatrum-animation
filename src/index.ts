@@ -1,4 +1,53 @@
-import { initializeAnimations } from "./animations"
+import gsap from "gsap"
+import { type AnimationConfig } from "./config/animationConfigs"
+import slideIn from "./entrances/slide-in/slide-in"
+
+export type { AnimationConfig }
+
+const ANIMATION_CONFIGS: Record<string, AnimationConfig> = {
+	...slideIn,
+}
+
+const selector = Object.keys(ANIMATION_CONFIGS).map(k => `.${k}`).join(",")
+
+function animateElement(el: Element): void {
+	const animationType = Object.keys(ANIMATION_CONFIGS).find(k => el.classList.contains(k))
+	if (!animationType) return
+	const config = ANIMATION_CONFIGS[animationType]
+
+	gsap.from(el, {
+		...config.from,
+		duration: config.duration / 1000,
+		ease: config.ease,
+		clearProps: "all",
+	})
+}
+
+export function initializeAnimations(): void {
+	document.querySelectorAll(selector).forEach(animateElement)
+
+	const animationKeys = Object.keys(ANIMATION_CONFIGS)
+
+	new MutationObserver((mutations) => {
+		for (const mutation of mutations) {
+			if (mutation.type === "attributes" && mutation.target instanceof Element) {
+				const oldClasses = new Set((mutation.oldValue ?? "").split(" "))
+				const newlyAdded = animationKeys.find(
+					k => mutation.target instanceof Element && mutation.target.classList.contains(k) && !oldClasses.has(k)
+				)
+				if (newlyAdded) animateElement(mutation.target as Element)
+				continue
+			}
+			for (const node of mutation.addedNodes) {
+				if (!(node instanceof Element)) continue
+				if (animationKeys.some(k => node.classList.contains(k))) {
+					animateElement(node)
+				}
+				node.querySelectorAll(selector).forEach(animateElement)
+			}
+		}
+	}).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"], attributeOldValue: true })
+}
 
 // Initialize animations when DOM is ready
 if (document.readyState === "loading") {
@@ -6,60 +55,3 @@ if (document.readyState === "loading") {
 } else {
 	initializeAnimations()
 }
-
-// @import url(./basic/flip.css);
-// @import url(./basic/rotate.css);
-// @import url(./basic/scale.css);
-// @import url(./basic/shadow.css);
-// @import url(./basic/slide.css);
-// @import url(./basic/swing.css);
-
-// @import url(./entrances/bounce-ins.css);
-// @import url(./entrances/fade-ins.css);
-// @import url(./entrances/flicker-ins.css);
-// @import url(./entrances/puff-ins.css);
-// @import url(./entrances/roll-ins.css);
-// @import url(./entrances/rotate-ins.css);
-// @import url(./entrances/scale-ins.css);
-// @import url(./entrances/slide-ins.css);
-// @import url(./entrances/swing-ins.css);
-// @import url(./entrances/swirl-ins.css);
-// @import url(./entrances/tilt-ins.css);
-
-// @import url(./exits/bounce-out.css);
-// @import url(./exits/fade-out.css);
-// @import url(./exits/flicker-out.css);
-// @import url(./exits/flip-out.css);
-// @import url(./exits/puff-out.css);
-// @import url(./exits/roll-out.css);
-// @import url(./exits/rotate-out.css);
-// @import url(./exits/scale-down.css);
-// @import url(./exits/scale-out.css);
-// @import url(./exits/scale-up.css);
-// @import url(./exits/slide-out.css);
-// @import url(./exits/slit-out.css);
-// @import url(./exits/swing-out.css);
-// @import url(./exits/swirl-out.css);
-
-// @import url(./attention/blink.css);
-// @import url(./attention/bounce.css);
-// @import url(./attention/flicker.css);
-// @import url(./attention/heartbeat.css);
-// @import url(./attention/jello.css);
-// @import url(./attention/ping.css);
-// @import url(./attention/pulsate.css);
-// @import url(./attention/scale-down.css);
-// @import url(./attention/scale-up.css);
-// @import url(./attention/shake.css);
-// @import url(./attention/vibrate.css);
-// @import url(./attention/wobble.css);
-
-// @import url(./bg.css);
-
-// @import url(./text/focus-in.css);
-// @import url(./text/text-blur-out.css);
-// @import url(./text/text-flicker.css);
-// @import url(./text/text-pop.css);
-// @import url(./text/text-shadow.css);
-// @import url(./text/tracking-in.css);
-// @import url(./text/tracking-out.css);

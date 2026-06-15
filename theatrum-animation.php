@@ -43,36 +43,33 @@ function theatrum_animation_enqueue_scripts()
   }
 }
 add_action('wp_enqueue_scripts', 'theatrum_animation_enqueue_scripts');
-add_action('enqueue_block_editor_assets', 'theatrum_animation_enqueue_scripts');
 
-/*
-Plugin Sidebar Script Registration and Enqueueing
-*/
-register_post_meta( 'post', 'sidebar_plugin_meta_block_field', array(
-    'show_in_rest' => true,
-    'single' => true,
-    'type' => 'string',
-) );
-function sidebar_plugin_register() {
-    wp_register_script(
-        'plugin-sidebar-js',
-        plugins_url( 'inc/plugin-sidebar.js', __FILE__ ),
-        array(
-            'react',
-            'wp-plugins',
-            'wp-editor',
-            'wp-components'
-        )
-    );
-    wp_register_style(
-        'plugin-sidebar-css',
-        plugins_url( 'inc/plugin-sidebar.css', __FILE__ )
-    );
-}
-add_action( 'init', 'sidebar_plugin_register' );
+function theatrum_animation_enqueue_editor_scripts() {
+  $editor_script_path = plugin_dir_path(__FILE__) . 'dist/editor.js';
 
-function sidebar_plugin_script_enqueue() {
-    wp_enqueue_script( 'plugin-sidebar-js' );
-    wp_enqueue_style( 'plugin-sidebar-css' );
+  if (file_exists($editor_script_path)) {
+    wp_enqueue_script(
+      'theatrum-animation-editor',
+      plugin_dir_url(__FILE__) . 'dist/editor.js',
+      ['react', 'wp-hooks', 'wp-block-editor', 'wp-components', 'wp-compose', 'wp-element'],
+      filemtime($editor_script_path),
+      true
+    );
+  }
 }
-add_action( 'enqueue_block_editor_assets', 'sidebar_plugin_script_enqueue' );
+add_action('enqueue_block_editor_assets', 'theatrum_animation_enqueue_editor_scripts');
+
+function theatrum_animation_enqueue_block_assets() {
+  if (!is_admin()) return;
+  $script_path = plugin_dir_path(__FILE__) . 'dist/main.js';
+  if (file_exists($script_path)) {
+    wp_enqueue_script(
+      'theatrum-animation-canvas',
+      plugin_dir_url(__FILE__) . 'dist/main.js',
+      array(),
+      filemtime($script_path),
+      true
+    );
+  }
+}
+add_action('enqueue_block_assets', 'theatrum_animation_enqueue_block_assets');
