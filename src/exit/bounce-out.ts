@@ -1,6 +1,43 @@
-// @keyframes bounce-out-top {0% { transform: translateY(0); animation-timing-function: ease-out }5% { transform: translateY(-30px); animation-timing-function: ease-in }15% { transform: translateY(0); animation-timing-function: ease-out }25% { transform: translateY(-38px); animation-timing-function: ease-in }38% { transform: translateY(0); animation-timing-function: ease-out }52% { transform: translateY(-75px); animation-timing-function: ease-in }70% { transform: translateY(0); animation-timing-function: ease-out }85% { opacity: 1 }100% { transform: translateY(-800px); opacity: 0 }}
-// @keyframes bounce-out-fwd {0% { transform: translateZ(0); animation-timing-function: ease-out }5% { transform: translateZ(90px); animation-timing-function: ease-in }15% { transform: translateZ(0); animation-timing-function: ease-out }25% { transform: translateZ(95px); animation-timing-function: ease-in }38% { transform: translateZ(0); animation-timing-function: ease-out }52% { transform: translateZ(150px); animation-timing-function: ease-in }70% { transform: translateZ(0); animation-timing-function: ease-out }85% { opacity: 1 }100% { transform: translateZ(500px); animation-timing-function: ease-in; opacity: 0 }}
-// @keyframes bounce-out-bck {0% { transform: translateZ(0); animation-timing-function: ease-out }5% { transform: translateZ(-100px); animation-timing-function: ease-in }15% { transform: translateZ(0); animation-timing-function: ease-out }25% { transform: translateZ(-110px); animation-timing-function: ease-in }38% { transform: translateZ(0); animation-timing-function: ease-out }52% { transform: translateZ(-200px); animation-timing-function: ease-in }70% { transform: translateZ(0) scale(1); animation-timing-function: ease-out }85% { opacity: 1 }100% { transform: translateZ(-900px) scale(0); animation-timing-function: ease-in; opacity: 0 }}
-// @keyframes bounce-out-left {0% { transform: translateX(0); animation-timing-function: ease-out }5% { transform: translateX(-30px); animation-timing-function: ease-in }15% { transform: translateX(0); animation-timing-function: ease-out }25% { transform: translateX(-38px); animation-timing-function: ease-in }38% { transform: translateX(0); animation-timing-function: ease-out }52% { transform: translateX(-80px); animation-timing-function: ease-in }70% { transform: translateX(0); animation-timing-function: ease-out }85% { opacity: 1 }100% { transform: translateX(-1000px); opacity: 0 }}
-// @keyframes bounce-out-bottom {0% { transform: translateY(0); animation-timing-function: ease-out }5% { transform: translateY(30px); animation-timing-function: ease-in }15% { transform: translateY(0); animation-timing-function: ease-out }25% { transform: translateY(38px); animation-timing-function: ease-in }38% { transform: translateY(0); animation-timing-function: ease-out }52% { transform: translateY(75px); animation-timing-function: ease-in }70% { transform: translateY(0); animation-timing-function: ease-out }85% { opacity: 1 }100% { transform: translateY(800px); opacity: 0 }}
-// @keyframes bounce-out-right {0% { transform: translateX(0); animation-timing-function: ease-out }5% { transform: translateX(30px); animation-timing-function: ease-in }15% { transform: translateX(0); animation-timing-function: ease-out }25% { transform: translateX(38px); animation-timing-function: ease-in }38% { transform: translateX(0); animation-timing-function: ease-out }52% { transform: translateX(80px); animation-timing-function: ease-in }65% { transform: translateX(0); animation-timing-function: ease-out }85% { opacity: 1 }100% { transform: translateX(1000px); opacity: 0 }}
+import gsap from "gsap"
+import type { AnimationConfig } from "../config/animationConfigs"
+
+function makeBounceOut(
+	name: string,
+	axis: "y" | "x" | "z",
+	smallDir: number,
+	bigDir: number,
+	extraProps?: gsap.TweenVars
+): AnimationConfig {
+	return {
+		name,
+		duration: 1400,
+		ease: "none",
+		timeline: (el) => {
+			const tl = gsap.timeline()
+			const small = { [axis]: smallDir * 0.4 }
+			const mid   = { [axis]: smallDir * 0.5 }
+			const large = { [axis]: smallDir }
+			const reset = { [axis]: 0 }
+			const exit  = { [axis]: bigDir, opacity: 0, ...extraProps }
+			tl.to(el, { ...small, duration: 0.07, ease: "power1.out" })
+			  .to(el, { ...reset, duration: 0.14, ease: "power1.in" })
+			  .to(el, { ...mid,   duration: 0.14, ease: "power1.out" })
+			  .to(el, { ...reset, duration: 0.18, ease: "power1.in" })
+			  .to(el, { ...large, duration: 0.20, ease: "power1.out" })
+			  .to(el, { ...reset, duration: 0.25, ease: "power1.in" })
+			  .to(el, { ...exit,  duration: 0.42, ease: "power2.in" })
+			return tl
+		},
+	}
+}
+
+const bounceOut: Record<string, AnimationConfig> = {
+	"bounce-out-top":    makeBounceOut("bounce-out-top",    "y", -75,  -800),
+	"bounce-out-bottom": makeBounceOut("bounce-out-bottom", "y",  75,   800),
+	"bounce-out-left":   makeBounceOut("bounce-out-left",   "x", -80, -1000),
+	"bounce-out-right":  makeBounceOut("bounce-out-right",  "x",  80,  1000),
+	"bounce-out-fwd":    makeBounceOut("bounce-out-fwd",    "z",  150,  500),
+	"bounce-out-bck":    makeBounceOut("bounce-out-bck",    "z", -200, -900, { scale: 0 }),
+}
+
+export default bounceOut

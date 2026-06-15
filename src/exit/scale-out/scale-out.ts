@@ -1,15 +1,23 @@
-// @keyframes scale-out-center {0% { transform: scale(1); opacity: 1 }100% { transform: scale(0); opacity: 1 }}
-// @keyframes scale-out-br {0% { transform: scale(1); transform-origin: 100% 100%; opacity: 1 }100% { transform: scale(0); transform-origin: 100% 100%; opacity: 1 }}
-// @keyframes scale-out-horizontal {0% { transform: scaleX(1); opacity: 1 }100% { transform: scaleX(0); opacity: 1 }}
-// @keyframes scale-out-ver-bottom {0% { transform: scaleY(1); transform-origin: 0 100%; opacity: 1 }100% { transform: scaleY(0); transform-origin: 0 100%; opacity: 1 }}
-// @keyframes scale-out-right {0% { transform: scale(1); transform-origin: 100% 50%; opacity: 1 }100% { transform: scale(0); transform-origin: 100% 50%; opacity: 1 }}
-// @keyframes scale-out-ver-top {0% { transform: scaleY(1); transform-origin: 100% 0; opacity: 1 }100% { transform: scaleY(0); transform-origin: 100% 0; opacity: 1 }}
-// @keyframes scale-out-tl {0% { transform: scale(1); transform-origin: 0 0; opacity: 1 }100% { transform: scale(0); transform-origin: 0 0; opacity: 1 }}
-// @keyframes scale-out-left {0% { transform: scale(1); transform-origin: 0 50%; opacity: 1 }100% { transform: scale(0); transform-origin: 0 50%; opacity: 1 }}
-// @keyframes scale-out-tr {0% { transform: scale(1); transform-origin: 100% 0; opacity: 1 }100% { transform: scale(0); transform-origin: 100% 0; opacity: 1 }}
-// @keyframes scale-out-vertical {0% { transform: scaleY(1); opacity: 1 }100% { transform: scaleY(0); opacity: 1 }}
-// @keyframes scale-out-hor-right {0% { transform: scaleX(1); transform-origin: 100% 100%; opacity: 1 }100% { transform: scaleX(0); transform-origin: 100% 100%; opacity: 1 }}
-// @keyframes scale-out-bl {0% { transform: scale(1); transform-origin: 0 100%; opacity: 1 }100% { transform: scale(0); transform-origin: 0 100%; opacity: 1 }}
-// @keyframes scale-out-top {0% { transform: scale(1); transform-origin: 50% 0; opacity: 1 }100% { transform: scale(0); transform-origin: 50% 0; opacity: 1 }}
-// @keyframes scale-out-bottom {0% { transform: scale(1); transform-origin: 50% 100%; opacity: 1 }100% { transform: scale(0); transform-origin: 50% 100%; opacity: 1 }}
-// @keyframes scale-out-hor-left {0% { transform: scaleX(1); transform-origin: 0 0; opacity: 1 }100% { transform: scaleX(0); transform-origin: 0 0; opacity: 1 }}
+import type { AnimationConfig } from "../../config/animationConfigs"
+
+const defaults = { duration: 500, ease: "power2.in" }
+
+const scaleOut: Record<string, AnimationConfig> = {
+	"scale-out-center":     { ...defaults, name: "scale-out-center",     to: { scale: 0 } },
+	"scale-out-top":        { ...defaults, name: "scale-out-top",        to: { scale: 0, transformOrigin: "50% 0" } },
+	"scale-out-right":      { ...defaults, name: "scale-out-right",      to: { scale: 0, transformOrigin: "100% 50%" } },
+	"scale-out-bottom":     { ...defaults, name: "scale-out-bottom",     to: { scale: 0, transformOrigin: "50% 100%" } },
+	"scale-out-left":       { ...defaults, name: "scale-out-left",       to: { scale: 0, transformOrigin: "0 50%" } },
+	"scale-out-tl":         { ...defaults, name: "scale-out-tl",         to: { scale: 0, transformOrigin: "0 0" } },
+	"scale-out-tr":         { ...defaults, name: "scale-out-tr",         to: { scale: 0, transformOrigin: "100% 0" } },
+	"scale-out-bl":         { ...defaults, name: "scale-out-bl",         to: { scale: 0, transformOrigin: "0 100%" } },
+	"scale-out-br":         { ...defaults, name: "scale-out-br",         to: { scale: 0, transformOrigin: "100% 100%" } },
+	"scale-out-horizontal": { ...defaults, name: "scale-out-horizontal", to: { scaleX: 0 } },
+	"scale-out-vertical":   { ...defaults, name: "scale-out-vertical",   to: { scaleY: 0 } },
+	"scale-out-ver-top":    { ...defaults, name: "scale-out-ver-top",    to: { scaleY: 0, transformOrigin: "100% 0" } },
+	"scale-out-ver-bottom": { ...defaults, name: "scale-out-ver-bottom", to: { scaleY: 0, transformOrigin: "0 100%" } },
+	"scale-out-hor-right":  { ...defaults, name: "scale-out-hor-right",  to: { scaleX: 0, transformOrigin: "100% 100%" } },
+	"scale-out-hor-left":   { ...defaults, name: "scale-out-hor-left",   to: { scaleX: 0, transformOrigin: "0 0" } },
+}
+
+export default scaleOut

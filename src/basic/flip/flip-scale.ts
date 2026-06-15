@@ -1,13 +1,85 @@
-// @keyframes flip-scale-up-hor {0% { transform: scale(1) rotateX(0) }50% { transform: scale(2.5) rotateX(-90deg) }100% { transform: scale(1) rotateX(-180deg) }}
-// @keyframes flip-scale-up-diag-2 {0% { transform: scale(1) rotate3d(-1, 1, 0, 0deg) }50% { transform: scale(2.5) rotate3d(-1, 1, 0, 90deg) }100% { transform: scale(1) rotate3d(-1, 1, 0, 180deg) }}
-// @keyframes flip-scale-down-hor {0% { transform: scale(1) rotateX(0) }50% { transform: scale(.4) rotateX(90deg) }100% { transform: scale(1) rotateX(180deg) }}
-// @keyframes flip-scale-down-diag-2 {0% { transform: scale(1) rotate3d(-1, 1, 0, 0deg) }50% { transform: scale(.4) rotate3d(-1, 1, 0, -90deg) }100% { transform: scale(1) rotate3d(-1, 1, 0, -180deg) }}
-// @keyframes flip-scale-up-ver {0% { transform: scale(1) rotateY(0) }50% { transform: scale(2.5) rotateY(90deg) }100% { transform: scale(1) rotateY(180deg) }}
-// @keyframes flip-scale-down-ver {0% { transform: scale(1) rotateY(0) }50% { transform: scale(.4) rotateY(-90deg) }100% { transform: scale(1) rotateY(-180deg) }}
-// @keyframes flip-scale-up-diag-1 {0% { transform: scale(1) rotate3d(1, 1, 0, 0deg) }50% { transform: scale(2.5) rotate3d(1, 1, 0, 90deg) }100% { transform: scale(1) rotate3d(1, 1, 0, 180deg) }}
-// @keyframes flip-scale-down-diag-1 {0% { transform: scale(1) rotate3d(1, 1, 0, 0deg) }50% { transform: scale(.4) rotate3d(1, 1, 0, -90deg) }100% { transform: scale(1) rotate3d(1, 1, 0, -180deg) }}
-// @keyframes flip-scale-2-hor-top {0% { transform: translateY(0) rotateX(0) scale(1); transform-origin: 50% 0 }50% { transform: translateY(-50%) rotateX(-90deg) scale(2); transform-origin: 50% 50% }100% { transform: translateY(-100%) rotateX(-180deg) scale(1); transform-origin: 50% 100% }}
-// @keyframes flip-scale-2-ver-right {0% { transform: translateX(0) rotateY(0) scale(1); transform-origin: 100% 50% }50% { transform: translateX(50%) rotateY(-90deg) scale(2); transform-origin: 50% 50% }100% { transform: translateX(100%) rotateY(-180deg) scale(1); transform-origin: 0 50% }}
-// @keyframes flip-scale-2-hor-bottom {0% { transform: translateY(0) rotateX(0) scale(1); transform-origin: 50% 100% }50% { transform: translateY(50%) rotateX(90deg) scale(2); transform-origin: 50% 50% }100% { transform: translateY(100%) rotateX(180deg) scale(1); transform-origin: 50% 0 }}
-// @keyframes flip-scale-2-ver-left {0% { transform: translateX(0) rotateY(0) scale(1); transform-origin: 0 50% }50% { transform: translateX(-50%) rotateY(90deg) scale(2); transform-origin: 50% 50% }100% { transform: translateX(-100%) rotateY(180deg) scale(1); transform-origin: 100% 50% }}
+import gsap from "gsap"
+import type { AnimationConfig } from "../../config/animationConfigs"
 
+function makeFlipScale(
+	name: string,
+	midScale: number,
+	axis: "rotateX" | "rotateY",
+	midAngle: number,
+	endAngle: number
+): AnimationConfig {
+	return {
+		name,
+		duration: 500,
+		ease: "none",
+		timeline: (el) => {
+			const tl = gsap.timeline()
+			tl.to(el, { scale: midScale, [axis]: midAngle, duration: 0.25, ease: "power1.in" })
+			  .to(el, { scale: 1,        [axis]: endAngle, duration: 0.25, ease: "power1.out", clearProps: "all" })
+			return tl
+		},
+	}
+}
+
+function makeFlipScaleDiag(name: string, midScale: number, midX: number, midY: number): AnimationConfig {
+	return {
+		name,
+		duration: 500,
+		ease: "none",
+		timeline: (el) => {
+			const tl = gsap.timeline()
+			tl.to(el, { scale: midScale, rotateX: midX, rotateY: midY, duration: 0.25, ease: "power1.in" })
+			  .to(el, { scale: 1, rotateX: midX * 2, rotateY: midY * 2, duration: 0.25, ease: "power1.out", clearProps: "all" })
+			return tl
+		},
+	}
+}
+
+function makeFlipScale2(
+	name: string,
+	axis: "rotateX" | "rotateY",
+	translateAxis: "xPercent" | "yPercent",
+	midTranslate: number,
+	endTranslate: number,
+	midAngle: number,
+	endAngle: number,
+	originStart: string,
+	originMid: string,
+	originEnd: string
+): AnimationConfig {
+	return {
+		name,
+		duration: 600,
+		ease: "none",
+		timeline: (el) => {
+			const tl = gsap.timeline()
+			tl.to(el, {
+				scale: 2, [axis]: midAngle, [translateAxis]: midTranslate,
+				transformOrigin: originMid, duration: 0.3, ease: "power1.in",
+			})
+			  .to(el, {
+				scale: 1, [axis]: endAngle, [translateAxis]: endTranslate,
+				transformOrigin: originEnd, duration: 0.3, ease: "power1.out",
+			})
+			gsap.set(el, { transformOrigin: originStart }, 0)
+			return tl
+		},
+	}
+}
+
+const flipScale: Record<string, AnimationConfig> = {
+	"flip-scale-up-hor":     makeFlipScale("flip-scale-up-hor",     2.5, "rotateX",  -90, -180),
+	"flip-scale-down-hor":   makeFlipScale("flip-scale-down-hor",   0.4, "rotateX",   90,  180),
+	"flip-scale-up-ver":     makeFlipScale("flip-scale-up-ver",     2.5, "rotateY",   90,  180),
+	"flip-scale-down-ver":   makeFlipScale("flip-scale-down-ver",   0.4, "rotateY",  -90, -180),
+	"flip-scale-up-diag-1":  makeFlipScaleDiag("flip-scale-up-diag-1",  2.5,  90,  90),
+	"flip-scale-down-diag-1":makeFlipScaleDiag("flip-scale-down-diag-1",0.4, -90, -90),
+	"flip-scale-up-diag-2":  makeFlipScaleDiag("flip-scale-up-diag-2",  2.5,  90, -90),
+	"flip-scale-down-diag-2":makeFlipScaleDiag("flip-scale-down-diag-2",0.4, -90,  90),
+	"flip-scale-2-hor-top":    makeFlipScale2("flip-scale-2-hor-top",    "rotateX", "yPercent",  -50, -100,  -90, -180, "50% 0",    "50% 50%", "50% 100%"),
+	"flip-scale-2-hor-bottom": makeFlipScale2("flip-scale-2-hor-bottom", "rotateX", "yPercent",   50,  100,   90,  180, "50% 100%", "50% 50%", "50% 0"),
+	"flip-scale-2-ver-right":  makeFlipScale2("flip-scale-2-ver-right",  "rotateY", "xPercent",   50,  100,  -90, -180, "100% 50%", "50% 50%", "0 50%"),
+	"flip-scale-2-ver-left":   makeFlipScale2("flip-scale-2-ver-left",   "rotateY", "xPercent",  -50, -100,   90,  180, "0 50%",    "50% 50%", "100% 50%"),
+}
+
+export default flipScale

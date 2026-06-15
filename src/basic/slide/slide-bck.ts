@@ -1,9 +1,17 @@
-// @keyframes slide-bck-center {0% { transform: translateZ(0) }100% { transform: translateZ(-400px) }}
-// @keyframes slide-bck-bottom {0% { transform: translateZ(0) translateY(0) }100% { transform: translateZ(-400px) translateY(200px) }}
-// @keyframes slide-bck-br {0% { transform: translateZ(0) translateY(0) translateX(0) }100% { transform: translateZ(-400px) translateY(200px) translateX(200px) }}
-// @keyframes slide-bck-right {0% { transform: translateZ(0) translateX(0) }100% { transform: translateZ(-400px) translateX(200px) }}
-// @keyframes slide-bck-tr {0% { transform: translateZ(0) translateY(0) translateX(0) }100% { transform: translateZ(-400px) translateY(-200px) translateX(200px) }}
-// @keyframes slide-bck-tl {0% { transform: translateZ(0) translateY(0) translateX(0) }100% { transform: translateZ(-400px) translateY(-200px) translateX(-200px) }}
-// @keyframes slide-bck-top {0% { transform: translateZ(0) translateY(0) }100% { transform: translateZ(-400px) translateY(-200px) }}
-// @keyframes slide-bck-left {0% { transform: translateZ(0) translateX(0) }100% { transform: translateZ(-400px) translateX(-200px) }}
-// @keyframes slide-bck-bl {0% { transform: translateZ(0) translateY(0) translateX(0) }100% { transform: translateZ(-400px) translateY(200px) translateX(-200px) }}
+import type { AnimationConfig } from "../../config/animationConfigs"
+
+const defaults = { duration: 500, ease: "power1.in" }
+
+const slideBck: Record<string, AnimationConfig> = {
+	"slide-bck-center": { ...defaults, name: "slide-bck-center", to: { z: -400 } },
+	"slide-bck-top":    { ...defaults, name: "slide-bck-top",    to: { z: -400, y: -200 } },
+	"slide-bck-right":  { ...defaults, name: "slide-bck-right",  to: { z: -400, x:  200 } },
+	"slide-bck-bottom": { ...defaults, name: "slide-bck-bottom", to: { z: -400, y:  200 } },
+	"slide-bck-left":   { ...defaults, name: "slide-bck-left",   to: { z: -400, x: -200 } },
+	"slide-bck-tl":     { ...defaults, name: "slide-bck-tl",     to: { z: -400, y: -200, x: -200 } },
+	"slide-bck-tr":     { ...defaults, name: "slide-bck-tr",     to: { z: -400, y: -200, x:  200 } },
+	"slide-bck-bl":     { ...defaults, name: "slide-bck-bl",     to: { z: -400, y:  200, x: -200 } },
+	"slide-bck-br":     { ...defaults, name: "slide-bck-br",     to: { z: -400, y:  200, x:  200 } },
+}
+
+export default slideBck

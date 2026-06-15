@@ -1,2 +1,64 @@
-// @keyframes text-flicker-in-glow {0% { opacity: 0 }10% { opacity: 0; text-shadow: none }10.1% { opacity: 1; text-shadow: none }10.2% { opacity: 0; text-shadow: none }20% { opacity: 0; text-shadow: none }20.1% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .25) }20.6% { opacity: 0; text-shadow: none }30% { opacity: 0; text-shadow: none }30.1% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .45), 0 0 60px rgba(255, 255, 255, .25) }30.5% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .45), 0 0 60px rgba(255, 255, 255, .25) }30.6% { opacity: 0; text-shadow: none }45% { opacity: 0; text-shadow: none }45.1% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .45), 0 0 60px rgba(255, 255, 255, .25) }50% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .45), 0 0 60px rgba(255, 255, 255, .25) }55% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .45), 0 0 60px rgba(255, 255, 255, .25) }55.1% { opacity: 0; text-shadow: none }57% { opacity: 0; text-shadow: none }57.1% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .55), 0 0 60px rgba(255, 255, 255, .35) }60% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .55), 0 0 60px rgba(255, 255, 255, .35) }60.1% { opacity: 0; text-shadow: none }65% { opacity: 0; text-shadow: none }65.1% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .55), 0 0 60px rgba(255, 255, 255, .35), 0 0 100px rgba(255, 255, 255, .1) }75% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .55), 0 0 60px rgba(255, 255, 255, .35), 0 0 100px rgba(255, 255, 255, .1) }75.1% { opacity: 0; text-shadow: none }77% { opacity: 0; text-shadow: none }77.1% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .55), 0 0 60px rgba(255, 255, 255, .4), 0 0 110px rgba(255, 255, 255, .2), 0 0 100px rgba(255, 255, 255, .1) }85% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .55), 0 0 60px rgba(255, 255, 255, .4), 0 0 110px rgba(255, 255, 255, .2), 0 0 100px rgba(255, 255, 255, .1) }85.1% { opacity: 0; text-shadow: none }86% { opacity: 0; text-shadow: none }86.1% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .6), 0 0 60px rgba(255, 255, 255, .45), 0 0 110px rgba(255, 255, 255, .25), 0 0 100px rgba(255, 255, 255, .1) }100% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .6), 0 0 60px rgba(255, 255, 255, .45), 0 0 110px rgba(255, 255, 255, .25), 0 0 100px rgba(255, 255, 255, .1) }}
-// @keyframes text-flicker-out-glow {0% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .6), 0 0 60px rgba(255, 255, 255, .45), 0 0 110px rgba(255, 255, 255, .25), 0 0 100px rgba(255, 255, 255, .1) }13.9% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .6), 0 0 60px rgba(255, 255, 255, .45), 0 0 110px rgba(255, 255, 255, .25), 0 0 100px rgba(255, 255, 255, .1) }14% { opacity: 0; text-shadow: none }14.9% { opacity: 0; text-shadow: none }15% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .55), 0 0 60px rgba(255, 255, 255, .4), 0 0 110px rgba(255, 255, 255, .2), 0 0 100px rgba(255, 255, 255, .1) }22.9% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .55), 0 0 60px rgba(255, 255, 255, .4), 0 0 110px rgba(255, 255, 255, .2), 0 0 100px rgba(255, 255, 255, .1) }23% { opacity: 0; text-shadow: none }24.9% { opacity: 0; text-shadow: none }25% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .55), 0 0 60px rgba(255, 255, 255, .35), 0 0 100px rgba(255, 255, 255, .1) }34.9% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .55), 0 0 60px rgba(255, 255, 255, .35), 0 0 100px rgba(255, 255, 255, .1) }35% { opacity: 0; text-shadow: none }39.9% { opacity: 0; text-shadow: none }40% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .55), 0 0 60px rgba(255, 255, 255, .35) }42.9% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .55), 0 0 60px rgba(255, 255, 255, .35) }43% { opacity: 0; text-shadow: none }44.9% { opacity: 0; text-shadow: none }45% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .45), 0 0 60px rgba(255, 255, 255, .25) }50% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .45), 0 0 60px rgba(255, 255, 255, .25) }54.9% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .45), 0 0 60px rgba(255, 255, 255, .25) }55% { opacity: 0; text-shadow: none }69.4% { opacity: 0; text-shadow: none }69.5% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .45), 0 0 60px rgba(255, 255, 255, .25) }69.9% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .45), 0 0 60px rgba(255, 255, 255, .25) }70% { opacity: 0; text-shadow: none }79.4% { opacity: 0; text-shadow: none }79.9% { opacity: 1; text-shadow: 0 0 30px rgba(255, 255, 255, .25) }80% { opacity: 0; text-shadow: none }89.8% { opacity: 0; text-shadow: none }89.9% { opacity: 1; text-shadow: none }90% { opacity: 0; text-shadow: none }100% { opacity: 0 }}
+import gsap from "gsap"
+import type { AnimationConfig } from "../config/animationConfigs"
+
+const textFlicker: Record<string, AnimationConfig> = {
+	"text-flicker-in-glow": {
+		name: "text-flicker-in-glow",
+		duration: 2500,
+		ease: "none",
+		timeline: (el) => {
+			const dur = 2.5
+			const s1 = "0 0 30px rgba(255,255,255,.25)"
+			const s2 = "0 0 30px rgba(255,255,255,.45), 0 0 60px rgba(255,255,255,.25)"
+			const s3 = "0 0 30px rgba(255,255,255,.55), 0 0 60px rgba(255,255,255,.35)"
+			const s4 = "0 0 30px rgba(255,255,255,.55), 0 0 60px rgba(255,255,255,.35), 0 0 100px rgba(255,255,255,.1)"
+			const s5 = "0 0 30px rgba(255,255,255,.55), 0 0 60px rgba(255,255,255,.4), 0 0 110px rgba(255,255,255,.2), 0 0 100px rgba(255,255,255,.1)"
+			const s6 = "0 0 30px rgba(255,255,255,.6), 0 0 60px rgba(255,255,255,.45), 0 0 110px rgba(255,255,255,.25), 0 0 100px rgba(255,255,255,.1)"
+			const tl = gsap.timeline()
+			const steps: [number, number, string][] = [
+				[0, 0, "none"],
+				[0.101 * dur, 1, "none"],   [0.102 * dur, 0, "none"],
+				[0.201 * dur, 1, s1],       [0.206 * dur, 0, "none"],
+				[0.301 * dur, 1, s2],       [0.306 * dur, 0, "none"],
+				[0.451 * dur, 1, s2],       [0.551 * dur, 0, "none"],
+				[0.571 * dur, 1, s3],       [0.601 * dur, 0, "none"],
+				[0.651 * dur, 1, s4],       [0.751 * dur, 0, "none"],
+				[0.771 * dur, 1, s5],       [0.851 * dur, 0, "none"],
+				[0.861 * dur, 1, s6],       [dur, 1, s6],
+			]
+			steps.forEach(([t, op, shadow]) => tl.set(el, { opacity: op, textShadow: shadow }, t))
+			return tl
+		},
+	},
+
+	"text-flicker-out-glow": {
+		name: "text-flicker-out-glow",
+		duration: 2000,
+		ease: "none",
+		timeline: (el) => {
+			const dur = 2.0
+			const s6 = "0 0 30px rgba(255,255,255,.6), 0 0 60px rgba(255,255,255,.45), 0 0 110px rgba(255,255,255,.25), 0 0 100px rgba(255,255,255,.1)"
+			const s5 = "0 0 30px rgba(255,255,255,.55), 0 0 60px rgba(255,255,255,.4), 0 0 110px rgba(255,255,255,.2), 0 0 100px rgba(255,255,255,.1)"
+			const s4 = "0 0 30px rgba(255,255,255,.55), 0 0 60px rgba(255,255,255,.35), 0 0 100px rgba(255,255,255,.1)"
+			const s3 = "0 0 30px rgba(255,255,255,.55), 0 0 60px rgba(255,255,255,.35)"
+			const s2 = "0 0 30px rgba(255,255,255,.45), 0 0 60px rgba(255,255,255,.25)"
+			const s1 = "0 0 30px rgba(255,255,255,.25)"
+			const tl = gsap.timeline()
+			const steps: [number, number, string][] = [
+				[0, 1, s6],
+				[0.14 * dur, 0, "none"], [0.15 * dur, 1, s5],
+				[0.23 * dur, 0, "none"], [0.25 * dur, 1, s4],
+				[0.35 * dur, 0, "none"], [0.40 * dur, 1, s3],
+				[0.43 * dur, 0, "none"], [0.45 * dur, 1, s2],
+				[0.55 * dur, 0, "none"], [0.695 * dur, 1, s2],
+				[0.70 * dur, 0, "none"], [0.799 * dur, 1, s1],
+				[0.80 * dur, 0, "none"], [0.899 * dur, 1, "none"],
+				[0.90 * dur, 0, "none"], [dur, 0, "none"],
+			]
+			steps.forEach(([t, op, shadow]) => tl.set(el, { opacity: op, textShadow: shadow }, t))
+			return tl
+		},
+	},
+}
+
+export default textFlicker

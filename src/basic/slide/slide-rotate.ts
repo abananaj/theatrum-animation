@@ -1,12 +1,20 @@
-// @keyframes slide-rotate-hor-top {0% { transform: translateY(0) rotateX(0deg) }100% { transform: translateY(-150px) rotateX(-90deg) }}
-// @keyframes slide-rotate-ver-r-fwd {0% { transform: translateX(0) translateZ(0) rotateY(0); transform-origin: center left }100% { transform: translateX(150px) translateZ(130px) rotateY(-90deg); transform-origin: center left }}
-// @keyframes slide-rotate-ver-l-fwd {0% { transform: translateX(0) translateZ(0) rotateY(0); transform-origin: center right }100% { transform: translateX(-150px) translateZ(130px) rotateY(90deg); transform-origin: center right }}
-// @keyframes slide-rotate-ver-r-bck {0% { transform: translateX(0) translateZ(0) rotateY(0); transform-origin: center right }100% { transform: translateX(150px) translateZ(-230px) rotateY(-90deg); transform-origin: center right }}
-// @keyframes slide-rotate-ver-l-bck {0% { transform: translateX(0) translateZ(0) rotateY(0); transform-origin: center left }100% { transform: translateX(-150px) translateZ(-230px) rotateY(90deg); transform-origin: center left }}
-// @keyframes slide-rotate-ver-right {0% { transform: translateX(0) rotateY(0) }100% { transform: translateX(150px) rotateY(-90deg) }}
-// @keyframes slide-rotate-ver-left {0% { transform: translateX(0) rotateY(0) }100% { transform: translateX(-150px) rotateY(90deg) }}
-// @keyframes slide-rotate-hor-t-fwd {0% { transform: translateY(0) translateZ(0) rotateX(0deg); transform-origin: bottom center }100% { transform: translateY(-150px) translateZ(130px) rotateX(-90deg); transform-origin: bottom center }}
-// @keyframes slide-rotate-hor-b-fwd {0% { transform: translateY(0) translateZ(0) rotateX(0deg); transform-origin: top center }100% { transform: translateY(150px) translateZ(130px) rotateX(90deg); transform-origin: top center }}
-// @keyframes slide-rotate-hor-t-bck {0% { transform: translateY(0) translateZ(0) rotateX(0deg); transform-origin: top center }100% { transform: translateY(-150px) translateZ(-230px) rotateX(-90deg); transform-origin: top center }}
-// @keyframes slide-rotate-hor-b-bck {0% { transform: translateY(0) translateZ(0) rotateX(0deg); transform-origin: bottom center }100% { transform: translateY(150px) translateZ(-230px) rotateX(90deg); transform-origin: bottom center }}
-// @keyframes slide-rotate-hor-bottom {0% { transform: translateY(0) rotateX(0deg) }100% { transform: translateY(150px) rotateX(90deg) }}
+import type { AnimationConfig } from "../../config/animationConfigs"
+
+const defaults = { duration: 500, ease: "power2.in" }
+
+const slideRotate: Record<string, AnimationConfig> = {
+	"slide-rotate-hor-top":    { ...defaults, name: "slide-rotate-hor-top",    to: { y: -150, rotateX: -90 } },
+	"slide-rotate-hor-bottom": { ...defaults, name: "slide-rotate-hor-bottom", to: { y:  150, rotateX:  90 } },
+	"slide-rotate-ver-right":  { ...defaults, name: "slide-rotate-ver-right",  to: { x:  150, rotateY: -90 } },
+	"slide-rotate-ver-left":   { ...defaults, name: "slide-rotate-ver-left",   to: { x: -150, rotateY:  90 } },
+	"slide-rotate-hor-t-fwd":  { ...defaults, name: "slide-rotate-hor-t-fwd",  to: { y: -150, z:  130, rotateX: -90, transformOrigin: "bottom center" } },
+	"slide-rotate-hor-b-fwd":  { ...defaults, name: "slide-rotate-hor-b-fwd",  to: { y:  150, z:  130, rotateX:  90, transformOrigin: "top center" } },
+	"slide-rotate-hor-t-bck":  { ...defaults, name: "slide-rotate-hor-t-bck",  to: { y: -150, z: -230, rotateX: -90, transformOrigin: "top center" } },
+	"slide-rotate-hor-b-bck":  { ...defaults, name: "slide-rotate-hor-b-bck",  to: { y:  150, z: -230, rotateX:  90, transformOrigin: "bottom center" } },
+	"slide-rotate-ver-r-fwd":  { ...defaults, name: "slide-rotate-ver-r-fwd",  to: { x:  150, z:  130, rotateY: -90, transformOrigin: "center left" } },
+	"slide-rotate-ver-l-fwd":  { ...defaults, name: "slide-rotate-ver-l-fwd",  to: { x: -150, z:  130, rotateY:  90, transformOrigin: "center right" } },
+	"slide-rotate-ver-r-bck":  { ...defaults, name: "slide-rotate-ver-r-bck",  to: { x:  150, z: -230, rotateY: -90, transformOrigin: "center right" } },
+	"slide-rotate-ver-l-bck":  { ...defaults, name: "slide-rotate-ver-l-bck",  to: { x: -150, z: -230, rotateY:  90, transformOrigin: "center left" } },
+}
+
+export default slideRotate

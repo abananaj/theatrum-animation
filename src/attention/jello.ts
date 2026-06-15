@@ -1,4 +1,59 @@
-// @keyframes jello-horizontal {0% { transform: scale3d(1, 1, 1) }30% { transform: scale3d(1.25, .75, 1) }40% { transform: scale3d(.75, 1.25, 1) }50% { transform: scale3d(1.15, .85, 1) }65% { transform: scale3d(.95, 1.05, 1) }75% { transform: scale3d(1.05, .95, 1) }100% { transform: scale3d(1, 1, 1) }}
-// @keyframes jello-diagonal-2 {0% { transform: skew(0deg 0deg) }30% { transform: skew(-25deg -25deg) }40% { transform: skew(15deg, 15deg) }50% { transform: skew(-15deg, -15deg) }65% { transform: skew(5deg, 5deg) }75% { transform: skew(-5deg, -5deg) }100% { transform: skew(0deg 0deg) }}
-// @keyframes jello-diagonal-1 {0% { transform: skew(0deg 0deg) }30% { transform: skew(25deg 25deg) }40% { transform: skew(-15deg, -15deg) }50% { transform: skew(15deg, 15deg) }65% { transform: skew(-5deg, -5deg) }75% { transform: skew(5deg, 5deg) }100% { transform: skew(0deg 0deg) }}
-// @keyframes jello-vertical {0% { transform: scale3d(1, 1, 1) }30% { transform: scale3d(.75, 1.25, 1) }40% { transform: scale3d(1.25, .75, 1) }50% { transform: scale3d(.85, 1.15, 1) }65% { transform: scale3d(1.05, .95, 1) }75% { transform: scale3d(.95, 1.05, 1) }100% { transform: scale3d(1, 1, 1) }}
+import gsap from "gsap"
+import type { AnimationConfig } from "../config/animationConfigs"
+
+const jello: Record<string, AnimationConfig> = {
+	"jello-horizontal": {
+		name: "jello-horizontal", duration: 900, ease: "none",
+		timeline: (el) => {
+			const tl = gsap.timeline({ repeat: -1 })
+			tl.to(el, { scaleX: 1.25, scaleY: 0.75, duration: 0.27, ease: "power1.inOut" })
+			  .to(el, { scaleX: 0.75, scaleY: 1.25, duration: 0.09, ease: "power1.inOut" })
+			  .to(el, { scaleX: 1.15, scaleY: 0.85, duration: 0.09, ease: "power1.inOut" })
+			  .to(el, { scaleX: 0.95, scaleY: 1.05, duration: 0.135, ease: "power1.inOut" })
+			  .to(el, { scaleX: 1.05, scaleY: 0.95, duration: 0.09, ease: "power1.inOut" })
+			  .to(el, { scaleX: 1,    scaleY: 1,    duration: 0.225, ease: "power1.inOut" })
+			return tl
+		},
+	},
+	"jello-vertical": {
+		name: "jello-vertical", duration: 900, ease: "none",
+		timeline: (el) => {
+			const tl = gsap.timeline({ repeat: -1 })
+			tl.to(el, { scaleX: 0.75, scaleY: 1.25, duration: 0.27, ease: "power1.inOut" })
+			  .to(el, { scaleX: 1.25, scaleY: 0.75, duration: 0.09, ease: "power1.inOut" })
+			  .to(el, { scaleX: 0.85, scaleY: 1.15, duration: 0.09, ease: "power1.inOut" })
+			  .to(el, { scaleX: 1.05, scaleY: 0.95, duration: 0.135, ease: "power1.inOut" })
+			  .to(el, { scaleX: 0.95, scaleY: 1.05, duration: 0.09, ease: "power1.inOut" })
+			  .to(el, { scaleX: 1,    scaleY: 1,    duration: 0.225, ease: "power1.inOut" })
+			return tl
+		},
+	},
+	"jello-diagonal-1": {
+		name: "jello-diagonal-1", duration: 900, ease: "none",
+		timeline: (el) => {
+			const tl = gsap.timeline({ repeat: -1 })
+			tl.to(el, { skewX:  25, skewY:  25, duration: 0.27, ease: "power1.inOut" })
+			  .to(el, { skewX: -15, skewY: -15, duration: 0.09, ease: "power1.inOut" })
+			  .to(el, { skewX:  15, skewY:  15, duration: 0.09, ease: "power1.inOut" })
+			  .to(el, { skewX:  -5, skewY:  -5, duration: 0.135, ease: "power1.inOut" })
+			  .to(el, { skewX:   5, skewY:   5, duration: 0.09, ease: "power1.inOut" })
+			  .to(el, { skewX:   0, skewY:   0, duration: 0.225, ease: "power1.inOut" })
+			return tl
+		},
+	},
+	"jello-diagonal-2": {
+		name: "jello-diagonal-2", duration: 900, ease: "none",
+		timeline: (el) => {
+			const tl = gsap.timeline({ repeat: -1 })
+			tl.to(el, { skewX: -25, skewY: -25, duration: 0.27, ease: "power1.inOut" })
+			  .to(el, { skewX:  15, skewY:  15, duration: 0.09, ease: "power1.inOut" })
+			  .to(el, { skewX: -15, skewY: -15, duration: 0.09, ease: "power1.inOut" })
+			  .to(el, { skewX:   5, skewY:   5, duration: 0.135, ease: "power1.inOut" })
+			  .to(el, { skewX:  -5, skewY:  -5, duration: 0.09, ease: "power1.inOut" })
+			  .to(el, { skewX:   0, skewY:   0, duration: 0.225, ease: "power1.inOut" })
+			return tl
+		},
+	},
+}
+
+export default jello

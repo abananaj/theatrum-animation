@@ -1,10 +1,16 @@
+import type { AnimationConfig } from "../config/animationConfigs"
 
-// @keyframes kenburns-top {0% { transform: scale(1) translateY(0); transform-origin: 50% 16% }100% { transform: scale(1.25) translateY(-15px); transform-origin: top }}
-// @keyframes kenburns-left {0% { transform: scale(1) translate(0, 0); transform-origin: 16% 50% }100% { transform: scale(1.25) translate(-20px, 15px); transform-origin: left }}
-// @keyframes kenburns-top-right {0% { transform: scale(1) translate(0, 0); transform-origin: 84% 16% }100% { transform: scale(1.25) translate(20px, -15px); transform-origin: right top }}
-// @keyframes kenburns-top-left {0% { transform: scale(1) translate(0, 0); transform-origin: 16% 16% }100% { transform: scale(1.25) translate(-20px, -15px); transform-origin: top left }}
-// @keyframes kenburns-right {0% { transform: scale(1) translate(0, 0); transform-origin: 84% 50% }100% { transform: scale(1.25) translateX(20px); transform-origin: right }}
-// @keyframes kenburns-bottom-right {0% { transform: scale(1) translate(0, 0); transform-origin: 84% 84% }100% { transform: scale(1.25) translate(20px, 15px); transform-origin: right bottom }}
-// @keyframes kenburns-bottom {0% { transform: scale(1) translateY(0); transform-origin: 50% 84% }100% { transform: scale(1.25) translateY(15px); transform-origin: bottom }}
-// @keyframes kenburns-bottom-left {0% { transform: scale(1) translate(0, 0); transform-origin: 16% 84% }100% { transform: scale(1.25) translate(-20px, 15px); transform-origin: left bottom }}
+const defaults = { duration: 8000, ease: "power1.inOut", repeat: -1, yoyo: true }
 
+const backgroundKenburns: Record<string, AnimationConfig> = {
+	"kenburns-top":          { ...defaults, name: "kenburns-top",          to: { scale: 1.25, y:  -15, transformOrigin: "50% 0%" } },
+	"kenburns-right":        { ...defaults, name: "kenburns-right",        to: { scale: 1.25, x:   20, transformOrigin: "100% 50%" } },
+	"kenburns-bottom":       { ...defaults, name: "kenburns-bottom",       to: { scale: 1.25, y:   15, transformOrigin: "50% 100%" } },
+	"kenburns-left":         { ...defaults, name: "kenburns-left",         to: { scale: 1.25, x:  -20, y: 15, transformOrigin: "0 50%" } },
+	"kenburns-top-right":    { ...defaults, name: "kenburns-top-right",    to: { scale: 1.25, x:   20, y: -15, transformOrigin: "100% 0%" } },
+	"kenburns-top-left":     { ...defaults, name: "kenburns-top-left",     to: { scale: 1.25, x:  -20, y: -15, transformOrigin: "0 0" } },
+	"kenburns-bottom-right": { ...defaults, name: "kenburns-bottom-right", to: { scale: 1.25, x:   20, y:  15, transformOrigin: "100% 100%" } },
+	"kenburns-bottom-left":  { ...defaults, name: "kenburns-bottom-left",  to: { scale: 1.25, x:  -20, y:  15, transformOrigin: "0 100%" } },
+}
+
+export default backgroundKenburns

@@ -1,4 +1,12 @@
-// @keyframes bounce-top {0% { transform: translateY(-45px); animation-timing-function: ease-in; opacity: 1 }24% { opacity: 1 }40% { transform: translateY(-24px); animation-timing-function: ease-in }65% { transform: translateY(-12px); animation-timing-function: ease-in }82% { transform: translateY(-6px); animation-timing-function: ease-in }93% { transform: translateY(-4px); animation-timing-function: ease-in }25%,55%,75%,87% { transform: translateY(0); animation-timing-function: ease-out }100% { transform: translateY(0); animation-timing-function: ease-out; opacity: 1 }}
-// @keyframes bounce-bottom {0% { transform: translateY(45px); animation-timing-function: ease-in; opacity: 1 }24% { opacity: 1 }40% { transform: translateY(24px); animation-timing-function: ease-in }65% { transform: translateY(12px); animation-timing-function: ease-in }82% { transform: translateY(6px); animation-timing-function: ease-in }93% { transform: translateY(4px); animation-timing-function: ease-in }25%,55%,75%,87% { transform: translateY(0); animation-timing-function: ease-out }100% { transform: translateY(0); animation-timing-function: ease-out; opacity: 1 }}
-// @keyframes bounce-left {0% { transform: translateX(-48px); animation-timing-function: ease-in; opacity: 1 }24% { opacity: 1 }40% { transform: translateX(-26px); animation-timing-function: ease-in }65% { transform: translateX(-13px); animation-timing-function: ease-in }82% { transform: translateX(-6.5px); animation-timing-function: ease-in }93% { transform: translateX(-4px); animation-timing-function: ease-in }25%,55%,75%,87%,98% { transform: translateX(0); animation-timing-function: ease-out }100% { transform: translateX(0); animation-timing-function: ease-out; opacity: 1 }}
-// @keyframes bounce-right {0% { transform: translateX(48px); animation-timing-function: ease-in; opacity: 1 }24% { opacity: 1 }40% { transform: translateX(26px); animation-timing-function: ease-in }65% { transform: translateX(13px); animation-timing-function: ease-in }82% { transform: translateX(6.5px); animation-timing-function: ease-in }93% { transform: translateX(4px); animation-timing-function: ease-in }25%,55%,75%,87%,98% { transform: translateX(0); animation-timing-function: ease-out }100% { transform: translateX(0); animation-timing-function: ease-out; opacity: 1 }}
+import type { AnimationConfig } from "../config/animationConfigs"
+
+const defaults = { duration: 1000, ease: "bounce.out", repeat: -1, yoyo: true }
+
+const bounce: Record<string, AnimationConfig> = {
+	"bounce-top":    { ...defaults, name: "bounce-top",    from: { y: -45 } },
+	"bounce-bottom": { ...defaults, name: "bounce-bottom", from: { y:  45 } },
+	"bounce-left":   { ...defaults, name: "bounce-left",   from: { x: -48 } },
+	"bounce-right":  { ...defaults, name: "bounce-right",  from: { x:  48 } },
+}
+
+export default bounce

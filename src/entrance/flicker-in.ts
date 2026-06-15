@@ -1,2 +1,58 @@
-// @keyframes flicker-in-1 {0% { opacity: 0 }10% { opacity: 0 }10.1% { opacity: 1 }10.2% { opacity: 0 }20% { opacity: 0 }20.1% { opacity: 1 }20.6% { opacity: 0 }30% { opacity: 0 }30.1% { opacity: 1 }30.5% { opacity: 1 }30.6% { opacity: 0 }45% { opacity: 0 }45.1% { opacity: 1 }50% { opacity: 1 }55% { opacity: 1 }55.1% { opacity: 0 }57% { opacity: 0 }57.1% { opacity: 1 }60% { opacity: 1 }60.1% { opacity: 0 }65% { opacity: 0 }65.1% { opacity: 1 }75% { opacity: 1 }75.1% { opacity: 0 }77% { opacity: 0 }77.1% { opacity: 1 }85% { opacity: 1 }85.1% { opacity: 0 }86% { opacity: 0 }86.1% { opacity: 1 }100% { opacity: 1 }}
-// @keyframes flicker-in-2 {0% { opacity: 0 }10% { opacity: 0; box-shadow: none }10.1% { opacity: 1; box-shadow: none }10.2% { opacity: 0; box-shadow: none }20% { opacity: 0; box-shadow: none }20.1% { opacity: 1; box-shadow: 0 0 30px rgba(255, 255, 255, .25) }20.6% { opacity: 0; box-shadow: none }30% { opacity: 0; box-shadow: none }30.1% { opacity: 1; box-shadow: 0 0 30px rgba(255, 255, 255, .45), 0 0 60px rgba(255, 255, 255, .25) }30.5% { opacity: 1; box-shadow: 0 0 30px rgba(255, 255, 255, .45), 0 0 60px rgba(255, 255, 255, .25) }30.6% { opacity: 0; box-shadow: none }45% { opacity: 0; box-shadow: none }45.1% { opacity: 1; box-shadow: 0 0 30px rgba(255, 255, 255, .45), 0 0 60px rgba(255, 255, 255, .25) }50% { opacity: 1; box-shadow: 0 0 30px rgba(255, 255, 255, .45), 0 0 60px rgba(255, 255, 255, .25) }55% { opacity: 1; box-shadow: 0 0 30px rgba(255, 255, 255, .45), 0 0 60px rgba(255, 255, 255, .25) }55.1% { opacity: 0; box-shadow: none }57% { opacity: 0; box-shadow: none }57.1% { opacity: 1; box-shadow: 0 0 30px rgba(255, 255, 255, .55), 0 0 60px rgba(255, 255, 255, .3) }60% { opacity: 1; box-shadow: 0 0 30px rgba(255, 255, 255, .55), 0 0 60px rgba(255, 255, 255, .3) }60.1% { opacity: 0; box-shadow: none }65% { opacity: 0; box-shadow: none }65.1% { opacity: 1; box-shadow: 0 0 30px rgba(255, 255, 255, .55), 0 0 60px rgba(255, 255, 255, .3), 0 0 100px rgba(255, 255, 255, .1) }75% { opacity: 1; box-shadow: 0 0 30px rgba(255, 255, 255, .55), 0 0 60px rgba(255, 255, 255, .3), 0 0 100px rgba(255, 255, 255, .1) }75.1% { opacity: 0; box-shadow: none }77% { opacity: 0; box-shadow: none }77.1% { opacity: 1; box-shadow: 0 0 30px rgba(255, 255, 255, .6), 0 0 60px rgba(255, 255, 255, .4), 0 0 110px rgba(255, 255, 255, .2), 0 0 100px rgba(255, 255, 255, .1) }85% { opacity: 1; box-shadow: 0 0 30px rgba(255, 255, 255, .6), 0 0 60px rgba(255, 255, 255, .4), 0 0 110px rgba(255, 255, 255, .2), 0 0 100px rgba(255, 255, 255, .1) }85.1% { opacity: 0; box-shadow: none }86% { opacity: 0; box-shadow: none }86.1% { opacity: 1; box-shadow: 0 0 30px rgba(255, 255, 255, .6), 0 0 60px rgba(255, 255, 255, .45), 0 0 110px rgba(255, 255, 255, .25), 0 0 100px rgba(255, 255, 255, .1) }100% { opacity: 1; box-shadow: 0 0 30px rgba(255, 255, 255, .6), 0 0 60px rgba(255, 255, 255, .45), 0 0 110px rgba(255, 255, 255, .25), 0 0 100px rgba(255, 255, 255, .1) }}
+import gsap from "gsap"
+import type { AnimationConfig } from "../config/animationConfigs"
+
+const flickerIn: Record<string, AnimationConfig> = {
+	"flicker-in-1": {
+		name: "flicker-in-1",
+		duration: 2500,
+		ease: "none",
+		timeline: (el) => {
+			const dur = 2.5
+			const tl = gsap.timeline()
+			const steps: [number, number][] = [
+				[0, 0],
+				[0.101 * dur, 1], [0.102 * dur, 0],
+				[0.201 * dur, 1], [0.206 * dur, 0],
+				[0.301 * dur, 1], [0.306 * dur, 0],
+				[0.451 * dur, 1], [0.551 * dur, 0],
+				[0.571 * dur, 1], [0.601 * dur, 0],
+				[0.651 * dur, 1], [0.751 * dur, 0],
+				[0.771 * dur, 1], [0.851 * dur, 0],
+				[0.861 * dur, 1], [dur, 1],
+			]
+			steps.forEach(([t, op]) => tl.set(el, { opacity: op }, t))
+			return tl
+		},
+	},
+
+	"flicker-in-2": {
+		name: "flicker-in-2",
+		duration: 2500,
+		ease: "none",
+		timeline: (el) => {
+			const dur = 2.5
+			const s1 = "0 0 30px rgba(255,255,255,.25)"
+			const s2 = "0 0 30px rgba(255,255,255,.45), 0 0 60px rgba(255,255,255,.25)"
+			const s3 = "0 0 30px rgba(255,255,255,.55), 0 0 60px rgba(255,255,255,.3)"
+			const s4 = "0 0 30px rgba(255,255,255,.55), 0 0 60px rgba(255,255,255,.3), 0 0 100px rgba(255,255,255,.1)"
+			const s5 = "0 0 30px rgba(255,255,255,.6), 0 0 60px rgba(255,255,255,.4), 0 0 110px rgba(255,255,255,.2), 0 0 100px rgba(255,255,255,.1)"
+			const s6 = "0 0 30px rgba(255,255,255,.6), 0 0 60px rgba(255,255,255,.45), 0 0 110px rgba(255,255,255,.25), 0 0 100px rgba(255,255,255,.1)"
+			const tl = gsap.timeline()
+			const steps: [number, number, string][] = [
+				[0, 0, "none"],
+				[0.101 * dur, 1, "none"],   [0.102 * dur, 0, "none"],
+				[0.201 * dur, 1, s1],       [0.206 * dur, 0, "none"],
+				[0.301 * dur, 1, s2],       [0.306 * dur, 0, "none"],
+				[0.451 * dur, 1, s2],       [0.551 * dur, 0, "none"],
+				[0.571 * dur, 1, s3],       [0.601 * dur, 0, "none"],
+				[0.651 * dur, 1, s4],       [0.751 * dur, 0, "none"],
+				[0.771 * dur, 1, s5],       [0.851 * dur, 0, "none"],
+				[0.861 * dur, 1, s6],       [dur, 1, s6],
+			]
+			steps.forEach(([t, op, shadow]) => tl.set(el, { opacity: op, boxShadow: shadow }, t))
+			return tl
+		},
+	},
+}
+
+export default flickerIn

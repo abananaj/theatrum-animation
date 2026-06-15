@@ -1,12 +1,14 @@
-// .swing-top-fwd {animation: 500ms swing-top-fwd;}
-// .swing-top-bck {animation: 500ms swing-top-bck;}
-// .swing-top-left-fwd {animation: 500ms swing-top-left-fwd;}
-// .swing-top-right-fwd {animation: 500ms swing-top-right-fwd;}
-// .swing-top-left-bck {animation: 500ms swing-top-left-bck;}
-// .swing-top-right-bck {animation: 500ms swing-top-right-bck;}
-// @keyframes swing-top-fwd {0% { transform: rotateX(0); transform-origin: top }100% { transform: rotateX(180deg); transform-origin: top }}@keyframes swing-top-bck {0% { transform: rotateX(0); transform-origin: top }100% { transform: rotateX(-180deg); transform-origin: top }}
-// @keyframes swing-top-left-fwd {0% { transform: rotate3d(-1, 1, 0, 0deg); transform-origin: 0 0 }100% { transform: rotate3d(-1, 1, 0, -180deg); transform-origin: 0 0 }}
-// @keyframes swing-bottom-fwd {0% { transform: rotateX(0); transform-origin: bottom }100% { transform: rotateX(-180deg); transform-origin: bottom }}
-// @keyframes swing-top-right-fwd {0% { transform: rotate3d(1, 1, 0, 0deg); transform-origin: 100% 0 }100% { transform: rotate3d(1, 1, 0, 180deg); transform-origin: 100% 0 }}
-// @keyframes swing-top-left-bck {0% { transform: rotate3d(-1, 1, 0, 0deg); transform-origin: 0 0 }100% { transform: rotate3d(-1, 1, 0, 180deg); transform-origin: 0 0 }}
-// @keyframes swing-top-right-bck {0% { transform: rotate3d(1, 1, 0, 0deg); transform-origin: 100% 0 }100% { transform: rotate3d(1, 1, 0, -180deg); transform-origin: 100% 0 }}
+import type { AnimationConfig } from "../../config/animationConfigs"
+
+const defaults = { duration: 500, ease: "power2.inOut" }
+
+const swingTop: Record<string, AnimationConfig> = {
+	"swing-top-fwd":       { ...defaults, name: "swing-top-fwd",       to: { rotateX:  180, transformOrigin: "top" } },
+	"swing-top-bck":       { ...defaults, name: "swing-top-bck",       to: { rotateX: -180, transformOrigin: "top" } },
+	"swing-top-left-fwd":  { ...defaults, name: "swing-top-left-fwd",  to: { rotateX: -90, rotateY:  90, transformOrigin: "0 0" } },
+	"swing-top-left-bck":  { ...defaults, name: "swing-top-left-bck",  to: { rotateX:  90, rotateY: -90, transformOrigin: "0 0" } },
+	"swing-top-right-fwd": { ...defaults, name: "swing-top-right-fwd", to: { rotateX:  90, rotateY:  90, transformOrigin: "100% 0" } },
+	"swing-top-right-bck": { ...defaults, name: "swing-top-right-bck", to: { rotateX: -90, rotateY:  90, transformOrigin: "100% 0" } },
+}
+
+export default swingTop

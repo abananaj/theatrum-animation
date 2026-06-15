@@ -1,15 +1,23 @@
-// @keyframes scale-up-center {0% { transform: scale(.5) }100% { transform: scale(1) }}
-// @keyframes scale-up-bl {0% { transform: scale(.5); transform-origin: 0 100% }100% { transform: scale(1); transform-origin: 0 100% }}
-// @keyframes scale-up-ver-center {0% { transform: scaleY(.4) }100% { transform: scaleY(1) }}
-// @keyframes scale-up-top {0% { transform: scale(.5); transform-origin: 50% 0 }100% { transform: scale(1); transform-origin: 50% 0 }}
-// @keyframes scale-up-left {0% { transform: scale(.5); transform-origin: 0 50% }100% { transform: scale(1); transform-origin: 0 50% }}
-// @keyframes scale-up-ver-top {0% { transform: scaleY(.4); transform-origin: 100% 0 }100% { transform: scaleY(1); transform-origin: 100% 0 }}
-// @keyframes scale-up-tr {0% { transform: scale(.5); transform-origin: 100% 0 }100% { transform: scale(1); transform-origin: 100% 0 }}
-// @keyframes scale-up-tl {0% { transform: scale(.5); transform-origin: 0 0 }100% { transform: scale(1); transform-origin: 0 0 }}
-// @keyframes scale-up-ver-bottom {0% { transform: scaleY(.4); transform-origin: 0 100% }100% { transform: scaleY(1); transform-origin: 0 100% }}
-// @keyframes scale-up-right {0% { transform: scale(.5); transform-origin: 100% 50% }100% { transform: scale(1); transform-origin: 100% 50% }}
-// @keyframes scale-up-hor-center {0% { transform: scaleX(.4) }100% { transform: scaleX(1) }}
-// @keyframes scale-up-br {0% { transform: scale(.5); transform-origin: 100% 100% }100% { transform: scale(1); transform-origin: 100% 100% }}
-// @keyframes scale-up-hor-left {0% { transform: scaleX(.4); transform-origin: 0 0 }100% { transform: scaleX(1); transform-origin: 0 0 }}
-// @keyframes scale-up-hor-right {0% { transform: scaleX(.4); transform-origin: 100% 100% }100% { transform: scaleX(1); transform-origin: 100% 100% }}
-// @keyframes scale-up-bottom {0% { transform: scale(.5); transform-origin: 50% 100% }100% { transform: scale(1); transform-origin: 50% 100% }}
+import type { AnimationConfig } from "../../config/animationConfigs"
+
+const defaults = { duration: 400, ease: "power2.out" }
+
+const scaleUp: Record<string, AnimationConfig> = {
+	"scale-up-center":     { ...defaults, name: "scale-up-center",     from: { scale: 0.5 } },
+	"scale-up-top":        { ...defaults, name: "scale-up-top",        from: { scale: 0.5, transformOrigin: "50% 0" } },
+	"scale-up-right":      { ...defaults, name: "scale-up-right",      from: { scale: 0.5, transformOrigin: "100% 50%" } },
+	"scale-up-bottom":     { ...defaults, name: "scale-up-bottom",     from: { scale: 0.5, transformOrigin: "50% 100%" } },
+	"scale-up-left":       { ...defaults, name: "scale-up-left",       from: { scale: 0.5, transformOrigin: "0 50%" } },
+	"scale-up-tl":         { ...defaults, name: "scale-up-tl",         from: { scale: 0.5, transformOrigin: "0 0" } },
+	"scale-up-tr":         { ...defaults, name: "scale-up-tr",         from: { scale: 0.5, transformOrigin: "100% 0" } },
+	"scale-up-bl":         { ...defaults, name: "scale-up-bl",         from: { scale: 0.5, transformOrigin: "0 100%" } },
+	"scale-up-br":         { ...defaults, name: "scale-up-br",         from: { scale: 0.5, transformOrigin: "100% 100%" } },
+	"scale-up-hor-center": { ...defaults, name: "scale-up-hor-center", from: { scaleX: 0.4 } },
+	"scale-up-hor-left":   { ...defaults, name: "scale-up-hor-left",   from: { scaleX: 0.4, transformOrigin: "0 0" } },
+	"scale-up-hor-right":  { ...defaults, name: "scale-up-hor-right",  from: { scaleX: 0.4, transformOrigin: "100% 100%" } },
+	"scale-up-ver-center": { ...defaults, name: "scale-up-ver-center", from: { scaleY: 0.4 } },
+	"scale-up-ver-top":    { ...defaults, name: "scale-up-ver-top",    from: { scaleY: 0.4, transformOrigin: "100% 0" } },
+	"scale-up-ver-bottom": { ...defaults, name: "scale-up-ver-bottom", from: { scaleY: 0.4, transformOrigin: "0 100%" } },
+}
+
+export default scaleUp

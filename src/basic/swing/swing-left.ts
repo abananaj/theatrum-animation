@@ -1,4 +1,10 @@
-// .swing-left-fwd {animation: 500ms swing-left-fwd;}
-// .swing-left-bck {animation: 500ms swing-left-bck;}
-// @keyframes swing-left-fwd {0% { transform: rotateY(0); transform-origin: left bottom }100% { transform: rotateY(-180deg); transform-origin: left bottom }}
-// @keyframes swing-left-bck {0% { transform: rotateY(0); transform-origin: left bottom }100% { transform: rotateY(180deg); transform-origin: left bottom }}
+import type { AnimationConfig } from "../../config/animationConfigs"
+
+const defaults = { duration: 500, ease: "power2.inOut" }
+
+const swingLeft: Record<string, AnimationConfig> = {
+	"swing-left-fwd": { ...defaults, name: "swing-left-fwd", to: { rotateY: -180, transformOrigin: "left bottom" } },
+	"swing-left-bck": { ...defaults, name: "swing-left-bck", to: { rotateY:  180, transformOrigin: "left bottom" } },
+}
+
+export default swingLeft

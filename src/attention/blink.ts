@@ -1,2 +1,10 @@
-// @keyframes blink-1 {0%, 0%,100% { opacity: 1 }25%,75% { opacity: 0 }}
-// @keyframes blink-2 {0% { opacity: 1 }50% { opacity: .2 }100% { opacity: 1 }}
+import type { AnimationConfig } from "../config/animationConfigs"
+
+const blinkDefaults = { duration: 800, ease: "power1.inOut", repeat: -1, yoyo: true }
+
+const blink: Record<string, AnimationConfig> = {
+	"blink-1": { ...blinkDefaults, name: "blink-1", to: { opacity: 0 } },
+	"blink-2": { ...blinkDefaults, name: "blink-2", to: { opacity: 0.2 } },
+}
+
+export default blink

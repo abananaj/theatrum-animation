@@ -1,9 +1,17 @@
-// @keyframes slide-out-fwd-center {0% { transform: translateZ(1); opacity: 1 }100% { transform: translateZ(600px); opacity: 0 }}
-// @keyframes slide-out-fwd-bottom {0% { transform: translateZ(0) translateY(0); opacity: 1 }100% { transform: translateZ(600px) translateY(300px); opacity: 0 }}
-// @keyframes slide-out-fwd-br {0% { transform: translateZ(0) translateY(0) translateX(0); opacity: 1 }100% { transform: translateZ(600px) translateY(300px) translateX(400px); opacity: 0 }}
-// @keyframes slide-out-fwd-right {0% { transform: translateZ(0) translateX(0); opacity: 1 }100% { transform: translateZ(600px) translateX(400px); opacity: 0 }}
-// @keyframes slide-out-fwd-tr {0% { transform: translateZ(0) translateY(0) translateX(0); opacity: 1 }100% { transform: translateZ(600px) translateY(-300px) translateX(400px); opacity: 0 }}
-// @keyframes slide-out-fwd-tl {0% { transform: translateZ(0) translateY(0) translateX(0); opacity: 1 }100% { transform: translateZ(600px) translateY(-300px) translateX(-400px); opacity: 0 }}
-// @keyframes slide-out-fwd-top {0% { transform: translateZ(1) translateY(0); opacity: 1 }100% { transform: translateZ(600px) translateY(-300px); opacity: 0 }}
-// @keyframes slide-out-fwd-left {0% { transform: translateZ(0) translateX(0); opacity: 1 }100% { transform: translateZ(600px) translateX(-400px); opacity: 0 }}
-// @keyframes slide-out-fwd-bl {0% { transform: translateZ(0) translateY(0) translateX(0); opacity: 1 }100% { transform: translateZ(600px) translateY(300px) translateX(-400px); opacity: 0 }}
+import type { AnimationConfig } from "../../config/animationConfigs"
+
+const defaults = { duration: 700, ease: "power2.in" }
+
+const slideOutFwd: Record<string, AnimationConfig> = {
+	"slide-out-fwd-center": { ...defaults, name: "slide-out-fwd-center", to: { z:  600, opacity: 0 } },
+	"slide-out-fwd-top":    { ...defaults, name: "slide-out-fwd-top",    to: { z:  600, y: -300, opacity: 0 } },
+	"slide-out-fwd-right":  { ...defaults, name: "slide-out-fwd-right",  to: { z:  600, x:  400, opacity: 0 } },
+	"slide-out-fwd-bottom": { ...defaults, name: "slide-out-fwd-bottom", to: { z:  600, y:  300, opacity: 0 } },
+	"slide-out-fwd-left":   { ...defaults, name: "slide-out-fwd-left",   to: { z:  600, x: -400, opacity: 0 } },
+	"slide-out-fwd-tl":     { ...defaults, name: "slide-out-fwd-tl",     to: { z:  600, y: -300, x: -400, opacity: 0 } },
+	"slide-out-fwd-tr":     { ...defaults, name: "slide-out-fwd-tr",     to: { z:  600, y: -300, x:  400, opacity: 0 } },
+	"slide-out-fwd-bl":     { ...defaults, name: "slide-out-fwd-bl",     to: { z:  600, y:  300, x: -400, opacity: 0 } },
+	"slide-out-fwd-br":     { ...defaults, name: "slide-out-fwd-br",     to: { z:  600, y:  300, x:  400, opacity: 0 } },
+}
+
+export default slideOutFwd

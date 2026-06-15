@@ -1,8 +1,16 @@
-// @keyframes roll-in-left {0% { transform: translateX(-800px) rotate(-540deg); opacity: 0 }100% { transform: translateX(0) rotate(0deg); opacity: 1 }}
-// @keyframes roll-in-top {0% { transform: translateY(-800px) rotate(-540deg); opacity: 0 }100% { transform: translateY(0) rotate(0deg); opacity: 1 }}
-// @keyframes roll-in-right {0% { transform: translateX(800px) rotate(540deg); opacity: 0 }100% { transform: translateX(0) rotate(0deg); opacity: 1 }}
-// @keyframes roll-in-bottom {0% { transform: translateY(800px) rotate(540deg); opacity: 0 }100% { transform: translateY(0) rotate(0deg); opacity: 1 }}
-// @keyframes roll-in-blurred-left {0% { transform: translateX(-1000px) rotate(-720deg); filter: blur(50px); opacity: 0 }100% { transform: translateX(0) rotate(0deg); filter: blur(0); opacity: 1 }}
-// @keyframes roll-in-blurred-top {0% { transform: translateY(-800px) rotate(-720deg); filter: blur(50px); opacity: 0 }100% { transform: translateY(0) rotate(0deg); filter: blur(0); opacity: 1 }}
-// @keyframes roll-in-blurred-right {0% { transform: translateX(1000px) rotate(720deg); filter: blur(50px); opacity: 0 }100% { transform: translateX(0) rotate(0deg); filter: blur(0); opacity: 1 }}
-// @keyframes roll-in-blurred-bottom {0% { transform: translateY(800px) rotate(720deg); filter: blur(50px); opacity: 0 }100% { transform: translateY(0) rotate(0deg); opacity: 1 }}
+import type { AnimationConfig } from "../config/animationConfigs"
+
+const defaults = { duration: 800, ease: "power4.out" }
+
+const rollIn: Record<string, AnimationConfig> = {
+	"roll-in-left":          { ...defaults, name: "roll-in-left",          from: { x: -800,  rotation: -540, opacity: 0 } },
+	"roll-in-right":         { ...defaults, name: "roll-in-right",         from: { x:  800,  rotation:  540, opacity: 0 } },
+	"roll-in-top":           { ...defaults, name: "roll-in-top",           from: { y: -800,  rotation: -540, opacity: 0 } },
+	"roll-in-bottom":        { ...defaults, name: "roll-in-bottom",        from: { y:  800,  rotation:  540, opacity: 0 } },
+	"roll-in-blurred-left":  { ...defaults, name: "roll-in-blurred-left",  from: { x: -1000, rotation: -720, filter: "blur(50px)", opacity: 0 } },
+	"roll-in-blurred-right": { ...defaults, name: "roll-in-blurred-right", from: { x:  1000, rotation:  720, filter: "blur(50px)", opacity: 0 } },
+	"roll-in-blurred-top":   { ...defaults, name: "roll-in-blurred-top",   from: { y: -800,  rotation: -720, filter: "blur(50px)", opacity: 0 } },
+	"roll-in-blurred-bottom":{ ...defaults, name: "roll-in-blurred-bottom",from: { y:  800,  rotation:  720, filter: "blur(50px)", opacity: 0 } },
+}
+
+export default rollIn

@@ -1,13 +1,21 @@
-// @keyframes rotate-out-center {0% { transform: rotate(0); opacity: 1 }100% { transform: rotate(-360deg); opacity: 0 }}
-// @keyframes rotate-out-right {0% { transform: rotate(0); transform-origin: right; opacity: 1 }100% { transform: rotate(-360deg); transform-origin: right; opacity: 0 }}
-// @keyframes rotate-out-br {0% { transform: rotate(0); transform-origin: bottom right; opacity: 1 }100% { transform: rotate(-360deg); transform-origin: bottom right; opacity: 0 }}
-// @keyframes rotate-out-hor {0% { transform: rotateX(360deg); opacity: 1 }100% { transform: rotateX(0deg); opacity: 0 }}
-// @keyframes rotate-out-tl {0% { transform: rotate(0); transform-origin: top left; opacity: 1 }100% { transform: rotate(-360deg); transform-origin: top left; opacity: 0 }}
-// @keyframes rotate-out-diag-2 {0% { transform: rotate3d(-1, 1, 0, 360deg); opacity: 1 }100% { transform: rotate3d(-1, 1, 0, 0deg); opacity: 0 }}
-// @keyframes rotate-out-left {0% { transform: rotate(0); transform-origin: left; opacity: 1 }100% { transform: rotate(-360deg); transform-origin: left; opacity: 0 }}
-// @keyframes rotate-out-tr {0% { transform: rotate(0); transform-origin: top right; opacity: 1 }100% { transform: rotate(-360deg); transform-origin: top right; opacity: 0 }}
-// @keyframes rotate-out-top {0% { transform: rotate(0); transform-origin: top; opacity: 1 }100% { transform: rotate(-360deg); transform-origin: top; opacity: 0 }}
-// @keyframes rotate-out-bl {0% { transform: rotate(0); transform-origin: bottom left; opacity: 1 }100% { transform: rotate(-360deg); transform-origin: bottom left; opacity: 0 }}
-// @keyframes rotate-out-diag-1 {0% { transform: rotate3d(1, 1, 0, 360deg); opacity: 1 }100% { transform: rotate3d(1, 1, 0, 0deg); opacity: 0 }}
-// @keyframes rotate-out-ver {0% { transform: rotateY(360deg); opacity: 1 }100% { transform: rotateY(0deg); opacity: 0 }}
-// @keyframes rotate-out-bottom {0% { transform: rotate(0); transform-origin: bottom; opacity: 1 }100% { transform: rotate(-360deg); transform-origin: bottom; opacity: 0 }}
+import type { AnimationConfig } from "../../config/animationConfigs"
+
+const defaults = { duration: 600, ease: "power2.in" }
+
+const rotateOut: Record<string, AnimationConfig> = {
+	"rotate-out-center": { ...defaults, name: "rotate-out-center", to: { rotation: -360, opacity: 0 } },
+	"rotate-out-top":    { ...defaults, name: "rotate-out-top",    to: { rotation: -360, transformOrigin: "top",          opacity: 0 } },
+	"rotate-out-right":  { ...defaults, name: "rotate-out-right",  to: { rotation: -360, transformOrigin: "right",        opacity: 0 } },
+	"rotate-out-bottom": { ...defaults, name: "rotate-out-bottom", to: { rotation: -360, transformOrigin: "bottom",       opacity: 0 } },
+	"rotate-out-left":   { ...defaults, name: "rotate-out-left",   to: { rotation: -360, transformOrigin: "left",         opacity: 0 } },
+	"rotate-out-tl":     { ...defaults, name: "rotate-out-tl",     to: { rotation: -360, transformOrigin: "top left",     opacity: 0 } },
+	"rotate-out-tr":     { ...defaults, name: "rotate-out-tr",     to: { rotation: -360, transformOrigin: "top right",    opacity: 0 } },
+	"rotate-out-bl":     { ...defaults, name: "rotate-out-bl",     to: { rotation: -360, transformOrigin: "bottom left",  opacity: 0 } },
+	"rotate-out-br":     { ...defaults, name: "rotate-out-br",     to: { rotation: -360, transformOrigin: "bottom right", opacity: 0 } },
+	"rotate-out-hor":    { ...defaults, name: "rotate-out-hor",    to: { rotateX:  360, opacity: 0 } },
+	"rotate-out-ver":    { ...defaults, name: "rotate-out-ver",    to: { rotateY:  360, opacity: 0 } },
+	"rotate-out-diag-1": { ...defaults, name: "rotate-out-diag-1", to: { rotateX:  180, rotateY:  180, opacity: 0 } },
+	"rotate-out-diag-2": { ...defaults, name: "rotate-out-diag-2", to: { rotateX: -180, rotateY:  180, opacity: 0 } },
+}
+
+export default rotateOut

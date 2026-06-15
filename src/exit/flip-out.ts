@@ -1,7 +1,15 @@
-// @keyframes flip-out-hor-top {0% { transform: rotateX(0); opacity: 1 }100% { transform: rotateX(70deg); opacity: 0 }}
-// @keyframes flip-out-diag-1-bl {0% { transform: rotate3d(1, 1, 0, 0deg); opacity: 1 }100% { transform: rotate3d(1, 1, 0, -70deg); opacity: 0 }}
-// @keyframes flip-out-diag-1-tr {0% { transform: rotate3d(1, 1, 0, 0deg); opacity: 1 }100% { transform: rotate3d(1, 1, 0, 70deg); opacity: 0 }}
-// @keyframes flip-out-ver-left {0% { transform: rotateY(0); opacity: 1 }100% { transform: rotateY(-70deg); opacity: 0 }}
-// @keyframes flip-out-hor-bottom {0% { transform: rotateX(0); opacity: 1 }100% { transform: rotateX(-70deg); opacity: 0 }}
-// @keyframes flip-out-diag-2-br {0% { transform: rotate3d(1, 1, 0, 0deg); opacity: 1 }100% { transform: rotate3d(-1, 1, 0, 70deg); opacity: 0 }}
-// @keyframes flip-out-diag-2-tl {0% { transform: rotate3d(1, 1, 0, 0deg); opacity: 1 }100% { transform: rotate3d(-1, 1, 0, -70deg); opacity: 0 }}
+import type { AnimationConfig } from "../config/animationConfigs"
+
+const defaults = { duration: 600, ease: "power2.in" }
+
+const flipOut: Record<string, AnimationConfig> = {
+	"flip-out-hor-top":    { ...defaults, name: "flip-out-hor-top",    to: { rotateX:  70, opacity: 0 } },
+	"flip-out-hor-bottom": { ...defaults, name: "flip-out-hor-bottom", to: { rotateX: -70, opacity: 0 } },
+	"flip-out-ver-left":   { ...defaults, name: "flip-out-ver-left",   to: { rotateY: -70, opacity: 0 } },
+	"flip-out-diag-1-tr":  { ...defaults, name: "flip-out-diag-1-tr",  to: { rotateX:  50, rotateY:  50, opacity: 0 } },
+	"flip-out-diag-1-bl":  { ...defaults, name: "flip-out-diag-1-bl",  to: { rotateX: -50, rotateY: -50, opacity: 0 } },
+	"flip-out-diag-2-br":  { ...defaults, name: "flip-out-diag-2-br",  to: { rotateX: -50, rotateY:  50, opacity: 0 } },
+	"flip-out-diag-2-tl":  { ...defaults, name: "flip-out-diag-2-tl",  to: { rotateX:  50, rotateY: -50, opacity: 0 } },
+}
+
+export default flipOut

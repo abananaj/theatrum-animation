@@ -1,3 +1,51 @@
-// @keyframes vibrate-1 {0% { transform: translate(0) }20% { transform: translate(-2px, 2px) }40% { transform: translate(-2px, -2px) }60% { transform: translate(2px, 2px) }80% { transform: translate(2px, -2px) }100% { transform: translate(0) }}
-// @keyframes vibrate-3 {0% { transform: translate(0) }10% { transform: translate(-2px, -2px) }20% { transform: translate(2px, -2px) }30% { transform: translate(-2px, 2px) }40% { transform: translate(2px, 2px) }50% { transform: translate(-2px, -2px) }60% { transform: translate(2px, -2px) }70% { transform: translate(-2px, 2px) }80% { transform: translate(-2px, -2px) }90% { transform: translate(2px, -2px) }100% { transform: translate(0) }}
-// @keyframes vibrate-2 {0% { transform: translate(0) }20% { transform: translate(2px, -2px) }40% { transform: translate(2px, 2px) }60% { transform: translate(-2px, 2px) }80% { transform: translate(-2px, -2px) }100% { transform: translate(0) }}
+import gsap from "gsap"
+import type { AnimationConfig } from "../config/animationConfigs"
+
+const vibrate: Record<string, AnimationConfig> = {
+	"vibrate-1": {
+		name: "vibrate-1", duration: 300, ease: "none",
+		timeline: (el) => {
+			const tl = gsap.timeline({ repeat: -1 })
+			const d = 0.06
+			tl.to(el, { x: -2, y:  2, duration: d })
+			  .to(el, { x: -2, y: -2, duration: d })
+			  .to(el, { x:  2, y:  2, duration: d })
+			  .to(el, { x:  2, y: -2, duration: d })
+			  .to(el, { x:  0, y:  0, duration: d })
+			return tl
+		},
+	},
+	"vibrate-2": {
+		name: "vibrate-2", duration: 300, ease: "none",
+		timeline: (el) => {
+			const tl = gsap.timeline({ repeat: -1 })
+			const d = 0.06
+			tl.to(el, { x:  2, y: -2, duration: d })
+			  .to(el, { x:  2, y:  2, duration: d })
+			  .to(el, { x: -2, y:  2, duration: d })
+			  .to(el, { x: -2, y: -2, duration: d })
+			  .to(el, { x:  0, y:  0, duration: d })
+			return tl
+		},
+	},
+	"vibrate-3": {
+		name: "vibrate-3", duration: 500, ease: "none",
+		timeline: (el) => {
+			const tl = gsap.timeline({ repeat: -1 })
+			const d = 0.05
+			tl.to(el, { x: -2, y: -2, duration: d })
+			  .to(el, { x:  2, y: -2, duration: d })
+			  .to(el, { x: -2, y:  2, duration: d })
+			  .to(el, { x:  2, y:  2, duration: d })
+			  .to(el, { x: -2, y: -2, duration: d })
+			  .to(el, { x:  2, y: -2, duration: d })
+			  .to(el, { x: -2, y:  2, duration: d })
+			  .to(el, { x: -2, y: -2, duration: d })
+			  .to(el, { x:  2, y: -2, duration: d })
+			  .to(el, { x:  0, y:  0, duration: d })
+			return tl
+		},
+	},
+}
+
+export default vibrate

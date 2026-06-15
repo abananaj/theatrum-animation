@@ -1,8 +1,16 @@
-// @keyframes slide-in-elliptic-top-fwd {0% { transform: translateY(-600px) rotateX(-30deg) scale(0); transform-origin: 50% 100%; opacity: 0 }100% { transform: translateY(0) rotateX(0) scale(1); transform-origin: 50% 1400px; opacity: 1 }}
-// @keyframes slide-in-elliptic-top-bck {0% { transform: translateY(-600px) rotateX(30deg) scale(6.5); transform-origin: 50% 200%; opacity: 0 }100% { transform: translateY(0) rotateX(0) scale(1); transform-origin: 50% -500px; opacity: 1 }}
-// @keyframes slide-in-elliptic-right-fwd {0% { transform: translateX(800px) rotateY(-30deg) scale(0); transform-origin: -100% 50%; opacity: 0 }100% { transform: translateX(0) rotateY(0) scale(1); transform-origin: -1800px 50%; opacity: 1 }}
-// @keyframes slide-in-elliptic-right-bck {0% { transform: translateX(800px) rotateY(30deg) scale(6.5); transform-origin: -100% 50%; opacity: 0 }100% { transform: translateX(0) rotateY(0) scale(1); transform-origin: 600px 50%; opacity: 1 }}
-// @keyframes slide-in-elliptic-bottom-fwd {0% { transform: translateY(600px) rotateX(30deg) scale(0); transform-origin: 50% 100%; opacity: 0 }100% { transform: translateY(0) rotateX(0) scale(1); transform-origin: 50% -1400px; opacity: 1 }}
-// @keyframes slide-in-elliptic-bottom-bck {0% { transform: translateY(600px) rotateX(-30deg) scale(6.5); transform-origin: 50% -100%; opacity: 0 }100% { transform: translateY(0) rotateX(0) scale(1); transform-origin: 50% 500px; opacity: 1 }}
-// @keyframes slide-in-elliptic-left-bck {0% { transform: translateX(-800px) rotateY(-30deg) scale(6.5); transform-origin: 200% 50%; opacity: 0 }100% { transform: translateX(0) rotateY(0) scale(1); transform-origin: -600px 50%; opacity: 1 }}
-// @keyframes slide-in-elliptic-left-fwd {0% { transform: translateX(-800px) rotateY(30deg) scale(0); transform-origin: -100% 50%; opacity: 0 }100% { transform: translateX(0) rotateY(0) scale(1); transform-origin: 1800px 50%; opacity: 1 }}
+import type { AnimationConfig } from "../../config/animationConfigs"
+
+const defaults = { duration: 800, ease: "power2.out" }
+
+const slideInElliptic: Record<string, AnimationConfig> = {
+	"slide-in-elliptic-top-fwd":    { ...defaults, name: "slide-in-elliptic-top-fwd",    from: { y: -600, rotateX: -30, scale: 0,   transformOrigin: "50% 100%", opacity: 0 } },
+	"slide-in-elliptic-top-bck":    { ...defaults, name: "slide-in-elliptic-top-bck",    from: { y: -600, rotateX:  30, scale: 6.5, transformOrigin: "50% 200%", opacity: 0 } },
+	"slide-in-elliptic-right-fwd":  { ...defaults, name: "slide-in-elliptic-right-fwd",  from: { x:  800, rotateY: -30, scale: 0,   transformOrigin: "-100% 50%", opacity: 0 } },
+	"slide-in-elliptic-right-bck":  { ...defaults, name: "slide-in-elliptic-right-bck",  from: { x:  800, rotateY:  30, scale: 6.5, transformOrigin: "-100% 50%", opacity: 0 } },
+	"slide-in-elliptic-bottom-fwd": { ...defaults, name: "slide-in-elliptic-bottom-fwd", from: { y:  600, rotateX:  30, scale: 0,   transformOrigin: "50% 100%",  opacity: 0 } },
+	"slide-in-elliptic-bottom-bck": { ...defaults, name: "slide-in-elliptic-bottom-bck", from: { y:  600, rotateX: -30, scale: 6.5, transformOrigin: "50% -100%", opacity: 0 } },
+	"slide-in-elliptic-left-fwd":   { ...defaults, name: "slide-in-elliptic-left-fwd",   from: { x: -800, rotateY:  30, scale: 0,   transformOrigin: "-100% 50%", opacity: 0 } },
+	"slide-in-elliptic-left-bck":   { ...defaults, name: "slide-in-elliptic-left-bck",   from: { x: -800, rotateY: -30, scale: 6.5, transformOrigin: "200% 50%",  opacity: 0 } },
+}
+
+export default slideInElliptic

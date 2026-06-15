@@ -1,5 +1,10 @@
+import type { AnimationConfig } from "../../config/animationConfigs"
 
-// .swing-right-fwd {animation: 500ms swing-right-fwd;}
-// .swing-right-bck {animation: 500ms swing-right-bck;}
-// @keyframes swing-right-fwd {0% { transform: rotateY(0); transform-origin: right }100% { transform: rotateY(180deg); transform-origin: right }}
-// @keyframes swing-right-bck {0% { transform: rotateY(0); transform-origin: right }100% { transform: rotateY(-180deg); transform-origin: right }}
+const defaults = { duration: 500, ease: "power2.inOut" }
+
+const swingRight: Record<string, AnimationConfig> = {
+	"swing-right-fwd": { ...defaults, name: "swing-right-fwd", to: { rotateY:  180, transformOrigin: "right" } },
+	"swing-right-bck": { ...defaults, name: "swing-right-bck", to: { rotateY: -180, transformOrigin: "right" } },
+}
+
+export default swingRight

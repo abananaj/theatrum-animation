@@ -1,6 +1,79 @@
+import gsap from "gsap"
+import type { AnimationConfig } from "../config/animationConfigs"
 
-// @keyframes flicker-1 { 0%,100% { opacity: 1 }41.99% { opacity: 1 }42% { opacity: 0 }43% { opacity: 0 }43.01% { opacity: 1 }47.99% { opacity: 1 }48% { opacity: 0 }49% { opacity: 0 }49.01% { opacity: 1 }}
-// @keyframes flicker-2 { 0%,100% { opacity: 1 }41.99% { opacity: 1 }42% { opacity: 0 }43% { opacity: 0 }43.01% { opacity: 1 }45.99% { opacity: 1 }46% { opacity: 0 }46.9% { opacity: 0 }46.91% { opacity: 1 }51.99% { opacity: 1 }52% { opacity: 0 }52.8% { opacity: 0 }52.81% { opacity: 1 }}
-// @keyframes flicker-3 { 0%,100% { opacity: 1 }32.98% { opacity: 1 }33% { opacity: 0 }34% { opacity: 0 }34.02% { opacity: 1 }34.98% { opacity: 1 }35% { opacity: 0 }35.9% { opacity: 0 }35.92% { opacity: 1 }38.98% { opacity: 1 }39% { opacity: 0 }39.8% { opacity: 0 }39.82% { opacity: 1 }83.98% { opacity: 1 }84% { opacity: 0 }84.9% { opacity: 0 }84.92% { opacity: 1 }}
-// @keyframes flicker-4 { 0%,100% { opacity: 1 }31.98% { opacity: 1 }32% { opacity: 0 }32.8% { opacity: 0 }32.82% { opacity: 1 }34.98% { opacity: 1 }35% { opacity: 0 }35.7% { opacity: 0 }35.72% { opacity: 1 }36.98% { opacity: 1 }37% { opacity: 0 }37.6% { opacity: 0 }37.62% { opacity: 1 }67.98% { opacity: 1 }68% { opacity: 0 }68.4% { opacity: 0 }68.42% { opacity: 1 }95.98% { opacity: 1 }96% { opacity: 0 }96.7% { opacity: 0 }96.72% { opacity: 1 }98.98% { opacity: 1 }99% { opacity: 0 }99.6% { opacity: 0 }99.62% { opacity: 1 }}
-// @keyframes flicker-5 { 0%,100% { opacity: 1 }0% { opacity: 1 }1% { opacity: 1 }1.02% { opacity: 1 }8.98% { opacity: 1 }9% { opacity: 0 }9.8% { opacity: 0 }9.82% { opacity: 1 }9.48% { opacity: 1 }9.5% { opacity: 1 }9.6% { opacity: 1 }9.62% { opacity: 1 }14.98% { opacity: 1 }15% { opacity: .5 }15.8% { opacity: .5 }15.82% { opacity: 1 }15.18% { opacity: 1 }15.2% { opacity: .7 }16% { opacity: .7 }16.02% { opacity: 1 }15.48% { opacity: 1 }15.5% { opacity: .5 }16.2% { opacity: .5 }16.22% { opacity: 1 }16.98% { opacity: 1 }17% { opacity: 1 }17.8% { opacity: 1 }17.82% { opacity: 1 }20.48% { opacity: 1 }20.5% { opacity: .9 }21.3% { opacity: .9 }21.32% { opacity: 1 }20.98% { opacity: 1 }21% { opacity: 1 }22% { opacity: 1 }22.02% { opacity: 1 }39.98% { opacity: 1 }40% { opacity: 1 }41% { opacity: 1 }41.02% { opacity: 1 }40.48% { opacity: 1 }40.5% { opacity: .6 }41.4% { opacity: .6 }41.42% { opacity: 1 }41.98% { opacity: 1 }42% { opacity: 1 }42.8% { opacity: 1 }42.82% { opacity: 1 }59.98% { opacity: 1 }60% { opacity: 1 }61% { opacity: 1 }61.02% { opacity: 1 }60.18% { opacity: 1 }60.2% { opacity: .2 }61% { opacity: .2 }61.02% { opacity: 1 }60.78% { opacity: 1 }60.8% { opacity: .4 }61.6% { opacity: .4 }61.62% { opacity: 1 }61.38% { opacity: 1 }61.4% { opacity: 0 }62.2% { opacity: 0 }62.22% { opacity: 1 }61.78% { opacity: 1 }61.8% { opacity: 1 }62.8% { opacity: 1 }62.82% { opacity: 1 }75.98% { opacity: 1 }76% { opacity: 1 }77% { opacity: 1 }77.02% { opacity: 1 }77.98% { opacity: 1 }78% { opacity: .7 }78.8% { opacity: .7 }78.82% { opacity: 1 }78.98% { opacity: 1 }79% { opacity: 1 }80% { opacity: 1 }80.02% { opacity: 1 }99.98% { opacity: 1 }100% { opacity: 1 }}
+function makeFlicker(name: string, dur: number, steps: [number, number][]): AnimationConfig {
+	return {
+		name, duration: dur * 1000, ease: "none",
+		timeline: (el) => {
+			const tl = gsap.timeline({ repeat: -1 })
+			steps.forEach(([t, op]) => tl.set(el, { opacity: op }, t))
+			return tl
+		},
+	}
+}
+
+const flickerConfigs: Record<string, { dur: number; steps: [number, number][] }> = {
+	"flicker-1": {
+		dur: 0.8,
+		steps: [
+			[0, 1],
+			[0.42 * 0.8, 0], [0.4301 * 0.8, 1],
+			[0.48 * 0.8, 0], [0.4901 * 0.8, 1],
+			[0.8, 1],
+		],
+	},
+	"flicker-2": {
+		dur: 0.8,
+		steps: [
+			[0, 1],
+			[0.42 * 0.8, 0], [0.4301 * 0.8, 1],
+			[0.46 * 0.8, 0], [0.4691 * 0.8, 1],
+			[0.52 * 0.8, 0], [0.5281 * 0.8, 1],
+			[0.8, 1],
+		],
+	},
+	"flicker-3": {
+		dur: 1.0,
+		steps: [
+			[0, 1],
+			[0.33 * 1.0, 0], [0.3402 * 1.0, 1],
+			[0.35 * 1.0, 0], [0.3592 * 1.0, 1],
+			[0.39 * 1.0, 0], [0.3982 * 1.0, 1],
+			[0.84 * 1.0, 0], [0.8492 * 1.0, 1],
+			[1.0, 1],
+		],
+	},
+	"flicker-4": {
+		dur: 1.2,
+		steps: [
+			[0, 1],
+			[0.32 * 1.2, 0], [0.3282 * 1.2, 1],
+			[0.35 * 1.2, 0], [0.3572 * 1.2, 1],
+			[0.37 * 1.2, 0], [0.3762 * 1.2, 1],
+			[0.68 * 1.2, 0], [0.6842 * 1.2, 1],
+			[0.96 * 1.2, 0], [0.9672 * 1.2, 1],
+			[0.99 * 1.2, 0], [0.9962 * 1.2, 1],
+			[1.2, 1],
+		],
+	},
+	"flicker-5": {
+		dur: 1.5,
+		steps: [
+			[0, 1],
+			[0.09 * 1.5, 0], [0.0982 * 1.5, 1],
+			[0.152 * 1.5, 0.7], [0.1602 * 1.5, 1],
+			[0.205 * 1.5, 0.9], [0.2132 * 1.5, 1],
+			[0.405 * 1.5, 0.6], [0.4142 * 1.5, 1],
+			[0.602 * 1.5, 0.2], [0.614 * 1.5, 0.4], [0.614 * 1.5, 0], [0.6222 * 1.5, 1],
+			[0.78 * 1.5, 0.7], [0.7882 * 1.5, 1],
+			[1.5, 1],
+		],
+	},
+}
+
+const flicker: Record<string, AnimationConfig> = {}
+for (const [key, { dur, steps }] of Object.entries(flickerConfigs)) {
+	flicker[key] = makeFlicker(key, dur, steps)
+}
+
+export default flicker

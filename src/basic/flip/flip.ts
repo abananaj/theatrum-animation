@@ -1,16 +1,24 @@
-// @keyframes flip-horizontal-bottom {0% { transform: rotateX(0) }100% { transform: rotateX(-180deg) }}
-// @keyframes flip-vertical-left {0% { transform: rotateY(0) }100% { transform: rotateY(-180deg) }}
-// @keyframes flip-diagonal-1-fwd {0% { transform: translateZ(0) rotate3d(1, 1, 0, 0deg) }100% { transform: translateZ(160px) rotate3d(1, 1, 0, 180deg) }}
-// @keyframes flip-vertical-right {0% { transform: rotateY(0) }100% { transform: rotateY(180deg) }}
-// @keyframes flip-diagonal-1-bck {0% { transform: translateZ(0) rotate3d(1, 1, 0, 0deg) }100% { transform: translateZ(-260px) rotate3d(1, 1, 0, -180deg) }}
-// @keyframes flip-diagonal-1-bl {0% { transform: rotate3d(1, 1, 0, 0deg) }100% { transform: rotate3d(1, 1, 0, -180deg) }}
-// @keyframes flip-horizontal-fwd {0% { transform: translateZ(0) rotateX(0) }100% { transform: translateZ(160px) rotateX(-180deg) }}
-// @keyframes flip-diagonal-2-fwd {0% { transform: translateZ(0) rotate3d(-1, 1, 0, 0deg) }100% { transform: translateZ(160px) rotate3d(-1, 1, 0, 180deg) }}
-// @keyframes flip-horizontal-bck {0% { transform: translateZ(0) rotateX(0) }100% { transform: translateZ(-260px) rotateX(180deg) }}
-// @keyframes flip-diagonal-2-bck {0% { transform: translateZ(0) rotate3d(-1, 1, 0, 0deg) }100% { transform: translateZ(-260px) rotate3d(-1, 1, 0, -180deg) }}
-// @keyframes flip-diagonal-1-tr {0% { transform: rotate3d(1, 1, 0, 0deg) }100% { transform: rotate3d(1, 1, 0, 180deg) }}
-// @keyframes flip-horizontal-top {0% { transform: rotateX(0) }100% { transform: rotateX(180deg) }}
-// @keyframes flip-diagonal-2-tl {0% { transform: rotate3d(-1, 1, 0, 0deg) }100% { transform: rotate3d(-1, 1, 0, -180deg) }}
-// @keyframes flip-vertical-fwd {0% { transform: translateZ(0) rotateY(0) }100% { transform: translateZ(160px) rotateY(180deg) }}
-// @keyframes flip-vertical-bck {0% { transform: translateZ(0) rotateY(0) }100% { transform: translateZ(-260px) rotateY(-180deg) }}
-// @keyframes flip-diagonal-2-br {0% { transform: rotate3d(-1, 1, 0, 0deg) }100% { transform: rotate3d(-1, 1, 0, 180deg) }}
+import type { AnimationConfig } from "../../config/animationConfigs"
+
+const defaults = { duration: 500, ease: "power1.inOut" }
+
+const flip: Record<string, AnimationConfig> = {
+	"flip-horizontal-top":    { ...defaults, name: "flip-horizontal-top",    to: { rotateX:  180 } },
+	"flip-horizontal-bottom": { ...defaults, name: "flip-horizontal-bottom", to: { rotateX: -180 } },
+	"flip-horizontal-fwd":    { ...defaults, name: "flip-horizontal-fwd",    to: { z:  160, rotateX: -180 } },
+	"flip-horizontal-bck":    { ...defaults, name: "flip-horizontal-bck",    to: { z: -260, rotateX:  180 } },
+	"flip-vertical-right":    { ...defaults, name: "flip-vertical-right",    to: { rotateY:  180 } },
+	"flip-vertical-left":     { ...defaults, name: "flip-vertical-left",     to: { rotateY: -180 } },
+	"flip-vertical-fwd":      { ...defaults, name: "flip-vertical-fwd",      to: { z:  160, rotateY:  180 } },
+	"flip-vertical-bck":      { ...defaults, name: "flip-vertical-bck",      to: { z: -260, rotateY: -180 } },
+	"flip-diagonal-1-tr":     { ...defaults, name: "flip-diagonal-1-tr",     to: { rotateX:  90, rotateY:  90 } },
+	"flip-diagonal-1-bl":     { ...defaults, name: "flip-diagonal-1-bl",     to: { rotateX: -90, rotateY: -90 } },
+	"flip-diagonal-1-fwd":    { ...defaults, name: "flip-diagonal-1-fwd",    to: { z:  160, rotateX:  90, rotateY:  90 } },
+	"flip-diagonal-1-bck":    { ...defaults, name: "flip-diagonal-1-bck",    to: { z: -260, rotateX: -90, rotateY: -90 } },
+	"flip-diagonal-2-tl":     { ...defaults, name: "flip-diagonal-2-tl",     to: { rotateX: -90, rotateY:  90 } },
+	"flip-diagonal-2-br":     { ...defaults, name: "flip-diagonal-2-br",     to: { rotateX:  90, rotateY: -90 } },
+	"flip-diagonal-2-fwd":    { ...defaults, name: "flip-diagonal-2-fwd",    to: { z:  160, rotateX:  90, rotateY: -90 } },
+	"flip-diagonal-2-bck":    { ...defaults, name: "flip-diagonal-2-bck",    to: { z: -260, rotateX: -90, rotateY:  90 } },
+}
+
+export default flip

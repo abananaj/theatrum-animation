@@ -1,8 +1,16 @@
-// @keyframes swing-in-top-fwd {0% { transform: rotateX(-100deg); transform-origin: top; opacity: 0 }100% { transform: rotateX(0deg); transform-origin: top; opacity: 1 }}
-// @keyframes swing-in-left-fwd {0% { transform: rotateY(100deg); transform-origin: left; opacity: 0 }100% { transform: rotateY(0); transform-origin: left; opacity: 1 }}
-// @keyframes swing-in-top-bck {0% { transform: rotateX(70deg); transform-origin: top; opacity: 0 }100% { transform: rotateX(0deg); transform-origin: top; opacity: 1 }}
-// @keyframes swing-in-left-bck {0% { transform: rotateY(-70deg); transform-origin: left; opacity: 0 }100% { transform: rotateY(0); transform-origin: left; opacity: 1 }}
-// @keyframes swing-in-right-fwd {0% { transform: rotateY(-100deg); transform-origin: right; opacity: 0 }100% { transform: rotateY(0); transform-origin: right; opacity: 1 }}
-// @keyframes swing-in-right-bck {0% { transform: rotateY(70deg); transform-origin: right; opacity: 0 }100% { transform: rotateY(0); transform-origin: right; opacity: 1 }}
-// @keyframes swing-in-bottom-fwd {0% { transform: rotateX(100deg); transform-origin: bottom; opacity: 0 }100% { transform: rotateX(0); transform-origin: bottom; opacity: 1 }}
-// @keyframes swing-in-bottom-bck {0% { transform: rotateX(-70deg); transform-origin: bottom; opacity: 0 }100% { transform: rotateX(0); transform-origin: bottom; opacity: 1 }}
+import type { AnimationConfig } from "../config/animationConfigs"
+
+const defaults = { duration: 600, ease: "power2.out" }
+
+const swingIn: Record<string, AnimationConfig> = {
+	"swing-in-top-fwd":    { ...defaults, name: "swing-in-top-fwd",    from: { rotateX: -100, transformOrigin: "top",    opacity: 0 } },
+	"swing-in-top-bck":    { ...defaults, name: "swing-in-top-bck",    from: { rotateX:   70, transformOrigin: "top",    opacity: 0 } },
+	"swing-in-left-fwd":   { ...defaults, name: "swing-in-left-fwd",   from: { rotateY:  100, transformOrigin: "left",   opacity: 0 } },
+	"swing-in-left-bck":   { ...defaults, name: "swing-in-left-bck",   from: { rotateY:  -70, transformOrigin: "left",   opacity: 0 } },
+	"swing-in-right-fwd":  { ...defaults, name: "swing-in-right-fwd",  from: { rotateY: -100, transformOrigin: "right",  opacity: 0 } },
+	"swing-in-right-bck":  { ...defaults, name: "swing-in-right-bck",  from: { rotateY:   70, transformOrigin: "right",  opacity: 0 } },
+	"swing-in-bottom-fwd": { ...defaults, name: "swing-in-bottom-fwd", from: { rotateX:  100, transformOrigin: "bottom", opacity: 0 } },
+	"swing-in-bottom-bck": { ...defaults, name: "swing-in-bottom-bck", from: { rotateX:  -70, transformOrigin: "bottom", opacity: 0 } },
+}
+
+export default swingIn

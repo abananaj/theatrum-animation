@@ -1,11 +1,83 @@
-// @keyframes shake-horizontal { 0%,100% { transform: translateX(0) }10%,30%,50%,70% { transform: translateX(-10px) }20%,40%,60% { transform: translateX(10px) }80% { transform: translateX(8px) }90% { transform: translateX(-8px) }}
-// @keyframes shake-br { 0%,100% { transform: rotate(0deg); transform-origin: 100% 100% }10% { transform: rotate(2deg) }20%,40%,60% { transform: rotate(-4deg) }30%,50%,70% { transform: rotate(4deg) }80% { transform: rotate(-2deg) }90% { transform: rotate(2deg) }}
-// @keyframes shake-vertical { 0%,100% { transform: translateY(0) }10%,30%,50%,70% { transform: translateY(-8px) }20%,40%,60% { transform: translateY(8px) }80% { transform: translateY(6.4px) }90% { transform: translateY(-6.4px) }}
-// @keyframes shake-bottom { 0%,100% { transform: rotate(0deg); transform-origin: 50% 100% }10% { transform: rotate(2deg) }20%,40%,60% { transform: rotate(-4deg) }30%,50%,70% { transform: rotate(4deg) }80% { transform: rotate(-2deg) }90% { transform: rotate(2deg) }}
-// @keyframes shake-lr { 0%,100% { transform: rotate(0deg); transform-origin: 50% 50% }10% { transform: rotate(8deg) }20%,40%,60% { transform: rotate(-10deg) }30%,50%,70% { transform: rotate(10deg) }80% { transform: rotate(-8deg) }90% { transform: rotate(8deg) }}
-// @keyframes shake-bl { 0%,100% { transform: rotate(0deg); transform-origin: 0 100% }10% { transform: rotate(2deg) }20%,40%,60% { transform: rotate(-4deg) }30%,50%,70% { transform: rotate(4deg) }80% { transform: rotate(-2deg) }90% { transform: rotate(2deg) }}
-// @keyframes shake-top { 0%,100% { transform: rotate(0deg); transform-origin: 50% 0 }10% { transform: rotate(2deg) }20%,40%,60% { transform: rotate(-4deg) }30%,50%,70% { transform: rotate(4deg) }80% { transform: rotate(-2deg) }90% { transform: rotate(2deg) }}
-// @keyframes shake-left { 0%,100% { transform: rotate(0deg); transform-origin: 0 50% }10% { transform: rotate(2deg) }20%,40%,60% { transform: rotate(-4deg) }30%,50%,70% { transform: rotate(4deg) }80% { transform: rotate(-2deg) }90% { transform: rotate(2deg) }}
-// @keyframes shake-tr { 0%,100% { transform: rotate(0deg); transform-origin: 100% 0 }10% { transform: rotate(2deg) }20%,40%,60% { transform: rotate(-4deg) }30%,50%,70% { transform: rotate(4deg) }80% { transform: rotate(-2deg) }90% { transform: rotate(2deg) }}
-// @keyframes shake-tl { 0%,100% { transform: rotate(0deg); transform-origin: 0 0 }10% { transform: rotate(2deg) }20%,40%,60% { transform: rotate(-4deg) }30%,50%,70% { transform: rotate(4deg) }80% { transform: rotate(-2deg) }90% { transform: rotate(2deg) }}
-// @keyframes shake-right { 0%,100% { transform: rotate(0deg); transform-origin: 100% 50% }10% { transform: rotate(2deg) }20%,40%,60% { transform: rotate(-4deg) }30%,50%,70% { transform: rotate(4deg) }80% { transform: rotate(-2deg) }90% { transform: rotate(2deg) }}
+import gsap from "gsap"
+import type { AnimationConfig } from "../config/animationConfigs"
+
+function makeShakeX(name: string): AnimationConfig {
+	return {
+		name, duration: 800, ease: "none",
+		timeline: (el) => {
+			const tl = gsap.timeline({ repeat: -1 })
+			const d = 0.08
+			tl.to(el, { x: -10, duration: d })
+			  .to(el, { x:  10, duration: d })
+			  .to(el, { x: -10, duration: d })
+			  .to(el, { x:  10, duration: d })
+			  .to(el, { x: -10, duration: d })
+			  .to(el, { x:  10, duration: d })
+			  .to(el, { x: -10, duration: d })
+			  .to(el, { x:   8, duration: d })
+			  .to(el, { x:  -8, duration: d })
+			  .to(el, { x:   0, duration: d })
+			return tl
+		},
+	}
+}
+
+function makeShakeY(name: string): AnimationConfig {
+	return {
+		name, duration: 800, ease: "none",
+		timeline: (el) => {
+			const tl = gsap.timeline({ repeat: -1 })
+			const d = 0.08
+			tl.to(el, { y:  -8, duration: d })
+			  .to(el, { y:   8, duration: d })
+			  .to(el, { y:  -8, duration: d })
+			  .to(el, { y:   8, duration: d })
+			  .to(el, { y:  -8, duration: d })
+			  .to(el, { y:   8, duration: d })
+			  .to(el, { y:  -8, duration: d })
+			  .to(el, { y: 6.4, duration: d })
+			  .to(el, { y:-6.4, duration: d })
+			  .to(el, { y:   0, duration: d })
+			return tl
+		},
+	}
+}
+
+function makeShakeRot(name: string, origin: string, large = 10): AnimationConfig {
+	const small = large * 0.4
+	return {
+		name, duration: 800, ease: "none",
+		timeline: (el) => {
+			const tl = gsap.timeline({ repeat: -1 })
+			const d = 0.08
+			gsap.set(el, { transformOrigin: origin })
+			tl.to(el, { rotation:  small * 0.2,  duration: d })
+			  .to(el, { rotation: -large * 0.4,  duration: d })
+			  .to(el, { rotation:  large * 0.4,  duration: d })
+			  .to(el, { rotation: -large * 0.4,  duration: d })
+			  .to(el, { rotation:  large * 0.4,  duration: d })
+			  .to(el, { rotation: -large * 0.4,  duration: d })
+			  .to(el, { rotation:  large * 0.4,  duration: d })
+			  .to(el, { rotation: -small * 0.2,  duration: d })
+			  .to(el, { rotation:  small * 0.2,  duration: d })
+			  .to(el, { rotation:  0,             duration: d })
+			return tl
+		},
+	}
+}
+
+const shake: Record<string, AnimationConfig> = {
+	"shake-horizontal": makeShakeX("shake-horizontal"),
+	"shake-vertical":   makeShakeY("shake-vertical"),
+	"shake-top":        makeShakeRot("shake-top",    "50% 0",    4),
+	"shake-bottom":     makeShakeRot("shake-bottom", "50% 100%", 4),
+	"shake-left":       makeShakeRot("shake-left",   "0 50%",    4),
+	"shake-right":      makeShakeRot("shake-right",  "100% 50%", 4),
+	"shake-tl":         makeShakeRot("shake-tl",     "0 0",      4),
+	"shake-tr":         makeShakeRot("shake-tr",     "100% 0",   4),
+	"shake-bl":         makeShakeRot("shake-bl",     "0 100%",   4),
+	"shake-br":         makeShakeRot("shake-br",     "100% 100%",4),
+	"shake-lr":         makeShakeRot("shake-lr",     "50% 50%",  10),
+}
+
+export default shake

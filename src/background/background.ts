@@ -1,4 +1,45 @@
-// @keyframes color-change-2x {0% { background: #19dcea }100% { background: #b22cff }}
-// @keyframes color-change-3x {0% { background: #19dcea }50% { background: #b22cff }100% { background: #ea2222 }}
-// @keyframes color-change-4x {0%{background:#19dcea}33.3333%{background:#b22cff}66.666%{background:#ea2222}100%{background:#f5be10}}
-// @keyframes color-change-5x {0% { background: #19dcea }25% { background: #b22cff }50% { background: #ea2222 }75% { background: #f5be10 }100% { background: #3bd80d }}
+import gsap from "gsap"
+import type { AnimationConfig } from "../config/animationConfigs"
+
+const background: Record<string, AnimationConfig> = {
+	"color-change-2x": {
+		name: "color-change-2x", duration: 5000, ease: "none",
+		timeline: (el) => {
+			const tl = gsap.timeline({ repeat: -1, yoyo: true })
+			tl.fromTo(el, { backgroundColor: "#19dcea" }, { backgroundColor: "#b22cff", duration: 5, ease: "none" })
+			return tl
+		},
+	},
+	"color-change-3x": {
+		name: "color-change-3x", duration: 5000, ease: "none",
+		timeline: (el) => {
+			const tl = gsap.timeline({ repeat: -1 })
+			tl.fromTo(el, { backgroundColor: "#19dcea" }, { backgroundColor: "#b22cff", duration: 2.5, ease: "none" })
+			  .to(el, { backgroundColor: "#ea2222", duration: 2.5, ease: "none" })
+			return tl
+		},
+	},
+	"color-change-4x": {
+		name: "color-change-4x", duration: 5000, ease: "none",
+		timeline: (el) => {
+			const tl = gsap.timeline({ repeat: -1 })
+			tl.fromTo(el, { backgroundColor: "#19dcea" }, { backgroundColor: "#b22cff", duration: 1.67, ease: "none" })
+			  .to(el, { backgroundColor: "#ea2222", duration: 1.67, ease: "none" })
+			  .to(el, { backgroundColor: "#f5be10", duration: 1.67, ease: "none" })
+			return tl
+		},
+	},
+	"color-change-5x": {
+		name: "color-change-5x", duration: 5000, ease: "none",
+		timeline: (el) => {
+			const tl = gsap.timeline({ repeat: -1 })
+			tl.fromTo(el, { backgroundColor: "#19dcea" }, { backgroundColor: "#b22cff", duration: 1.25, ease: "none" })
+			  .to(el, { backgroundColor: "#ea2222", duration: 1.25, ease: "none" })
+			  .to(el, { backgroundColor: "#f5be10", duration: 1.25, ease: "none" })
+			  .to(el, { backgroundColor: "#3bd80d", duration: 1.25, ease: "none" })
+			return tl
+		},
+	},
+}
+
+export default background

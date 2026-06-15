@@ -1,9 +1,17 @@
-// @keyframes slide-fwd-center {0% { transform: translateZ(0) }100% { transform: translateZ(160px) }}
-// @keyframes slide-fwd-br {0% { transform: translateZ(0) translateY(0) translateX(0) }100% { transform: translateZ(160px) translateY(100px) translateX(100px) }}
-// @keyframes slide-fwd-bottom {0% { transform: translateZ(0) translateY(0) }100% { transform: translateZ(160px) translateY(100px) }}
-// @keyframes slide-fwd-right {0% { transform: translateZ(0) translateX(0) }100% { transform: translateZ(160px) translateX(100px) }}
-// @keyframes slide-fwd-tr {0% { transform: translateZ(0) translateY(0) translateX(0) }100% { transform: translateZ(160px) translateY(-100px) translateX(100px) }}
-// @keyframes slide-fwd-tl {0% { transform: translateZ(0) translateY(0) translateX(0) }100% { transform: translateZ(160px) translateY(-100px) translateX(-100px) }}
-// @keyframes slide-fwd-top {0% { transform: translateZ(0) translateY(0) }100% { transform: translateZ(160px) translateY(-100px) }}
-// @keyframes slide-fwd-left {0% { transform: translateZ(0) translateX(0) }100% { transform: translateZ(160px) translateX(-100px) }}
-// @keyframes slide-fwd-bl {0% { transform: translateZ(0) translateY(0) translateX(0) }100% { transform: translateZ(160px) translateY(100px) translateX(-100px) }}
+import type { AnimationConfig } from "../../config/animationConfigs"
+
+const defaults = { duration: 500, ease: "power1.out" }
+
+const slideFwd: Record<string, AnimationConfig> = {
+	"slide-fwd-center": { ...defaults, name: "slide-fwd-center", to: { z:  160 } },
+	"slide-fwd-top":    { ...defaults, name: "slide-fwd-top",    to: { z:  160, y: -100 } },
+	"slide-fwd-right":  { ...defaults, name: "slide-fwd-right",  to: { z:  160, x:  100 } },
+	"slide-fwd-bottom": { ...defaults, name: "slide-fwd-bottom", to: { z:  160, y:  100 } },
+	"slide-fwd-left":   { ...defaults, name: "slide-fwd-left",   to: { z:  160, x: -100 } },
+	"slide-fwd-tl":     { ...defaults, name: "slide-fwd-tl",     to: { z:  160, y: -100, x: -100 } },
+	"slide-fwd-tr":     { ...defaults, name: "slide-fwd-tr",     to: { z:  160, y: -100, x:  100 } },
+	"slide-fwd-bl":     { ...defaults, name: "slide-fwd-bl",     to: { z:  160, y:  100, x: -100 } },
+	"slide-fwd-br":     { ...defaults, name: "slide-fwd-br",     to: { z:  160, y:  100, x:  100 } },
+}
+
+export default slideFwd
