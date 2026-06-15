@@ -6,7 +6,7 @@ export default defineConfig({
   build: {
     emptyOutDir: false,
     rollupOptions: {
-      input: "src/block-editor/SelectControlEntrance.tsx",
+      input: "src/block-editor/inspector.tsx",
       output: {
         entryFileNames: "editor.js",
         dir: "dist",

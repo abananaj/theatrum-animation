@@ -176,7 +176,6 @@ Example for entrance category:
 />
 ```
 ## 4. Duration Input - Number input for duration in ms (default: 500ms)
-
 ## 5. Easing Dropdown - Two part dropdown (https://greensock.com/docs/v3/Eases) [Power 1-4, Back].[in,out,inOut]
 [With Hints](https://wordpress.github.io/gutenberg/iframe.html?id=components-customselectcontrol--docs&viewMode=docs&globals=#with-hints)
 ```js
@@ -247,7 +246,6 @@ Example for entrance category:
   }}
 />
 ```
-
 ## 6. Delay Input - Number input for delay in ms (default: 500ms)
 
 
@@ -255,6 +253,10 @@ Example for entrance category:
 - [ ] seperate delay, number input
 - [ ] separate duration, number input
 - [x] add option for animation easing (ex: power1, power2, back, etc.)
+- [ ] add option for animation easing direction (ex: in, out, inOut)
+- [ ] add option for animation direction (ex: top, bottom, left, right, etc.) that only shows for animations that have directional options (ex: slide in, slide out, etc.)
+- [ ] add option for animation category (ex: entrance, exit, background, text, attention, basic)
+- [ ] add option for custom cubic_bezier easing function
 - [ ] add option for animation trigger (ex: on scroll, on click, etc.)
 - [ ] add option for repeat/loop and number of times to loop (ex: 3, infinite, etc.)
 - [ ] add option for which css properties the animation applies to (ex: transform only, opacity only, etc.)
