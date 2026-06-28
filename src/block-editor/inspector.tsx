@@ -3,67 +3,78 @@ import { InspectorControls } from "@wordpress/block-editor"
 import { PanelBody, SelectControl, __experimentalNumberControl as NumberControl, Button } from "@wordpress/components"
 import { createHigherOrderComponent } from "@wordpress/compose"
 import { Fragment, useState } from "@wordpress/element"
+import { REGISTRY, buildClassIndex } from "../config/registry"
 
-// ─── Animation registry ────────────────────────────────────────────────────────
+// ─── Derived registries (single source of truth = config/registry.ts) ──────────
 
-const SLIDE_IN_DIRECTIONS = ["top", "right", "bottom", "left", "tl", "tr", "bl", "br"] as const
+/** CSS class → { category, animation } ids. */
+const CLASS_INDEX = buildClassIndex()
+const ALL_ANIMATION_CLASSES = Object.keys(CLASS_INDEX)
 
-const ALL_ANIMATION_CLASSES: string[] = SLIDE_IN_DIRECTIONS.map((d) => `slide-in-${d}`)
-
-// ─── Option trees ──────────────────────────────────────────────────────────────
+const SELECT_PLACEHOLDER = { label: "— Select —", value: "" }
 
 const CATEGORY_OPTIONS = [
-	{ label: "— Select —", value: "" },
-	{ label: "Entrance", value: "entrance" },
+	SELECT_PLACEHOLDER,
+	...Object.entries(REGISTRY).map(([value, cat]) => ({ label: cat.label, value })),
 ]
 
-const ANIMATION_OPTIONS: Record<string, { label: string; value: string }[]> = {
-	entrance: [
-		{ label: "— Select —", value: "" },
-		{ label: "Slide In", value: "slide-in" },
-	],
+function animationOptions(categoryId: string) {
+	const category = REGISTRY[categoryId]
+	if (!category) return [SELECT_PLACEHOLDER]
+	return [
+		SELECT_PLACEHOLDER,
+		...Object.entries(category.animations).map(([value, group]) => ({ label: group.label, value })),
+	]
 }
 
-const DIRECTION_OPTIONS: Record<string, { label: string; value: string }[]> = {
-	"slide-in": [
-		{ label: "— Select —", value: "" },
-		{ label: "Top", value: "top" },
-		{ label: "Top Right", value: "tr" },
-		{ label: "Right", value: "right" },
-		{ label: "Bottom Right", value: "br" },
-		{ label: "Bottom", value: "bottom" },
-		{ label: "Bottom Left", value: "bl" },
-		{ label: "Left", value: "left" },
-		{ label: "Top Left", value: "tl" },
-	],
+/** The CSS class keys for a given category + animation, in declaration order. */
+function variantClasses(categoryId: string, animationId: string): string[] {
+	return Object.keys(REGISTRY[categoryId]?.animations[animationId]?.configs ?? {})
 }
 
-const EASE_POWER_OPTIONS = [
-	{ label: "— Select —", value: "" },
-	{ label: "Power 1", value: "power1" },
-	{ label: "Power 2", value: "power2" },
-	{ label: "Power 3", value: "power3" },
-	{ label: "Power 4", value: "power4" },
-	{ label: "Back", value: "back" },
-]
+// ─── Auto-generated variant labels ─────────────────────────────────────────────
 
-const EASE_DIR_OPTIONS = [
-	{ label: "— Select —", value: "" },
-	{ label: "In", value: "in" },
-	{ label: "Out", value: "out" },
-	{ label: "In → Out", value: "inOut" },
-]
+const TOKEN_LABELS: Record<string, string> = {
+	tl: "Top Left", tr: "Top Right", bl: "Bottom Left", br: "Bottom Right",
+	fwd: "Forward", bck: "Back", hor: "Horizontal", ver: "Vertical",
+	cw: "CW", ccw: "CCW",
+}
+
+function humanizeTokens(tokens: string[]): string {
+	return tokens
+		.map((t) => TOKEN_LABELS[t] ?? t.charAt(0).toUpperCase() + t.slice(1))
+		.join(" ")
+}
+
+/**
+ * Build { value, label } options for an animation's variants by stripping the
+ * tokens common to all of its class keys, then humanizing the remainder.
+ * e.g. ["slide-in-top","slide-in-tr"] → "Top", "Top Right"
+ *      ["scale-down-center","scale-down-top"] → "Center", "Top"
+ */
+function variantOptions(classes: string[]): { value: string; label: string }[] {
+	const tokenized = classes.map((c) => c.split("-"))
+	let common = tokenized[0]?.length ?? 0
+	for (const tokens of tokenized) {
+		let i = 0
+		while (i < common && i < tokens.length && tokens[i] === tokenized[0][i]) i++
+		common = i
+	}
+	const options = classes.map((cls, idx) => {
+		const rest = tokenized[idx].slice(common)
+		return { value: cls, label: rest.length ? humanizeTokens(rest) : "Default" }
+	})
+	return [SELECT_PLACEHOLDER, ...options]
+}
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 
-function parseAnimationClass(className: string): { category: string; animation: string; direction: string } {
-	const classes = (className || "").split(" ")
-	for (const dir of SLIDE_IN_DIRECTIONS) {
-		if (classes.includes(`slide-in-${dir}`)) {
-			return { category: "entrance", animation: "slide-in", direction: dir }
-		}
+function parseAnimationClass(className: string): { category: string; animation: string; variant: string } {
+	for (const cls of (className || "").split(" ")) {
+		const hit = CLASS_INDEX[cls]
+		if (hit) return { category: hit.category, animation: hit.animation, variant: cls }
 	}
-	return { category: "", animation: "", direction: "" }
+	return { category: "", animation: "", variant: "" }
 }
 
 function stripAnimationClasses(className: string): string[] {
@@ -107,6 +118,24 @@ function addAnimationSaveProps(
 }
 addFilter("blocks.getSaveContent.extraProps", "theatrum-animation/save-props", addAnimationSaveProps)
 
+// ─── Ease controls ─────────────────────────────────────────────────────────────
+
+const EASE_POWER_OPTIONS = [
+	SELECT_PLACEHOLDER,
+	{ label: "Power 1", value: "power1" },
+	{ label: "Power 2", value: "power2" },
+	{ label: "Power 3", value: "power3" },
+	{ label: "Power 4", value: "power4" },
+	{ label: "Back", value: "back" },
+]
+
+const EASE_DIR_OPTIONS = [
+	SELECT_PLACEHOLDER,
+	{ label: "In", value: "in" },
+	{ label: "Out", value: "out" },
+	{ label: "In → Out", value: "inOut" },
+]
+
 // ─── Inspector panel ───────────────────────────────────────────────────────────
 
 const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
@@ -129,9 +158,10 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 		// Committed (saved) values take precedence over pending UI state
 		const activeCategory = parsed.category || uiCategory
 		const activeAnimation = parsed.animation || uiAnimation
-		const activeDirection = parsed.direction
+		const appliedClass = parsed.variant
 
-		const hasAnyAnimation = !!activeCategory || !!activeAnimation || !!activeDirection
+		const variants = activeCategory && activeAnimation ? variantClasses(activeCategory, activeAnimation) : []
+		const hasAnyAnimation = !!activeCategory || !!activeAnimation || !!appliedClass
 
 		function handleCategoryChange(val: string) {
 			setUiCategory(val)
@@ -141,12 +171,16 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 
 		function handleAnimationChange(val: string) {
 			setUiAnimation(val)
-			setAttributes({ className: stripAnimationClasses(className).join(" ") })
+			const base = stripAnimationClasses(className)
+			// Single-variant animations apply immediately; multi-variant wait for a direction.
+			const vs = val ? variantClasses(activeCategory, val) : []
+			if (vs.length === 1) base.push(vs[0])
+			setAttributes({ className: base.join(" ") })
 		}
 
-		function handleDirectionChange(val: string) {
+		function handleVariantChange(val: string) {
 			const base = stripAnimationClasses(className)
-			if (val) base.push(`${activeAnimation}-${val}`)
+			if (val) base.push(val)
 			setAttributes({ className: base.join(" ") })
 		}
 
@@ -162,9 +196,9 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 			})
 		}
 
-		const showAnimation = !!activeCategory && !!ANIMATION_OPTIONS[activeCategory]
-		const showDirection = !!activeAnimation && !!DIRECTION_OPTIONS[activeAnimation]
-		const showSettings = !!activeAnimation && (!showDirection || !!activeDirection)
+		const showAnimation = !!activeCategory && !!REGISTRY[activeCategory]
+		const showVariant = !!activeAnimation && variants.length > 1
+		const showSettings = !!appliedClass
 
 		return (
 			<Fragment>
@@ -183,17 +217,17 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 								__next40pxDefaultSize
 								label="Animation"
 								value={activeAnimation}
-								options={ANIMATION_OPTIONS[activeCategory]}
+								options={animationOptions(activeCategory)}
 								onChange={handleAnimationChange}
 							/>
 						)}
-						{showDirection && (
+						{showVariant && (
 							<SelectControl
 								__next40pxDefaultSize
-								label="Direction"
-								value={activeDirection}
-								options={DIRECTION_OPTIONS[activeAnimation]}
-								onChange={handleDirectionChange}
+								label="Variant"
+								value={appliedClass}
+								options={variantOptions(variants)}
+								onChange={handleVariantChange}
 							/>
 						)}
 						{showSettings && (
