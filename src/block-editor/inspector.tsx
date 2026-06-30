@@ -1,15 +1,16 @@
+import gsap from "gsap"
 import { addFilter } from "@wordpress/hooks"
 import { InspectorControls } from "@wordpress/block-editor"
 import { PanelBody, SelectControl, __experimentalNumberControl as NumberControl, Button } from "@wordpress/components"
 import { createHigherOrderComponent } from "@wordpress/compose"
-import { Fragment, useState } from "@wordpress/element"
-import { REGISTRY, buildClassIndex } from "../config/registry"
+import { Fragment, useState, useEffect, useRef } from "@wordpress/element"
+import { REGISTRY, buildClassIndex, flattenConfigs } from "../config/registry"
 
 // ─── Derived registries (single source of truth = config/registry.ts) ──────────
 
 /** CSS class → { category, animation } ids. */
 const CLASS_INDEX = buildClassIndex()
-const ALL_ANIMATION_CLASSES = Object.keys(CLASS_INDEX)
+const FLAT_CONFIGS = flattenConfigs()
 
 const SELECT_PLACEHOLDER = { label: "— Select —", value: "" }
 
@@ -78,7 +79,7 @@ function parseAnimationClass(className: string): { category: string; animation: 
 }
 
 function stripAnimationClasses(className: string): string[] {
-	return (className || "").split(" ").filter((c) => c && !ALL_ANIMATION_CLASSES.includes(c))
+	return (className || "").split(" ").filter((c) => c && !(c in CLASS_INDEX))
 }
 
 // ─── Register custom attributes on all blocks ──────────────────────────────────
@@ -105,7 +106,7 @@ function addAnimationSaveProps(
 	attributes: Record<string, any>
 ): Record<string, any> {
 	const { className = "", animationDuration, animationDelay, animationEasePower, animationEaseDir } = attributes
-	const hasAnimation = ALL_ANIMATION_CLASSES.some((cls) => (className || "").split(" ").includes(cls))
+	const hasAnimation = (className || "").split(" ").some((cls) => cls in CLASS_INDEX)
 	if (!hasAnimation) return props
 
 	const result = { ...props }
@@ -155,6 +156,22 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 		const [uiCategory, setUiCategory] = useState(parsed.category)
 		const [uiAnimation, setUiAnimation] = useState(parsed.animation)
 
+		// Set this to true in handlers before calling setAttributes so the effect
+		// below knows the className change came from us, not from an external source
+		// like undo/redo. After the effect fires it resets back to false.
+		const suppressSync = useRef(false)
+
+		// When className changes externally (undo/redo), reset pending UI state so
+		// the selects reflect the new reality instead of stale intermediate values.
+		useEffect(() => {
+			if (suppressSync.current) {
+				suppressSync.current = false
+				return
+			}
+			setUiCategory(parsed.category)
+			setUiAnimation(parsed.animation)
+		}, [className]) // eslint-disable-line react-hooks/exhaustive-deps
+
 		// Committed (saved) values take precedence over pending UI state
 		const activeCategory = parsed.category || uiCategory
 		const activeAnimation = parsed.animation || uiAnimation
@@ -164,12 +181,14 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 		const hasAnyAnimation = !!activeCategory || !!activeAnimation || !!appliedClass
 
 		function handleCategoryChange(val: string) {
+			suppressSync.current = true
 			setUiCategory(val)
 			setUiAnimation("")
 			setAttributes({ className: stripAnimationClasses(className).join(" ") })
 		}
 
 		function handleAnimationChange(val: string) {
+			suppressSync.current = true
 			setUiAnimation(val)
 			const base = stripAnimationClasses(className)
 			// Single-variant animations apply immediately; multi-variant wait for a direction.
@@ -179,12 +198,14 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 		}
 
 		function handleVariantChange(val: string) {
+			suppressSync.current = true
 			const base = stripAnimationClasses(className)
 			if (val) base.push(val)
 			setAttributes({ className: base.join(" ") })
 		}
 
 		function handleReset() {
+			suppressSync.current = true
 			setUiCategory("")
 			setUiAnimation("")
 			setAttributes({
@@ -194,6 +215,32 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 				animationEasePower: null,
 				animationEaseDir: null,
 			})
+		}
+
+		function handlePreview() {
+			const blockEl = document.querySelector(`[data-block="${props.clientId}"]`)
+			if (!blockEl || !appliedClass) return
+			const config = FLAT_CONFIGS[appliedClass]
+			if (!config) return
+
+			const duration = animationDuration != null ? animationDuration / 1000 : config.duration / 1000
+			const delay = animationDelay != null ? animationDelay / 1000 : 0
+			const ease = animationEasePower && animationEaseDir
+				? `${animationEasePower}.${animationEaseDir}`
+				: config.ease
+
+			gsap.killTweensOf(blockEl)
+
+			if (config.timeline) {
+				config.timeline(blockEl, duration)
+				return
+			}
+
+			if (config.from) {
+				gsap.from(blockEl, { ...config.from, duration, delay, ease, clearProps: "all" })
+			} else if (config.to) {
+				gsap.to(blockEl, { ...config.to, duration, delay, ease })
+			}
 		}
 
 		const showAnimation = !!activeCategory && !!REGISTRY[activeCategory]
@@ -274,6 +321,14 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 										setAttributes({ animationEaseDir: val || null })
 									}
 								/>
+								<Button
+									variant="secondary"
+									size="compact"
+									onClick={handlePreview}
+									style={{ marginTop: "8px" }}
+								>
+									Preview Animation
+								</Button>
 							</>
 						)}
 						{hasAnyAnimation && (
