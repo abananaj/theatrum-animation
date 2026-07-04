@@ -5,6 +5,7 @@ import { PanelBody, SelectControl, __experimentalNumberControl as NumberControl,
 import { createHigherOrderComponent } from "@wordpress/compose"
 import { Fragment, useState, useEffect, useRef } from "@wordpress/element"
 import { REGISTRY, buildClassIndex, flattenConfigs } from "../config/registry"
+import { clearPropsFor } from "../config/animationConfigs"
 
 // ─── Derived registries (single source of truth = config/registry.ts) ──────────
 
@@ -218,8 +219,17 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 		}
 
 		function handlePreview() {
-			const blockEl = document.querySelector(`[data-block="${props.clientId}"]`)
-			if (!blockEl || !appliedClass) return
+			if (!appliedClass) return
+			// The block canvas is rendered inside an iframe in modern WP; fall back to
+			// the top document for the non-iframed case. Scope the selector to the
+			// block-list wrapper so we don't match the List View row, which also
+			// carries data-block="<clientId>".
+			const canvas = document.querySelector<HTMLIFrameElement>('iframe[name="editor-canvas"]')
+			const doc = canvas?.contentDocument ?? document
+			const blockEl = doc.querySelector(
+				`.block-editor-block-list__block[data-block="${props.clientId}"]`
+			)
+			if (!blockEl) return
 			const config = FLAT_CONFIGS[appliedClass]
 			if (!config) return
 
@@ -237,7 +247,7 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 			}
 
 			if (config.from) {
-				gsap.from(blockEl, { ...config.from, duration, delay, ease, clearProps: "all" })
+				gsap.from(blockEl, { ...config.from, duration, delay, ease, clearProps: clearPropsFor(config.from) })
 			} else if (config.to) {
 				gsap.to(blockEl, { ...config.to, duration, delay, ease })
 			}

@@ -1,5 +1,6 @@
 import gsap from "gsap"
 import { type AnimationConfig, flattenConfigs } from "./config/registry"
+import { clearPropsFor } from "./config/animationConfigs"
 import { getScrollTrigger } from "./config/scrollTrigger"
 
 export type { AnimationConfig }
@@ -52,7 +53,7 @@ function animateElement(el: Element): void {
 			scrollTrigger,
 			...(hasRepeat
 				? { repeat: config.repeat, yoyo: config.yoyo }
-				: { clearProps: "all" }),
+				: { clearProps: clearPropsFor(config.from) }),
 		})
 	} else if (config.to) {
 		gsap.to(el, {
