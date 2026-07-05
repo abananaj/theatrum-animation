@@ -16,12 +16,11 @@ if (! defined('ABSPATH')) {
 }
 
 /**
- * Enqueue plugin scripts and styles
+ * Enqueue the frontend animation script.
  */
 function theatrum_animation_enqueue_scripts()
 {
   $script_path = plugin_dir_path(__FILE__) . 'dist/main.js';
-  $style_path  = plugin_dir_path(__FILE__) . 'dist/main.css';
 
   if (file_exists($script_path)) {
     wp_enqueue_script(
@@ -29,21 +28,18 @@ function theatrum_animation_enqueue_scripts()
       plugin_dir_url(__FILE__) . 'dist/main.js',
       array(),
       filemtime($script_path),
-      true
-    );
-  }
-
-  if (file_exists($style_path)) {
-    wp_enqueue_style(
-      'theatrum-animation',
-      plugin_dir_url(__FILE__) . 'dist/main.css',
-      array(),
-      filemtime($style_path)
+      array(
+        'in_footer' => true,
+        'strategy'  => 'defer',
+      )
     );
   }
 }
 add_action('wp_enqueue_scripts', 'theatrum_animation_enqueue_scripts');
 
+/**
+ * Enqueue the block editor inspector panel.
+ */
 function theatrum_animation_enqueue_editor_scripts() {
   $editor_script_path = plugin_dir_path(__FILE__) . 'dist/editor.js';
 
@@ -51,25 +47,12 @@ function theatrum_animation_enqueue_editor_scripts() {
     wp_enqueue_script(
       'theatrum-animation-editor',
       plugin_dir_url(__FILE__) . 'dist/editor.js',
-      ['react', 'wp-hooks', 'wp-block-editor', 'wp-components', 'wp-compose', 'wp-element'],
+      // Must match the externals/globals in vite.config.editor.js.
+      ['react', 'wp-hooks', 'wp-block-editor', 'wp-components', 'wp-compose', 'wp-element', 'wp-i18n'],
       filemtime($editor_script_path),
       true
     );
+    wp_set_script_translations('theatrum-animation-editor', 'theatrum-animation');
   }
 }
 add_action('enqueue_block_editor_assets', 'theatrum_animation_enqueue_editor_scripts');
-
-function theatrum_animation_enqueue_block_assets() {
-  if (!is_admin()) return;
-  $script_path = plugin_dir_path(__FILE__) . 'dist/main.js';
-  if (file_exists($script_path)) {
-    wp_enqueue_script(
-      'theatrum-animation-canvas',
-      plugin_dir_url(__FILE__) . 'dist/main.js',
-      array(),
-      filemtime($script_path),
-      true
-    );
-  }
-}
-add_action('enqueue_block_assets', 'theatrum_animation_enqueue_block_assets');

@@ -8,6 +8,9 @@ function makeSlit(name: string, axis: "rotateY" | "rotateX" | "diag1" | "diag2")
 		ease: "power1.in",
 		timeline: (el) => {
 			const tl = gsap.timeline()
+			// z-translation renders as no-op without a perspective on the element;
+			// once set here it persists for the follow-up tweens.
+			gsap.set(el, { transformPerspective: 800 })
 			if (axis === "rotateY") {
 				tl.to(el, { z: -160, rotateY: 87, duration: 0.54, ease: "power1.in" })
 				  .to(el, { z: -800, rotateY: 90, opacity: 0, duration: 0.46, ease: "power2.in" })

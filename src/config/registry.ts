@@ -27,8 +27,6 @@ import slitOut from "../exit/slit-out"
 import swingOut from "../exit/swing-out"
 import swirlOut from "../exit/swirl-out"
 import scaleOut from "../exit/scale-out/scale-out"
-import scaleOutDown from "../exit/scale-out/scale-down"
-import scaleOutUp from "../exit/scale-out/scale-up"
 import rotateOut from "../exit/rotate-out/rotate-out"
 import rotateOutMax from "../exit/rotate-out/rotate-out-max"
 import slideOut from "../exit/slide-out/slide-out"
@@ -102,10 +100,11 @@ export interface Category {
 
 // ─── The registry — single source of truth for editor + frontend ─────────────
 //
-// Category order is also the flatten/precedence order: when two animations share
-// a CSS class (e.g. `scale-down-center` exists in attention, exit and basic),
-// the LAST category listed wins on the frontend — matching the original
-// index.ts spread order (entrance → exit → attention → text → background → basic).
+// Every CSS class key must be unique across all categories. flattenConfigs()
+// is last-wins and buildClassIndex() is earliest-wins, so a duplicate key means
+// the frontend plays one config while the inspector attributes it to another.
+// Namespace new classes when a name would collide (e.g. attention uses
+// `attn-scale-*` because basic already owns `scale-*`).
 
 export const REGISTRY: Record<string, Category> = {
 	entrance: {
@@ -142,8 +141,6 @@ export const REGISTRY: Record<string, Category> = {
 			"swing-out":         { label: "Swing Out",           configs: swingOut },
 			"swirl-out":         { label: "Swirl Out",           configs: swirlOut },
 			"scale-out":         { label: "Scale Out",           configs: scaleOut },
-			"scale-out-down":    { label: "Scale Out Down",      configs: scaleOutDown },
-			"scale-out-up":      { label: "Scale Out Up",        configs: scaleOutUp },
 			"rotate-out":        { label: "Rotate Out",          configs: rotateOut },
 			"rotate-out-max":    { label: "Rotate Out Max",      configs: rotateOutMax },
 			"slide-out":         { label: "Slide Out",           configs: slideOut },

@@ -2,13 +2,16 @@
 	"name": "theatrum-animation",
 	"version": "1.0.0",
 	"description": "WordPress plugin for adding animations to blocks",
-	"main": "dist/index.js",
+	"main": "dist/main.js",
 	"type": "module",
 	"scripts": {
-		"build:watch": "vite build && vite build --config vite.config.editor.js --watch",
+		"start": "npm-run-all --parallel watch:main watch:editor",
+		"watch:main": "vite build --watch",
+		"watch:editor": "vite build --config vite.config.editor.js --watch",
 		"build": "vite build && vite build --config vite.config.editor.js",
 		"build:editor": "vite build --config vite.config.editor.js",
-		"deploy": "vite build && vite build --config vite.config.editor.js"
+		"typecheck": "tsc --noEmit",
+		"deploy": "npm run build"
 	},
 	"devDependencies": {
 		"@types/react": "^19.2.17",
@@ -19,6 +22,8 @@
 		"@wordpress/compose": "^8.1.0",
 		"@wordpress/element": "^8.0.0",
 		"@wordpress/hooks": "^4.48.0",
+		"@wordpress/i18n": "^6.1.0",
+		"npm-run-all": "^4.1.5",
 		"sass": "^1.77.0",
 		"typescript": "^5.3.0",
 		"vite": "^8.0.16"

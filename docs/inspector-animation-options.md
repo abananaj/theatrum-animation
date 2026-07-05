@@ -1,7 +1,10 @@
 # Inspector Panel — Why Only "Entrance → Slide In" Shows
 
 **Date:** 2026-06-19
-**Status:** Diagnosis only (not yet implemented)
+**Status:** ✅ Resolved — implemented as "Approach 1" on 2026-07-05. The inspector panel
+(`src/block-editor/inspector.tsx`) is now fully auto-derived from `REGISTRY`
+(`src/config/registry.ts`) — all 6 categories and every animation/variant are exposed.
+This document is kept for historical context only; see `README.md` for current architecture.
 
 ## Summary
 

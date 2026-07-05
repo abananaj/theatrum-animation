@@ -4,8 +4,9 @@ import { InspectorControls } from "@wordpress/block-editor"
 import { PanelBody, SelectControl, __experimentalNumberControl as NumberControl, Button } from "@wordpress/components"
 import { createHigherOrderComponent } from "@wordpress/compose"
 import { Fragment, useState, useEffect, useRef } from "@wordpress/element"
+import { __ } from "@wordpress/i18n"
 import { REGISTRY, buildClassIndex, flattenConfigs } from "../config/registry"
-import { clearPropsFor } from "../config/animationConfigs"
+import { clearPropsFor, withPerspective } from "../config/animationConfigs"
 
 // ─── Derived registries (single source of truth = config/registry.ts) ──────────
 
@@ -13,7 +14,7 @@ import { clearPropsFor } from "../config/animationConfigs"
 const CLASS_INDEX = buildClassIndex()
 const FLAT_CONFIGS = flattenConfigs()
 
-const SELECT_PLACEHOLDER = { label: "— Select —", value: "" }
+const SELECT_PLACEHOLDER = { label: __("— Select —", "theatrum-animation"), value: "" }
 
 const CATEGORY_OPTIONS = [
 	SELECT_PLACEHOLDER,
@@ -107,7 +108,7 @@ function addAnimationSaveProps(
 	attributes: Record<string, any>
 ): Record<string, any> {
 	const { className = "", animationDuration, animationDelay, animationEasePower, animationEaseDir } = attributes
-	const hasAnimation = (className || "").split(" ").some((cls) => cls in CLASS_INDEX)
+	const hasAnimation = (className || "").split(" ").some((cls: string) => cls in CLASS_INDEX)
 	if (!hasAnimation) return props
 
 	const result = { ...props }
@@ -124,18 +125,18 @@ addFilter("blocks.getSaveContent.extraProps", "theatrum-animation/save-props", a
 
 const EASE_POWER_OPTIONS = [
 	SELECT_PLACEHOLDER,
-	{ label: "Power 1", value: "power1" },
-	{ label: "Power 2", value: "power2" },
-	{ label: "Power 3", value: "power3" },
-	{ label: "Power 4", value: "power4" },
-	{ label: "Back", value: "back" },
+	{ label: __("Power 1", "theatrum-animation"), value: "power1" },
+	{ label: __("Power 2", "theatrum-animation"), value: "power2" },
+	{ label: __("Power 3", "theatrum-animation"), value: "power3" },
+	{ label: __("Power 4", "theatrum-animation"), value: "power4" },
+	{ label: __("Back", "theatrum-animation"), value: "back" },
 ]
 
 const EASE_DIR_OPTIONS = [
 	SELECT_PLACEHOLDER,
-	{ label: "In", value: "in" },
-	{ label: "Out", value: "out" },
-	{ label: "In → Out", value: "inOut" },
+	{ label: __("In", "theatrum-animation"), value: "in" },
+	{ label: __("Out", "theatrum-animation"), value: "out" },
+	{ label: __("In → Out", "theatrum-animation"), value: "inOut" },
 ]
 
 // ─── Inspector panel ───────────────────────────────────────────────────────────
@@ -157,10 +158,19 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 		const [uiCategory, setUiCategory] = useState(parsed.category)
 		const [uiAnimation, setUiAnimation] = useState(parsed.animation)
 
-		// Set this to true in handlers before calling setAttributes so the effect
+		// Set to true in handlers before calling setAttributes so the effect
 		// below knows the className change came from us, not from an external source
 		// like undo/redo. After the effect fires it resets back to false.
 		const suppressSync = useRef(false)
+
+		// Commit a className change from a handler. Only raise the suppress flag
+		// when the value actually changes — the effect below only fires (and only
+		// resets the flag) on a real className change, so flagging a no-op write
+		// would leave the flag latched and swallow the next external change.
+		function commitClassName(next: string, extra: Record<string, any> = {}) {
+			if (next !== className) suppressSync.current = true
+			setAttributes({ className: next, ...extra })
+		}
 
 		// When className changes externally (undo/redo), reset pending UI state so
 		// the selects reflect the new reality instead of stale intermediate values.
@@ -182,41 +192,45 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 		const hasAnyAnimation = !!activeCategory || !!activeAnimation || !!appliedClass
 
 		function handleCategoryChange(val: string) {
-			suppressSync.current = true
 			setUiCategory(val)
 			setUiAnimation("")
-			setAttributes({ className: stripAnimationClasses(className).join(" ") })
+			commitClassName(stripAnimationClasses(className).join(" "))
 		}
 
 		function handleAnimationChange(val: string) {
-			suppressSync.current = true
 			setUiAnimation(val)
 			const base = stripAnimationClasses(className)
 			// Single-variant animations apply immediately; multi-variant wait for a direction.
 			const vs = val ? variantClasses(activeCategory, val) : []
 			if (vs.length === 1) base.push(vs[0])
-			setAttributes({ className: base.join(" ") })
+			commitClassName(base.join(" "))
 		}
 
 		function handleVariantChange(val: string) {
-			suppressSync.current = true
 			const base = stripAnimationClasses(className)
 			if (val) base.push(val)
-			setAttributes({ className: base.join(" ") })
+			commitClassName(base.join(" "))
 		}
 
 		function handleReset() {
-			suppressSync.current = true
 			setUiCategory("")
 			setUiAnimation("")
-			setAttributes({
-				className: stripAnimationClasses(className).join(" "),
+			commitClassName(stripAnimationClasses(className).join(" "), {
 				animationDuration: null,
 				animationDelay: null,
 				animationEasePower: null,
 				animationEaseDir: null,
 			})
 		}
+
+		// The animation created by the last Preview click. killTweensOf() alone
+		// kills child tweens but leaves a repeat:-1 timeline container alive in
+		// GSAP's root ticker, leaking one per click — kill the container itself.
+		const previewAnim = useRef<gsap.core.Timeline | gsap.core.Tween | null>(null)
+		useEffect(() => () => {
+			previewAnim.current?.kill()
+			previewAnim.current = null
+		}, [])
 
 		function handlePreview() {
 			if (!appliedClass) return
@@ -239,32 +253,60 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 				? `${animationEasePower}.${animationEaseDir}`
 				: config.ease
 
+			previewAnim.current?.kill()
+			previewAnim.current = null
 			gsap.killTweensOf(blockEl)
 
 			if (config.timeline) {
-				config.timeline(blockEl, duration)
+				const tl = config.timeline(blockEl)
+				const speed = duration > 0 ? config.duration / 1000 / duration : 1
+				if (speed !== 1) tl.timeScale(speed)
+				if (delay > 0) {
+					tl.delay(delay)
+					tl.restart(true)
+				}
+				previewAnim.current = tl
 				return
 			}
 
+			const hasRepeat = config.repeat !== undefined
+
 			if (config.from) {
-				gsap.from(blockEl, { ...config.from, duration, delay, ease, clearProps: clearPropsFor(config.from) })
+				previewAnim.current = gsap.from(blockEl, {
+					...withPerspective(config.from),
+					duration,
+					delay,
+					ease,
+					...(hasRepeat
+						? { repeat: config.repeat, yoyo: config.yoyo }
+						: { clearProps: clearPropsFor(config.from) }),
+				})
 			} else if (config.to) {
-				gsap.to(blockEl, { ...config.to, duration, delay, ease })
+				previewAnim.current = gsap.to(blockEl, {
+					...withPerspective(config.to),
+					duration,
+					delay,
+					ease,
+					...(hasRepeat ? { repeat: config.repeat, yoyo: config.yoyo } : {}),
+				})
 			}
 		}
 
 		const showAnimation = !!activeCategory && !!REGISTRY[activeCategory]
 		const showVariant = !!activeAnimation && variants.length > 1
 		const showSettings = !!appliedClass
+		// Multi-step timelines have no single ease to override; hide the controls
+		// rather than show settings that do nothing.
+		const isTimeline = !!(appliedClass && FLAT_CONFIGS[appliedClass]?.timeline)
 
 		return (
 			<Fragment>
 				<BlockEdit {...props} />
 				<InspectorControls>
-					<PanelBody title="Animation" initialOpen={!!activeCategory}>
+					<PanelBody title={__("Animation", "theatrum-animation")} initialOpen={!!activeCategory}>
 						<SelectControl
 							__next40pxDefaultSize
-							label="Category"
+							label={__("Category", "theatrum-animation")}
 							value={activeCategory}
 							options={CATEGORY_OPTIONS}
 							onChange={handleCategoryChange}
@@ -272,7 +314,7 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 						{showAnimation && (
 							<SelectControl
 								__next40pxDefaultSize
-								label="Animation"
+								label={__("Animation", "theatrum-animation")}
 								value={activeAnimation}
 								options={animationOptions(activeCategory)}
 								onChange={handleAnimationChange}
@@ -281,7 +323,7 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 						{showVariant && (
 							<SelectControl
 								__next40pxDefaultSize
-								label="Variant"
+								label={__("Variant", "theatrum-animation")}
 								value={appliedClass}
 								options={variantOptions(variants)}
 								onChange={handleVariantChange}
@@ -291,53 +333,56 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 							<>
 								<NumberControl
 									__next40pxDefaultSize
-									label="Duration (ms)"
+									label={__("Duration (ms)", "theatrum-animation")}
 									value={animationDuration != null ? String(animationDuration) : ""}
 									min={0}
 									step={50}
-									onChange={(val?: string) =>
-										setAttributes({
-											animationDuration: val !== "" && val != null ? parseInt(val, 10) : null,
-										})
-									}
+									onChange={(val?: string) => {
+										// parseInt of intermediate input ("-", "5e") is NaN — store null, never NaN.
+										const n = parseInt(val ?? "", 10)
+										setAttributes({ animationDuration: Number.isNaN(n) ? null : n })
+									}}
 								/>
 								<NumberControl
 									__next40pxDefaultSize
-									label="Delay (ms)"
+									label={__("Delay (ms)", "theatrum-animation")}
 									value={animationDelay != null ? String(animationDelay) : ""}
 									min={0}
 									step={50}
-									onChange={(val?: string) =>
-										setAttributes({
-											animationDelay: val !== "" && val != null ? parseInt(val, 10) : null,
-										})
-									}
+									onChange={(val?: string) => {
+										const n = parseInt(val ?? "", 10)
+										setAttributes({ animationDelay: Number.isNaN(n) ? null : n })
+									}}
 								/>
-								<SelectControl
-									__next40pxDefaultSize
-									label="Ease — Power"
-									value={animationEasePower ?? ""}
-									options={EASE_POWER_OPTIONS}
-									onChange={(val: string) =>
-										setAttributes({ animationEasePower: val || null })
-									}
-								/>
-								<SelectControl
-									__next40pxDefaultSize
-									label="Ease — Direction"
-									value={animationEaseDir ?? ""}
-									options={EASE_DIR_OPTIONS}
-									onChange={(val: string) =>
-										setAttributes({ animationEaseDir: val || null })
-									}
-								/>
+								{!isTimeline && (
+									<>
+										<SelectControl
+											__next40pxDefaultSize
+											label={__("Ease — Power", "theatrum-animation")}
+											value={animationEasePower ?? ""}
+											options={EASE_POWER_OPTIONS}
+											onChange={(val: string) =>
+												setAttributes({ animationEasePower: val || null })
+											}
+										/>
+										<SelectControl
+											__next40pxDefaultSize
+											label={__("Ease — Direction", "theatrum-animation")}
+											value={animationEaseDir ?? ""}
+											options={EASE_DIR_OPTIONS}
+											onChange={(val: string) =>
+												setAttributes({ animationEaseDir: val || null })
+											}
+										/>
+									</>
+								)}
 								<Button
 									variant="secondary"
 									size="compact"
 									onClick={handlePreview}
 									style={{ marginTop: "8px" }}
 								>
-									Preview Animation
+									{__("Preview Animation", "theatrum-animation")}
 								</Button>
 							</>
 						)}
@@ -349,7 +394,7 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 								onClick={handleReset}
 								style={{ marginTop: "8px" }}
 							>
-								Reset Animation
+								{__("Reset Animation", "theatrum-animation")}
 							</Button>
 						)}
 					</PanelBody>

@@ -11,11 +11,11 @@ function makePop(
 ): AnimationConfig {
 	return {
 		name, duration: 500, ease: "power1.out",
-		timeline: (el, dur) => {
+		timeline: (el) => {
 			const tl = gsap.timeline()
 			tl.fromTo(el,
 				{ textShadow: zero, x: 0, y: 0 },
-				{ textShadow: shadow, x, y, duration: dur, ease: "power1.out", clearProps: "all" }
+				{ textShadow: shadow, x, y, duration: 0.5, ease: "power1.out", clearProps: "all" }
 			)
 			return tl
 		},

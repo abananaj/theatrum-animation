@@ -12,6 +12,7 @@ export default defineConfig({
         dir: "dist",
         format: "iife",
         name: "TheatrumAnimationEditor",
+        // Must match the dependency handles in theatrum-animation.php.
         globals: {
           react: "React",
           "@wordpress/hooks": "wp.hooks",
@@ -19,6 +20,7 @@ export default defineConfig({
           "@wordpress/components": "wp.components",
           "@wordpress/compose": "wp.compose",
           "@wordpress/element": "wp.element",
+          "@wordpress/i18n": "wp.i18n",
         },
       },
       external: ["react", /^@wordpress\//],

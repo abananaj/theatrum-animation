@@ -1,7 +1,7 @@
 # theatrum-animation
 
 > WordPress plugin — adds scroll-triggered GSAP animations to any block via the block inspector.
-> **Snapshot: June 2026 — pre-refactor archive.**
+> **Updated: 2026-07-05**, post code review. See `docs/jul5-code-review.md` for the full review.
 
 ---
 
@@ -37,13 +37,15 @@ src/
 ```
 
 **Two Vite builds:**
-- `vite.config.js` → `dist/main.js` (IIFE, bundles GSAP, frontend + editor canvas)
-- `vite.config.editor.js` → `dist/editor.js` (IIFE, externalizes React + `@wordpress/*`, block editor panel)
+- `vite.config.js` → `dist/main.js` (IIFE, bundles GSAP, frontend only)
+- `vite.config.editor.js` → `dist/editor.js` (IIFE, externalizes React + `@wordpress/*` incl. `@wordpress/i18n`, bundles GSAP for the Preview button; block editor panel)
 
 **PHP hooks:**
-- `wp_enqueue_scripts` → `main.js` (frontend)
+- `wp_enqueue_scripts` → `main.js` (frontend, loaded with `strategy: 'defer'`)
 - `enqueue_block_editor_assets` → `editor.js` (block editor sidebar)
-- `enqueue_block_assets` (admin only) → `main.js` again (editor canvas preview)
+
+Frontend animations honor `prefers-reduced-motion: reduce` — `initializeAnimations()`
+no-ops entirely when the user has that OS preference set (WCAG 2.3.3 / 2.2.2).
 
 ---
 
@@ -71,11 +73,17 @@ interface AnimationConfig {
   to?: gsap.TweenVars
   repeat?: number
   yoyo?: boolean
-  timeline?: (el: Element, duration: number) => gsap.core.Timeline
+  timeline?: (el: Element) => gsap.core.Timeline
 }
 ```
 
-One-shot tweens use `from`/`to` + ScrollTrigger. Looping/multi-step animations use `timeline` and bypass ScrollTrigger (play immediately on load).
+One-shot tweens use `from`/`to` + ScrollTrigger. Looping/multi-step animations use `timeline` and bypass ScrollTrigger (play immediately on load) — this is an intentional design decision, not a bug: entrances need a trigger point, ambient attention/background loops don't.
+
+Every CSS class key must be unique across the whole `REGISTRY` — `flattenConfigs()` (frontend) is last-category-wins and `buildClassIndex()` (inspector) is first-category-wins, so a duplicate key makes the frontend play one config while the inspector shows another. This bit us once: `attention`'s looping scale animations share visual names with `basic`'s one-shot scale animations, so attention's classes are namespaced `attn-scale-up-*` / `attn-scale-down-*`.
+
+**Dynamic blocks limitation:** `blocks.getSaveContent.extraProps` only writes `data-animation-*` overrides into statically-saved block HTML. Server-rendered blocks (most theatrum-blocks query/meta blocks) keep the animation class — so the animation still plays — but lose any custom Duration/Delay/Ease override, falling back to the animation's default timing. Fixing this needs a `render_block` PHP filter mapping the block's attributes onto the rendered wrapper; not yet implemented.
+
+**Ken Burns caveat:** `kenburns-*` configs transform the block wrapper itself, so applying it to a Cover block scales the whole block (including any overlaid text), not just the background image. A true Ken Burns effect needs the transform on an inner image layer (e.g. `.wp-block-cover__image-background`) with `overflow: hidden` on the wrapper — not yet implemented.
 
 ---
 
@@ -90,69 +98,67 @@ One-shot tweens use `from`/`to` + ScrollTrigger. Looping/multi-step animations u
 | **Variant** dropdown | Only if animation has >1 variant |
 | **Duration** (ms) | After a variant/animation is applied |
 | **Delay** (ms) | After a variant/animation is applied |
-| **Ease — Power** (`power1`–`power4`, `back`) | After a variant/animation is applied |
-| **Ease — Direction** (`in`, `out`, `inOut`) | After a variant/animation is applied |
+| **Ease — Power** (`power1`–`power4`, `back`) | After a variant/animation is applied, and only for one-shot tweens (hidden for `timeline`-based animations, which have no single ease to override) |
+| **Ease — Direction** (`in`, `out`, `inOut`) | Same as above |
 | **Preview Animation** button | After a variant/animation is applied |
 | **Reset Animation** button | Any animation is active |
 
-Easing composed as `power1.out`, written to `data-animation-ease` on save. Duration/delay written to `data-animation-duration` / `data-animation-delay`.
+Easing composed as `power1.out`, written to `data-animation-ease` on save. Duration/delay written to `data-animation-duration` / `data-animation-delay`. For `timeline`-based animations, Duration rescales the timeline's playback speed (`timeScale()`) and Delay restarts it with a `delay()`; there's no per-step ease to override.
 
-Undo/redo sync: **not yet implemented** — see Bug #4 in Next Steps.
+Undo/redo sync is implemented (`useEffect([className])` + a `suppressSync` ref in `withAnimationInspector`) — the ref is only raised when a handler's className write actually changes the value, so a no-op write (e.g. picking a category with no class yet applied) can't latch it and swallow the next real external change.
 
 ---
 
 ## Build & Dev
 
 ```bash
+npm run start          # watch both bundles in parallel (main + editor)
 npm run build          # production build (main + editor)
 npm run build:editor   # editor only
-npm run build:watch    # one-shot main build, then watch editor only
+npm run typecheck      # tsc --noEmit
 npm run deploy         # alias for build
 ```
-
-> ⚠️ No `npm run start` — see [Next Steps](#next-steps).
 
 ---
 
 ## Next Steps 🔧
 
-Issues in order of severity:
+Fixed in the 2026-07-05 review pass:
 
-### 🔴 Bugs
+- ✅ Undo/redo stale inspector state, `suppressSync` latch bug
+- ✅ GSAP timeline leak on repeated Preview clicks
+- ✅ `NaN` stored as duration/delay (both inspector write and frontend read)
+- ✅ `fade-in-fwd`/`bck`, `tracking-in/out`, `blur-out` z-axis variants (added `transformPerspective`)
+- ✅ 3-way `scale-up`/`scale-down` class collision (attention renamed to `attn-scale-*`; exit's duplicate deleted)
+- ✅ `prefers-reduced-motion` support (WCAG 2.3.3 / 2.2.2)
+- ✅ Timeline animations now honor Duration/Delay overrides (`timeScale()` + `delay()`); Ease controls hidden for them since a multi-step timeline has no single ease
+- ✅ 4 orphaned draft files deleted; `strict: true` + `npm run typecheck` added
+- ✅ `tsconfig.node.json` removed (was pointing at a nonexistent `vite.config.ts`)
+- ✅ `package.json` `main` field corrected; `npm run start` added (parallel watch via `npm-run-all`)
+- ✅ Dead `dist/main.css` enqueue removed; frontend script loads with `strategy: 'defer'`
+- ✅ `enqueue_block_assets` canvas-preview hook removed (the iframed editor canvas never executed it; removing it also eliminates the dual-GSAP-instance risk between `main.js` and `editor.js`)
+- ✅ i18n: all inspector strings wrapped in `__()`, `wp_set_script_translations()` wired up
+- ✅ `attention/flicker.ts`'s `flicker-2`–`flicker-5` exceeded WCAG 2.3.1's 3-flashes/sec
+  threshold while looping forever (up to 5/sec); loop duration widened per variant to
+  bring all under 3/sec while preserving the flicker pattern
 
-1. **Undo/redo leaves stale inspector state** — `uiCategory`/`uiAnimation` are `useState` values initialised once. When WordPress undo reverts `className` externally, the state isn't reset, so the Category and Animation dropdowns — and the "Reset Animation" button — remain visible as if an animation is active when none is. Fix: add a `useEffect([className])` that clears both state values when `parsed.category` is empty, gated on a `suppressSync` ref to skip self-initiated writes.
+Remaining, in order of severity:
 
-2. **GSAP timeline leak on repeated Preview clicks** — `gsap.killTweensOf(blockEl)` kills child tweens but leaves the `Timeline` container alive in GSAP's root scheduler. For animations that use `repeat: -1` timelines (`heartbeat`, `jello`, all `color-change` and `bg-pan` variants), each click of "Preview Animation" adds another orphaned infinite-repeat container running on every animation frame. Fix: store the returned timeline in a `useRef` and call `timelineRef.current?.kill()` before creating a new one.
+### 🟡 Open
 
-3. **`NaN` stored as duration/delay** — `parseInt(val, 10)` returns `NaN` for intermediate `NumberControl` states (`-`, `5e`, `1.`). `NaN != null` is `true`, so `data-animation-duration="NaN"` gets written to the block HTML. On the frontend GSAP receives `duration: NaN`, treats it as `0`, and the animation snaps to its final state instantly with no visible transition. Fix: `const n = parseInt(val, 10); value: !isNaN(n) ? n : null`.
+1. **`ping` timeline doesn't loop cleanly** — After `opacity: 0` the element scales to `2.2` while invisible. On `repeat: -1`, GSAP resets to the `fromTo` start values (`scale: 0.2, opacity: 0.8`) — but the final `to` is outside the `fromTo` so the reset jump may be visible. Needs visual testing and likely a timeline restructure.
 
-4. **`fade-in-fwd` / `fade-in-bck` broken** — `from: { z: -80 }` animates `z-index`, not 3D depth. GSAP needs `perspective` on the parent and `transformPerspective` on the element for z-axis motion. These variants appear to do nothing visually. Fix: use `transformPerspective` + `z` or switch to `scale` equivalents.
+2. **Dynamic blocks don't get duration/delay/ease overrides** — server-rendered blocks keep the animation class but lose `data-animation-*` attributes (see Architecture section above). Needs a `render_block` PHP filter.
 
-2. **`ping` timeline doesn't loop cleanly** — After `opacity: 0` the element scales to `2.2` while invisible. On `repeat: -1`, GSAP resets to the `fromTo` start values (`scale: 0.2, opacity: 0.8`) — but the final `to` is outside the `fromTo` so the reset jump may be visible. Needs testing and likely a timeline restructure.
+3. **`kenburns-*` animates the whole block, not just a background image** — see Ken Burns caveat above.
 
-3. **`build:watch` only watches editor** — `"build:watch": "vite build && vite build --config vite.config.editor.js --watch"` does a one-time build of `main.js`, then only watches `editor.js`. Changes to `src/index.ts` or any animation config won't hot-reload. Needs two parallel watch processes (e.g. `vite build --watch & vite build --config vite.config.editor.js --watch`).
+4. **`animista/` folder** — original CSS keyframe source files, superseded by the GSAP ports. Can be deleted once confidence in the GSAP equivalents is high.
 
-### 🟡 Tech Debt
+5. **`__experimentalNumberControl`** — used in `inspector.tsx`. Experimental WP component API, could change on Gutenberg upgrades. Low urgency but worth watching.
 
-4. **Orphaned draft files** — `src/block-editor/RadioControlDirection.js`, `SelectControlEase.js`, `SelectControlEntrance.js`, `SelectControlEntrance.tsx` are leftover early drafts, not imported anywhere. `SelectControlEntrance.tsx` is a superseded implementation. Contains invalid TypeScript (`useState<string[""]>`). Delete all four.
+6. **No conditional/deferred-load heuristic for `main.js`** — it loads on every frontend page regardless of whether the page uses any animated blocks. `defer` is in place, but a usage-based conditional enqueue (or a `ta-` class prefix migration to reduce false-positive MutationObserver matches) is a larger, separate pass — not done in this review, since it needs a content migration.
 
-5. **`tsconfig.node.json` misconfigured** — `"include": ["vite.config.ts"]` but config files are `.js`. No actual type-checking of vite configs.
-
-6. **CSS class collisions break attention scale animations** — All 30 `scale-down-*` and `scale-up-*` class names exist verbatim in both `attention/` (looping, `repeat: -1, yoyo: true`) and `basic/scale/` (one-shot). `CLASS_INDEX` uses earliest-wins so the inspector labels say "Attention", but `flattenConfigs` uses last-wins (basic overwrites) so both the Preview button and the live frontend play the basic one-shot config. The looping attention behaviour is permanently inaccessible. Fix: rename attention classes (e.g. `attn-scale-down-*`) or remove the duplicates from one category.
-
-7. **`animista/` folder** — Original CSS keyframe source files still present. These were the input for the GSAP migration. Can be deleted once you're confident in the GSAP equivalents.
-
-8. **`package.json` `main` field** — Points to `dist/index.js` but output is `dist/main.js`. Harmless for a WP plugin but misleading.
-
-9. **No `npm run start`** — CLAUDE.md convention for all plugins. Alias `build:watch` or add a proper parallel-watch script.
-
-10. **`__experimentalNumberControl`** — Used in `inspector.tsx:4`. Experimental WP component API, could change on Gutenberg updates. Low urgency but worth watching.
-
-11. **`stripAnimationClasses` O(n) array scan** — Uses `ALL_ANIMATION_CLASSES.includes(c)` (100+ entries scanned per token) when `CLASS_INDEX` is already available for O(1) `in` lookup. Replace with `!(c in CLASS_INDEX)` and remove the `ALL_ANIMATION_CLASSES` constant.
-
-12. **Category dropdown snaps back one frame on change** — `activeCategory = parsed.category || uiCategory` means the old committed category wins for one render frame when the user picks a new one while a class is already applied (parsed.category is non-empty until setAttributes propagates). A single controlled state with a `useEffect` sync would eliminate the `||` fallback.
-
-13. **Looping animations skip ScrollTrigger** — `timeline`-based animations (attention, background) start immediately on page load regardless of scroll position. May be intentional but worth documenting explicitly as a design decision.
+7. **PHP dependency array hand-synced with Vite externals** — `theatrum-animation.php`'s editor script `deps` array must match `vite.config.editor.js`'s `external`/`globals`; a comment now ties them together, but a `*.asset.php` (wp-scripts convention) would prevent drift automatically.
 
 ---
 
@@ -168,5 +174,6 @@ Issues in order of severity:
 | `src/block-editor/inspector.tsx` | Block editor HOC + all controls |
 | `vite.config.js` | Frontend build config |
 | `vite.config.editor.js` | Editor build config |
-| `docs/inspector-animation-options.md` | Diagnosis doc for inspector panel scope |
+| `docs/inspector-animation-options.md` | Diagnosis doc for inspector panel scope — resolved, kept for history |
+| `docs/jul5-code-review.md` | 2026-07-05 code review — source of the fixes in Next Steps above |
 | `animista/` | Original CSS keyframe sources (pre-migration, stale) |

@@ -1,4 +1,4 @@
-import type { AnimationConfig } from "../../config/animationConfigs"
+import type { AnimationConfig } from "../config/animationConfigs"
 
 const defaults = { duration: 700, ease: "power1.out" }
 

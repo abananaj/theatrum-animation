@@ -52,6 +52,7 @@ function makeFlipScale2(
 		duration: 600,
 		ease: "none",
 		timeline: (el) => {
+			gsap.set(el, { transformOrigin: originStart })
 			const tl = gsap.timeline()
 			tl.to(el, {
 				scale: 2, [axis]: midAngle, [translateAxis]: midTranslate,
@@ -61,7 +62,6 @@ function makeFlipScale2(
 				scale: 1, [axis]: endAngle, [translateAxis]: endTranslate,
 				transformOrigin: originEnd, duration: 0.3, ease: "power1.out",
 			})
-			gsap.set(el, { transformOrigin: originStart }, 0)
 			return tl
 		},
 	}
