@@ -16,10 +16,48 @@ const FLAT_CONFIGS = flattenConfigs()
 
 const SELECT_PLACEHOLDER = { label: __("— Select —", "theatrum-animation"), value: "" }
 
+// category id → its default trigger (single source of truth = the registry).
+const CATEGORY_DEFAULT_TRIGGER: Record<string, string> = Object.fromEntries(
+	Object.entries(REGISTRY).map(([id, cat]) => [id, cat.trigger])
+)
+
+// Which categories appear under each trigger header in the Category dropdown.
+// Entrance/Text/Basic list twice — under On Scroll (their default) and On Load;
+// picking from On Load persists a data-animation-trigger override. Exit is
+// deliberately excluded from the picker (kept in the registry for old content).
+const TRIGGER_GROUPS: { id: string; label: string; categories: string[] }[] = [
+	{ id: "scroll", label: __("On Scroll", "theatrum-animation"), categories: ["entrance", "text", "basic"] },
+	{ id: "load",   label: __("On Load", "theatrum-animation"),   categories: ["entrance", "text", "basic"] },
+	{ id: "hover",  label: __("On Hover", "theatrum-animation"),  categories: ["attention", "background"] },
+]
+
+// Grouped options for the Category <SelectControl>. Trigger headers are rendered
+// as disabled rows (version-safe vs <optgroup>); selectable rows encode both the
+// trigger and category in their value as `${trigger}:${category}`.
 const CATEGORY_OPTIONS = [
 	SELECT_PLACEHOLDER,
-	...Object.entries(REGISTRY).map(([value, cat]) => ({ label: cat.label, value })),
+	...TRIGGER_GROUPS.flatMap((group) => [
+		{ label: group.label, value: `__group_${group.id}`, disabled: true },
+		...group.categories
+			.filter((catId) => REGISTRY[catId])
+			.map((catId) => ({
+				label: `  ${REGISTRY[catId].label}`,
+				value: `${group.id}:${catId}`,
+			})),
+	]),
 ]
+
+/** Split a Category option value back into its trigger + category ids. */
+function parseCategoryValue(val: string): { trigger: string; category: string } | null {
+	const [trigger, category] = val.split(":")
+	if (!trigger || !category) return null
+	return { trigger, category }
+}
+
+/** The trigger to persist for a pick — only non-default triggers (i.e. Load) are saved. */
+function triggerToSave(category: string, trigger: string): string | null {
+	return trigger && trigger !== CATEGORY_DEFAULT_TRIGGER[category] ? trigger : null
+}
 
 function animationOptions(categoryId: string) {
 	const category = REGISTRY[categoryId]
@@ -95,6 +133,9 @@ function addAnimationAttributes(settings: Record<string, any>): Record<string, a
 			animationDelay: { type: "number", default: null },
 			animationEasePower: { type: "string", default: null },
 			animationEaseDir: { type: "string", default: null },
+			// Only persisted for the non-default (Load) trigger; scroll/hover are
+			// derived on the frontend from the animation's category.
+			animationTrigger: { type: "string", default: null },
 		},
 	}
 }
@@ -107,7 +148,7 @@ function addAnimationSaveProps(
 	_blockType: unknown,
 	attributes: Record<string, any>
 ): Record<string, any> {
-	const { className = "", animationDuration, animationDelay, animationEasePower, animationEaseDir } = attributes
+	const { className = "", animationDuration, animationDelay, animationEasePower, animationEaseDir, animationTrigger } = attributes
 	const hasAnimation = (className || "").split(" ").some((cls: string) => cls in CLASS_INDEX)
 	if (!hasAnimation) return props
 
@@ -117,6 +158,7 @@ function addAnimationSaveProps(
 	if (animationEasePower != null && animationEaseDir != null) {
 		result["data-animation-ease"] = `${animationEasePower}.${animationEaseDir}`
 	}
+	if (animationTrigger != null) result["data-animation-trigger"] = animationTrigger
 	return result
 }
 addFilter("blocks.getSaveContent.extraProps", "theatrum-animation/save-props", addAnimationSaveProps)
@@ -150,13 +192,21 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 			animationDelay = null,
 			animationEasePower = null,
 			animationEaseDir = null,
+			animationTrigger = null,
 		} = attributes
 
 		const parsed = parseAnimationClass(className)
 
+		// The trigger for a committed class = its saved override (Load) or its
+		// category default (scroll/hover).
+		function triggerFor(category: string): string {
+			return category ? animationTrigger || CATEGORY_DEFAULT_TRIGGER[category] || "" : ""
+		}
+
 		// Track intermediate selections before a class is committed to className
 		const [uiCategory, setUiCategory] = useState(parsed.category)
 		const [uiAnimation, setUiAnimation] = useState(parsed.animation)
+		const [uiTrigger, setUiTrigger] = useState(triggerFor(parsed.category))
 
 		// Set to true in handlers before calling setAttributes so the effect
 		// below knows the className change came from us, not from an external source
@@ -181,20 +231,29 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 			}
 			setUiCategory(parsed.category)
 			setUiAnimation(parsed.animation)
+			setUiTrigger(triggerFor(parsed.category))
 		}, [className]) // eslint-disable-line react-hooks/exhaustive-deps
 
 		// Committed (saved) values take precedence over pending UI state
 		const activeCategory = parsed.category || uiCategory
 		const activeAnimation = parsed.animation || uiAnimation
+		const activeTrigger = parsed.category ? triggerFor(parsed.category) : uiTrigger
 		const appliedClass = parsed.variant
+		// The combined value the grouped Category <SelectControl> matches on.
+		const categoryValue = activeCategory ? `${activeTrigger}:${activeCategory}` : ""
 
 		const variants = activeCategory && activeAnimation ? variantClasses(activeCategory, activeAnimation) : []
 		const hasAnyAnimation = !!activeCategory || !!activeAnimation || !!appliedClass
 
 		function handleCategoryChange(val: string) {
-			setUiCategory(val)
+			// Placeholder clears the selection; header rows never fire (disabled).
+			const picked = val ? parseCategoryValue(val) : null
+			if (val && !picked) return
+			setUiCategory(picked?.category ?? "")
+			setUiTrigger(picked?.trigger ?? "")
 			setUiAnimation("")
-			commitClassName(stripAnimationClasses(className).join(" "))
+			// Changing category drops any applied class and its trigger override.
+			commitClassName(stripAnimationClasses(className).join(" "), { animationTrigger: null })
 		}
 
 		function handleAnimationChange(val: string) {
@@ -202,24 +261,31 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 			const base = stripAnimationClasses(className)
 			// Single-variant animations apply immediately; multi-variant wait for a direction.
 			const vs = val ? variantClasses(activeCategory, val) : []
-			if (vs.length === 1) base.push(vs[0])
-			commitClassName(base.join(" "))
+			const committing = vs.length === 1
+			if (committing) base.push(vs[0])
+			commitClassName(base.join(" "), {
+				animationTrigger: committing ? triggerToSave(activeCategory, activeTrigger) : null,
+			})
 		}
 
 		function handleVariantChange(val: string) {
 			const base = stripAnimationClasses(className)
 			if (val) base.push(val)
-			commitClassName(base.join(" "))
+			commitClassName(base.join(" "), {
+				animationTrigger: val ? triggerToSave(activeCategory, activeTrigger) : null,
+			})
 		}
 
 		function handleReset() {
 			setUiCategory("")
 			setUiAnimation("")
+			setUiTrigger("")
 			commitClassName(stripAnimationClasses(className).join(" "), {
 				animationDuration: null,
 				animationDelay: null,
 				animationEasePower: null,
 				animationEaseDir: null,
+				animationTrigger: null,
 			})
 		}
 
@@ -307,7 +373,7 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 						<SelectControl
 							__next40pxDefaultSize
 							label={__("Category", "theatrum-animation")}
-							value={activeCategory}
+							value={categoryValue}
 							options={CATEGORY_OPTIONS}
 							onChange={handleCategoryChange}
 						/>

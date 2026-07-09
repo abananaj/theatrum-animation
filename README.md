@@ -1,6 +1,6 @@
 # theatrum-animation
 
-> WordPress plugin — adds scroll-triggered GSAP animations to any block via the block inspector.
+> WordPress plugin — adds GSAP animations to any block via the block inspector, triggered on scroll, load, or hover.
 > **Updated: 2026-07-05**, post code review. See `docs/jul5-code-review.md` for the full review.
 
 ---
@@ -93,7 +93,7 @@ Every CSS class key must be unique across the whole `REGISTRY` — `flattenConfi
 
 | Control | When shown |
 |---|---|
-| **Category** dropdown | Always |
+| **Category** dropdown (trigger-grouped) | Always |
 | **Animation** dropdown | After category is selected |
 | **Variant** dropdown | Only if animation has >1 variant |
 | **Duration** (ms) | After a variant/animation is applied |
@@ -106,6 +106,28 @@ Every CSS class key must be unique across the whole `REGISTRY` — `flattenConfi
 Easing composed as `power1.out`, written to `data-animation-ease` on save. Duration/delay written to `data-animation-duration` / `data-animation-delay`. For `timeline`-based animations, Duration rescales the timeline's playback speed (`timeScale()`) and Delay restarts it with a `delay()`; there's no per-step ease to override.
 
 Undo/redo sync is implemented (`useEffect([className])` + a `suppressSync` ref in `withAnimationInspector`) — the ref is only raised when a handler's className write actually changes the value, so a no-op write (e.g. picking a category with no class yet applied) can't latch it and swallow the next real external change.
+
+### Triggers
+
+The **Category** dropdown groups its options under three trigger headers (disabled
+rows, version-safe vs `<optgroup>`); the trigger is implied by which group you pick —
+there is no separate trigger field.
+
+| Trigger | Categories | Frontend behavior | Saved? |
+|---|---|---|---|
+| **On Scroll** | Entrance, Text, Basic | one-shot when the block scrolls into view (`ScrollTrigger` top 85%, once) | nothing |
+| **On Load** | Entrance, Text, Basic | one-shot immediately on page load | `data-animation-trigger="load"` |
+| **On Hover** | Attention, Background | plays while hovered, pauses on mouseleave; touch → tap-to-toggle | nothing |
+
+Trigger is resolved on the frontend (`src/index.ts` `resolveTrigger`) as
+`data-animation-trigger` attribute → else the class's **category default**
+(`flattenTriggers()` in `registry.ts`, keyed off each `Category.trigger`). Because
+scroll and hover come from the category default, only the Load override is ever
+persisted — via the `animationTrigger` block attribute written by the inspector when
+you pick an animation from the **On Load** group. The frontend dispatches per
+config-shape × trigger: one-shot `from`/`to` tweens use GSAP's integrated
+`scrollTrigger` for scroll or play immediately for load; `timeline`/looping configs
+are built paused and played on scroll-in or on hover.
 
 ---
 
@@ -148,7 +170,10 @@ Remaining, in order of severity:
 
 1. **`ping` timeline doesn't loop cleanly** — After `opacity: 0` the element scales to `2.2` while invisible. On `repeat: -1`, GSAP resets to the `fromTo` start values (`scale: 0.2, opacity: 0.8`) — but the final `to` is outside the `fromTo` so the reset jump may be visible. Needs visual testing and likely a timeline restructure.
 
-2. **Dynamic blocks don't get duration/delay/ease overrides** — server-rendered blocks keep the animation class but lose `data-animation-*` attributes (see Architecture section above). Needs a `render_block` PHP filter.
+2. **Dynamic blocks don't get duration/delay/ease/trigger overrides** — server-rendered blocks keep the animation class but lose `data-animation-*` attributes (see Architecture section above), including `data-animation-trigger`, so a dynamic block set to **On Load** falls back to its category default (scroll). Needs a `render_block` PHP filter.
+
+   - **Exit category excluded from the picker** — `exit` stays in `REGISTRY` (default trigger `scroll`) so existing pages keep animating, but it's omitted from `TRIGGER_GROUPS`; an existing exit block's Category select therefore shows the placeholder (Reset still works). Add an "On Scroll → Exit (legacy)" group entry if editing old exit blocks becomes necessary.
+   - **Attention & Background now trigger on hover** — they no longer auto-loop on page load. Any pre-existing use of those categories changes behavior accordingly.
 
 3. **`kenburns-*` animates the whole block, not just a background image** — see Ken Burns caveat above.
 

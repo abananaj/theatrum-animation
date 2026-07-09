@@ -86,6 +86,13 @@ export type { AnimationConfig }
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
+/**
+ * When an animation fires. Derived on the frontend from an element's category
+ * (see `trigger` on Category), so scroll/hover need nothing saved on the block.
+ * `load` is the one override the inspector persists (data-animation-trigger).
+ */
+export type TriggerId = "scroll" | "load" | "hover"
+
 /** One selectable animation: a human label + its variants keyed by CSS class. */
 export interface AnimationGroup {
 	label: string
@@ -95,6 +102,8 @@ export interface AnimationGroup {
 /** One category: a human label + its animations keyed by animation id. */
 export interface Category {
 	label: string
+	/** Default trigger for every animation in this category. */
+	trigger: TriggerId
 	animations: Record<string, AnimationGroup>
 }
 
@@ -109,6 +118,7 @@ export interface Category {
 export const REGISTRY: Record<string, Category> = {
 	entrance: {
 		label: "Entrance",
+		trigger: "scroll",
 		animations: {
 			"slide-in":          { label: "Slide In",            configs: slideIn },
 			"slide-in-fwd":      { label: "Slide In Forward",    configs: slideInFwd },
@@ -128,8 +138,11 @@ export const REGISTRY: Record<string, Category> = {
 			"rotate-in-2":       { label: "Rotate In 2",         configs: rotateIn2 },
 		},
 	},
+	// Kept for backward compat (existing pages) but excluded from the inspector
+	// picker; plays on scroll like before.
 	exit: {
 		label: "Exit",
+		trigger: "scroll",
 		animations: {
 			"bounce-out":        { label: "Bounce Out",          configs: bounceOut },
 			"fade-out":          { label: "Fade Out",            configs: fadeOut },
@@ -152,6 +165,7 @@ export const REGISTRY: Record<string, Category> = {
 	},
 	attention: {
 		label: "Attention",
+		trigger: "hover",
 		animations: {
 			"heartbeat":         { label: "Heartbeat",           configs: heartbeat },
 			"flicker":           { label: "Flicker",             configs: attentionFlicker },
@@ -169,6 +183,7 @@ export const REGISTRY: Record<string, Category> = {
 	},
 	text: {
 		label: "Text",
+		trigger: "scroll",
 		animations: {
 			"tracking-in":       { label: "Tracking In",         configs: trackingIn },
 			"tracking-out":      { label: "Tracking Out",        configs: trackingOut },
@@ -182,6 +197,7 @@ export const REGISTRY: Record<string, Category> = {
 	},
 	background: {
 		label: "Background",
+		trigger: "hover",
 		animations: {
 			"color-change":      { label: "Color Change",        configs: background },
 			"kenburns":          { label: "Ken Burns",           configs: backgroundKenburns },
@@ -190,6 +206,7 @@ export const REGISTRY: Record<string, Category> = {
 	},
 	basic: {
 		label: "Basic",
+		trigger: "scroll",
 		animations: {
 			"swing-left":        { label: "Swing Left",          configs: swingLeft },
 			"swing-right":       { label: "Swing Right",         configs: swingRight },
@@ -223,6 +240,17 @@ export function flattenConfigs(): Record<string, AnimationConfig> {
 	for (const category of Object.values(REGISTRY)) {
 		for (const group of Object.values(category.animations)) {
 			Object.assign(flat, group.configs)
+		}
+	}
+	return flat
+}
+
+/** Flat map of CSS class → default TriggerId, in category precedence order. */
+export function flattenTriggers(): Record<string, TriggerId> {
+	const flat: Record<string, TriggerId> = {}
+	for (const category of Object.values(REGISTRY)) {
+		for (const group of Object.values(category.animations)) {
+			for (const cls of Object.keys(group.configs)) flat[cls] = category.trigger
 		}
 	}
 	return flat
