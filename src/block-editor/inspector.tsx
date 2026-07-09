@@ -3,6 +3,7 @@ import { addFilter } from "@wordpress/hooks"
 import { InspectorControls } from "@wordpress/block-editor"
 import { PanelBody, SelectControl, __experimentalNumberControl as NumberControl, Button } from "@wordpress/components"
 import { createHigherOrderComponent } from "@wordpress/compose"
+import { useSelect, select as wpSelect } from "@wordpress/data"
 import { Fragment, useState, useEffect, useRef } from "@wordpress/element"
 import { __ } from "@wordpress/i18n"
 import { REGISTRY, buildClassIndex, flattenConfigs } from "../config/registry"
@@ -141,6 +142,20 @@ function addAnimationAttributes(settings: Record<string, any>): Record<string, a
 }
 addFilter("blocks.registerBlockType", "theatrum-animation/attributes", addAnimationAttributes)
 
+// ─── Register stagger attributes on all blocks ─────────────────────────────────
+
+function addStaggerAttributes(settings: Record<string, any>): Record<string, any> {
+	return {
+		...settings,
+		attributes: {
+			...settings.attributes,
+			staggerEach: { type: "number", default: null },
+			staggerFrom: { type: "string", default: null },
+		},
+	}
+}
+addFilter("blocks.registerBlockType", "theatrum-animation/stagger-attributes", addStaggerAttributes)
+
 // ─── Apply data-* attributes to saved block HTML ───────────────────────────────
 
 function addAnimationSaveProps(
@@ -163,6 +178,22 @@ function addAnimationSaveProps(
 }
 addFilter("blocks.getSaveContent.extraProps", "theatrum-animation/save-props", addAnimationSaveProps)
 
+function addStaggerSaveProps(
+	props: Record<string, any>,
+	_blockType: unknown,
+	attributes: Record<string, any>
+): Record<string, any> {
+	const { staggerEach, staggerFrom } = attributes
+	if (staggerEach == null) return props
+
+	return {
+		...props,
+		"data-stagger-each": staggerEach,
+		"data-stagger-from": staggerFrom ?? "start",
+	}
+}
+addFilter("blocks.getSaveContent.extraProps", "theatrum-animation/stagger-save-props", addStaggerSaveProps)
+
 // ─── Ease controls ─────────────────────────────────────────────────────────────
 
 const EASE_POWER_OPTIONS = [
@@ -181,11 +212,21 @@ const EASE_DIR_OPTIONS = [
 	{ label: __("In → Out", "theatrum-animation"), value: "inOut" },
 ]
 
+// ─── Stagger controls ───────────────────────────────────────────────────────
+
+const STAGGER_FROM_OPTIONS = [
+	{ label: __("Start", "theatrum-animation"), value: "start" },
+	{ label: __("End", "theatrum-animation"), value: "end" },
+	{ label: __("Center", "theatrum-animation"), value: "center" },
+	{ label: __("Edges", "theatrum-animation"), value: "edges" },
+	{ label: __("Random", "theatrum-animation"), value: "random" },
+]
+
 // ─── Inspector panel ───────────────────────────────────────────────────────────
 
 const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 	return (props: any) => {
-		const { attributes, setAttributes } = props
+		const { attributes, setAttributes, clientId } = props
 		const {
 			className = "",
 			animationDuration = null,
@@ -193,7 +234,16 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 			animationEasePower = null,
 			animationEaseDir = null,
 			animationTrigger = null,
+			staggerEach = null,
+			staggerFrom = null,
 		} = attributes
+
+		// getBlockOrder (child clientIds only) is much cheaper than getBlock
+		// (deep-clones the whole subtree) — this HOC wraps every block on the page.
+		const hasMultipleChildren = useSelect(
+			(select: any) => select("core/block-editor").getBlockOrder(clientId).length > 1,
+			[clientId]
+		)
 
 		const parsed = parseAnimationClass(className)
 
@@ -358,6 +408,95 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 			}
 		}
 
+		function handleStaggerReset() {
+			setAttributes({ staggerEach: null, staggerFrom: null })
+		}
+
+		// The animations created by the last Stagger Preview click.
+		const staggerPreviewAnims = useRef<(gsap.core.Timeline | gsap.core.Tween)[]>([])
+		useEffect(() => () => {
+			staggerPreviewAnims.current.forEach((a) => a.kill())
+			staggerPreviewAnims.current = []
+		}, [])
+
+		function handleStaggerPreview() {
+			if (staggerEach == null) return
+			const canvas = document.querySelector<HTMLIFrameElement>('iframe[name="editor-canvas"]')
+			const doc = canvas?.contentDocument ?? document
+
+			staggerPreviewAnims.current.forEach((a) => a.kill())
+			staggerPreviewAnims.current = []
+
+			// Mirror the frontend's bindStaggerGroup(): direct children only, only
+			// scroll/load-triggered ones (hover children preview independently),
+			// reading each child's own applied class + overrides from its block
+			// attributes — the editor canvas never carries data-animation-* (that's
+			// only written into saved HTML), so we can't read it off the DOM.
+			const childClientIds: string[] = wpSelect("core/block-editor").getBlockOrder(clientId) ?? []
+			const from = staggerFrom || "start"
+
+			const built: { el: Element; config: any; duration: number; ease: string; delay: number }[] = []
+			for (const childId of childClientIds) {
+				const childAttrs = wpSelect("core/block-editor").getBlockAttributes(childId) ?? {}
+				const parsedChild = parseAnimationClass(childAttrs.className || "")
+				if (!parsedChild.variant) continue
+				const config = FLAT_CONFIGS[parsedChild.variant]
+				if (!config) continue
+
+				const trigger = childAttrs.animationTrigger || CATEGORY_DEFAULT_TRIGGER[parsedChild.category] || "scroll"
+				if (trigger === "hover") continue
+
+				const el = doc.querySelector(`.block-editor-block-list__block[data-block="${childId}"]`)
+				if (!el) continue
+
+				gsap.killTweensOf(el)
+				built.push({
+					el,
+					config,
+					duration: childAttrs.animationDuration != null ? childAttrs.animationDuration / 1000 : config.duration / 1000,
+					ease: childAttrs.animationEasePower && childAttrs.animationEaseDir
+						? `${childAttrs.animationEasePower}.${childAttrs.animationEaseDir}`
+						: config.ease,
+					delay: childAttrs.animationDelay != null ? childAttrs.animationDelay / 1000 : 0,
+				})
+			}
+			if (built.length === 0) return
+
+			const distribute = gsap.utils.distribute({ each: staggerEach / 1000, from })
+			const els = built.map((b) => b.el)
+
+			built.forEach(({ el, config, duration, ease, delay }, i) => {
+				const totalDelay = delay + distribute(i, el, els)
+				const hasRepeat = config.repeat !== undefined
+
+				if (config.timeline) {
+					const tl = config.timeline(el)
+					const speed = duration > 0 ? config.duration / 1000 / duration : 1
+					if (speed !== 1) tl.timeScale(speed)
+					tl.delay(totalDelay)
+					tl.restart(true)
+					staggerPreviewAnims.current.push(tl)
+					return
+				}
+
+				if (config.from) {
+					staggerPreviewAnims.current.push(gsap.from(el, {
+						...withPerspective(config.from),
+						duration, delay: totalDelay, ease,
+						...(hasRepeat
+							? { repeat: config.repeat, yoyo: config.yoyo }
+							: { clearProps: clearPropsFor(config.from) }),
+					}))
+				} else if (config.to) {
+					staggerPreviewAnims.current.push(gsap.to(el, {
+						...withPerspective(config.to),
+						duration, delay: totalDelay, ease,
+						...(hasRepeat ? { repeat: config.repeat, yoyo: config.yoyo } : {}),
+					}))
+				}
+			})
+		}
+
 		const showAnimation = !!activeCategory && !!REGISTRY[activeCategory]
 		const showVariant = !!activeAnimation && variants.length > 1
 		const showSettings = !!appliedClass
@@ -464,6 +603,50 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 							</Button>
 						)}
 					</PanelBody>
+					{hasMultipleChildren && (
+						<PanelBody title={__("Stagger", "theatrum-animation")} initialOpen={staggerEach != null}>
+							<NumberControl
+								__next40pxDefaultSize
+								label={__("Stagger Each (ms)", "theatrum-animation")}
+								value={staggerEach != null ? String(staggerEach) : ""}
+								min={0}
+								step={50}
+								onChange={(val?: string) => {
+									// parseInt of intermediate input ("-", "5e") is NaN — store null, never NaN.
+									const n = parseInt(val ?? "", 10)
+									setAttributes({ staggerEach: Number.isNaN(n) ? null : n })
+								}}
+							/>
+							<SelectControl
+								__next40pxDefaultSize
+								label={__("Stagger From", "theatrum-animation")}
+								value={staggerFrom ?? "start"}
+								options={STAGGER_FROM_OPTIONS}
+								onChange={(val: string) => setAttributes({ staggerFrom: val })}
+							/>
+							{staggerEach != null && (
+								<Button
+									variant="secondary"
+									size="compact"
+									onClick={handleStaggerPreview}
+									style={{ marginTop: "8px" }}
+								>
+									{__("Preview Stagger", "theatrum-animation")}
+								</Button>
+							)}
+							{(staggerEach != null || staggerFrom != null) && (
+								<Button
+									variant="tertiary"
+									isDestructive
+									size="compact"
+									onClick={handleStaggerReset}
+									style={{ marginTop: "8px" }}
+								>
+									{__("Reset Stagger", "theatrum-animation")}
+								</Button>
+							)}
+						</PanelBody>
+					)}
 				</InspectorControls>
 			</Fragment>
 		)

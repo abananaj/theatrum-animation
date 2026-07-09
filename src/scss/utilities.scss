@@ -1,0 +1,139 @@
+// Standalone, JS-free motion utilities. Unlike the GSAP-driven `data-animation-*`
+// system, these are plain CSS classes applied via a block's Additional CSS
+// Class(es) field — no scroll-gating, no editor UI. See docs/stagger-and-css-utilities-plan.md.
+
+:root {
+	--tm-duration-fast: 150ms;
+	--tm-duration-base: 300ms;
+	--tm-duration-slow: 500ms;
+	--tm-ease-standard: cubic-bezier(.4, 0, .2, 1);
+	--tm-ease-decelerate: cubic-bezier(0, 0, .2, 1);
+	--tm-ease-accelerate: cubic-bezier(.4, 0, 1, 1);
+}
+
+// ─── Entrance (on-load keyframe animations) ────────────────────────────────
+
+@keyframes tm-slide-in-up {
+	from { opacity: 0; transform: translateY(24px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes tm-slide-in-down {
+	from { opacity: 0; transform: translateY(-24px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes tm-slide-in-left {
+	from { opacity: 0; transform: translateX(-24px); }
+	to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes tm-slide-in-right {
+	from { opacity: 0; transform: translateX(24px); }
+	to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes tm-fade-in {
+	from { opacity: 0; }
+	to   { opacity: 1; }
+}
+@keyframes tm-scale-in-subtle {
+	from { opacity: 0; transform: scale(.96); }
+	to   { opacity: 1; transform: scale(1); }
+}
+
+.tm-slide-in-up,
+.tm-slide-in-down,
+.tm-slide-in-left,
+.tm-slide-in-right,
+.tm-fade-in,
+.tm-scale-in-subtle {
+	animation-duration: var(--tm-duration-slow);
+	animation-timing-function: var(--tm-ease-decelerate);
+	animation-fill-mode: both;
+}
+
+.tm-slide-in-up      { animation-name: tm-slide-in-up; }
+.tm-slide-in-down    { animation-name: tm-slide-in-down; }
+.tm-slide-in-left    { animation-name: tm-slide-in-left; }
+.tm-slide-in-right   { animation-name: tm-slide-in-right; }
+.tm-fade-in          { animation-name: tm-fade-in; }
+.tm-scale-in-subtle  { animation-name: tm-scale-in-subtle; }
+
+// ─── Hover / focus (transition-based) ──────────────────────────────────────
+// :focus-visible alongside :hover on every rule below for keyboard parity.
+
+.tm-hover-lift {
+	transition: transform var(--tm-duration-fast) var(--tm-ease-standard);
+
+	&:hover,
+	&:focus-visible {
+		transform: translateY(-2px);
+	}
+}
+
+.tm-hover-grow {
+	transition: transform var(--tm-duration-fast) var(--tm-ease-standard);
+
+	&:hover,
+	&:focus-visible {
+		transform: scale(1.03);
+	}
+}
+
+.tm-hover-shadow {
+	transition: box-shadow var(--tm-duration-base) var(--tm-ease-standard);
+
+	&:hover,
+	&:focus-visible {
+		box-shadow: 0 8px 20px rgba(0, 0, 0, .15);
+	}
+}
+
+.tm-hover-brighten {
+	transition: filter var(--tm-duration-fast) var(--tm-ease-standard);
+
+	&:hover,
+	&:focus-visible {
+		filter: brightness(1.1);
+	}
+}
+
+.tm-underline-grow {
+	position: relative;
+	text-decoration: none;
+
+	&::after {
+		content: "";
+		position: absolute;
+		left: 0;
+		bottom: -2px;
+		width: 0;
+		height: 1px;
+		background: currentColor;
+		transition: width var(--tm-duration-base) var(--tm-ease-standard);
+	}
+
+	&:hover::after,
+	&:focus-visible::after {
+		width: 100%;
+	}
+}
+
+// ─── Reduced motion ─────────────────────────────────────────────────────────
+
+@media (prefers-reduced-motion: reduce) {
+	.tm-slide-in-up,
+	.tm-slide-in-down,
+	.tm-slide-in-left,
+	.tm-slide-in-right,
+	.tm-fade-in,
+	.tm-scale-in-subtle {
+		animation: none;
+	}
+
+	.tm-hover-lift,
+	.tm-hover-grow,
+	.tm-hover-shadow,
+	.tm-hover-brighten,
+	.tm-underline-grow,
+	.tm-underline-grow::after {
+		transition: none;
+	}
+}

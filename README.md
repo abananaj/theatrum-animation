@@ -1,7 +1,7 @@
 # theatrum-animation
 
-> WordPress plugin — adds GSAP animations to any block via the block inspector, triggered on scroll, load, or hover.
-> **Updated: 2026-07-05**, post code review. See `docs/jul5-code-review.md` for the full review.
+> WordPress plugin — adds GSAP animations to any block via the block inspector, triggered on scroll, load, or hover. Also ships a standalone, JS-free `tm-*` CSS utility layer and a GSAP-driven stagger option for cascading a parent block's entrance children.
+> **Updated: 2026-07-08** — stagger + `tm-*` CSS utilities added. See `docs/stagger-and-css-utilities-plan.md` for the design. Previously updated 2026-07-05, post code review — see `docs/jul5-code-review.md`.
 
 ---
 
@@ -22,12 +22,16 @@
 ```
 src/
 ├── index.ts                  ← frontend entry: init + MutationObserver
+├── engine.ts                 ← shared animation state/helpers (ANIMATION_CONFIGS, buildPaused, etc.) — used by index.ts and stagger.ts
+├── stagger.ts                ← bindStaggerGroups(): GSAP stagger for a parent's entrance children
+├── scss/
+│   └── utilities.scss        ← standalone tm-* CSS utility classes (no GSAP/JS involved)
 ├── config/
 │   ├── animationConfigs.ts   ← AnimationConfig interface
 │   ├── registry.ts           ← REGISTRY (single source of truth for editor + frontend)
 │   └── scrollTrigger.ts      ← ScrollTrigger config (trigger: top 85%, once: true)
 ├── block-editor/
-│   └── inspector.tsx         ← HOC: InspectorControls panel, block filters
+│   └── inspector.tsx         ← HOC: InspectorControls panel (Animation + Stagger), block filters
 ├── entrance/                 ← 16 animation groups
 ├── exit/                     ← 19 animation groups
 ├── attention/                ← 12 animation groups
@@ -131,6 +135,33 @@ are built paused and played on scroll-in or on hover.
 
 ---
 
+## Stagger
+
+A parent block with 2+ inner blocks gets a **Stagger** inspector panel (below the Animation panel) with two controls: **Stagger Each** (ms between children) and **Stagger From** (`Start`/`End`/`Center`/`Edges`/`Random`) — GSAP's own stagger model (`gsap.utils.distribute`), no grid/axis options. Setting Stagger Each writes `data-stagger-each`/`data-stagger-from` onto the parent's saved HTML.
+
+**Preview Stagger** / **Reset Stagger** buttons work like the Animation panel's Preview/Reset, but Preview plays the whole child cascade at once rather than a single block: it reads the block's children (`getBlockOrder`), pulls each child's own applied animation + Duration/Delay/Ease overrides from its block attributes (the editor canvas has no `data-animation-*` to read — that's save-only — so this mirrors the same workaround the single-block Preview already uses), skips hover-triggered children, and fires all eligible children together with the same `gsap.utils.distribute()` offsets the frontend uses.
+
+On the frontend, `src/stagger.ts`'s `bindStaggerGroups()` runs before the normal per-element sweep in `index.ts`: for each `[data-stagger-each]` parent, it collects **direct children** whose resolved trigger is `scroll` or `load` (hover/attention children are excluded and animate independently), computes each one's delay offset via `gsap.utils.distribute({ each, from })`, builds them all paused (`buildPaused()` from `engine.ts`), and plays the whole group together — gated on the parent scrolling into view via `onScrollIntoView()`, or immediately if every member is Load-triggered.
+
+**Scope:** static blocks only (Group, Columns, Row, etc.) — server-rendered/dynamic parent blocks never get `data-stagger-*` written (same `blocks.getSaveContent.extraProps` limitation as `data-animation-*`, see Dynamic blocks limitation above). Direct children only, no recursion into grandchildren.
+
+**Shared engine module:** `applyOverrides`, `resolveTrigger`, `buildPaused`, `ANIMATION_CONFIGS`, and the `processed` WeakSet moved out of `index.ts` into `src/engine.ts` so `stagger.ts` could import them without creating a circular import (`index.ts` calls `bindStaggerGroups()`, so `stagger.ts` importing back from `index.ts` would cycle). `buildPaused()` also picked up a fix while it moved: its `timeline`-based branch now calls `tl.delay(delay)`, which it previously never did — needed for stagger offsets to apply to timeline-based animations (e.g. `flicker-in`), and incidentally fixes the same silent no-op for any existing scroll/hover timeline animation's Delay override.
+
+---
+
+## CSS Utilities (`tm-*`)
+
+`src/scss/utilities.scss` — a standalone, JS-free set of utility classes, separate from the GSAP `REGISTRY` (no inspector UI; apply via a block's **Additional CSS Class(es)** field). Prefixed `tm-` to avoid any collision with the GSAP registry's class keys.
+
+- **Entrance** (fires on load/paint via `@keyframes` + `animation-fill-mode: both`, not scroll-gated): `.tm-slide-in-up`, `.tm-slide-in-down`, `.tm-slide-in-left`, `.tm-slide-in-right`, `.tm-fade-in`, `.tm-scale-in-subtle`.
+- **Hover/focus** (transition-based, `:focus-visible` alongside `:hover` for keyboard parity): `.tm-hover-lift`, `.tm-hover-grow`, `.tm-hover-shadow`, `.tm-hover-brighten`, `.tm-underline-grow`.
+- Motion tokens: `--tm-duration-{fast,base,slow}`, `--tm-ease-{standard,decelerate,accelerate}`.
+- Respects `prefers-reduced-motion: reduce` (own `@media` block, independent of the GSAP frontend's reduced-motion gate).
+
+**Delivery:** no separate stylesheet is enqueued. This Vite build has no HTML entry point to extract CSS against (a plain `.ts` entry → IIFE), so Vite bundles `utilities.scss` into `dist/main.js` and injects it via `document.head.appendChild(<style>)` at script execution — `dist/main.css` is never created. This is why an earlier `dist/main.css` enqueue in this plugin's history was removed as dead code (see Next Steps below). Practical trade-off: the `tm-*` classes render only once `main.js` executes (already the case for every other animation in this plugin), and there's a theoretical brief FOUC window before injection on first paint.
+
+---
+
 ## Build & Dev
 
 ```bash
@@ -144,6 +175,12 @@ npm run deploy         # alias for build
 ---
 
 ## Next Steps 🔧
+
+Added 2026-07-08 (stagger + CSS utilities pass):
+
+- ✅ Stagger inspector panel + frontend `bindStaggerGroups()` — see Stagger section above
+- ✅ Standalone `tm-*` CSS utility classes — see CSS Utilities section above
+- ✅ `buildPaused()` timeline branch now honors `delay` (`tl.delay(delay)`) — was previously silently dropped for any scroll/hover animation using a `timeline` config
 
 Fixed in the 2026-07-05 review pass:
 
@@ -193,12 +230,16 @@ Remaining, in order of severity:
 |---|---|
 | `theatrum-animation.php` | Plugin init, asset enqueue |
 | `src/index.ts` | Frontend entry, `initializeAnimations()`, MutationObserver |
+| `src/engine.ts` | Shared animation state/helpers (`ANIMATION_CONFIGS`, `applyOverrides`, `resolveTrigger`, `buildPaused`) used by both `index.ts` and `stagger.ts` |
+| `src/stagger.ts` | `bindStaggerGroups()` — GSAP stagger for a parent block's entrance children |
+| `src/scss/utilities.scss` | Standalone `tm-*` CSS utility classes |
 | `src/config/registry.ts` | `REGISTRY` — single source of truth; `flattenConfigs()`, `buildClassIndex()` |
 | `src/config/animationConfigs.ts` | `AnimationConfig` interface |
 | `src/config/scrollTrigger.ts` | ScrollTrigger defaults |
-| `src/block-editor/inspector.tsx` | Block editor HOC + all controls |
+| `src/block-editor/inspector.tsx` | Block editor HOC + all controls (Animation + Stagger panels) |
 | `vite.config.js` | Frontend build config |
 | `vite.config.editor.js` | Editor build config |
 | `docs/inspector-animation-options.md` | Diagnosis doc for inspector panel scope — resolved, kept for history |
 | `docs/jul5-code-review.md` | 2026-07-05 code review — source of the fixes in Next Steps above |
+| `docs/stagger-and-css-utilities-plan.md` | Design doc for the stagger + `tm-*` CSS utilities features |
 | `animista/` | Original CSS keyframe sources (pre-migration, stale) |
