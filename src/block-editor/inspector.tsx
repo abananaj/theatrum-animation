@@ -123,9 +123,21 @@ function stripAnimationClasses(className: string): string[] {
 	return (className || "").split(" ").filter((c) => c && !(c in CLASS_INDEX))
 }
 
+// ─── Blocks excluded from animation entirely ───────────────────────────────────
+//
+// WPForms' block (and any future wpforms/* block) is skipped everywhere below —
+// its preview/frontend widgets (reCAPTCHA, date pickers, etc.) measure their own
+// size on mount, and injecting unexpected attributes/props into a block whose
+// schema we don't control risks corrupting its ServerSideRender preview. Wrap it
+// in a Group block and animate that instead.
+function isExcludedBlock(name: unknown): boolean {
+	return typeof name === "string" && name.startsWith("wpforms/")
+}
+
 // ─── Register custom attributes on all blocks ──────────────────────────────────
 
-function addAnimationAttributes(settings: Record<string, any>): Record<string, any> {
+function addAnimationAttributes(settings: Record<string, any>, name?: string): Record<string, any> {
+	if (isExcludedBlock(name ?? settings?.name)) return settings
 	return {
 		...settings,
 		attributes: {
@@ -144,7 +156,8 @@ addFilter("blocks.registerBlockType", "theatrum-animation/attributes", addAnimat
 
 // ─── Register stagger attributes on all blocks ─────────────────────────────────
 
-function addStaggerAttributes(settings: Record<string, any>): Record<string, any> {
+function addStaggerAttributes(settings: Record<string, any>, name?: string): Record<string, any> {
+	if (isExcludedBlock(name ?? settings?.name)) return settings
 	return {
 		...settings,
 		attributes: {
@@ -160,9 +173,10 @@ addFilter("blocks.registerBlockType", "theatrum-animation/stagger-attributes", a
 
 function addAnimationSaveProps(
 	props: Record<string, any>,
-	_blockType: unknown,
+	blockType: Record<string, any>,
 	attributes: Record<string, any>
 ): Record<string, any> {
+	if (isExcludedBlock(blockType?.name)) return props
 	const { className = "", animationDuration, animationDelay, animationEasePower, animationEaseDir, animationTrigger } = attributes
 	const hasAnimation = (className || "").split(" ").some((cls: string) => cls in CLASS_INDEX)
 	if (!hasAnimation) return props
@@ -180,9 +194,10 @@ addFilter("blocks.getSaveContent.extraProps", "theatrum-animation/save-props", a
 
 function addStaggerSaveProps(
 	props: Record<string, any>,
-	_blockType: unknown,
+	blockType: Record<string, any>,
 	attributes: Record<string, any>
 ): Record<string, any> {
+	if (isExcludedBlock(blockType?.name)) return props
 	const { staggerEach, staggerFrom } = attributes
 	if (staggerEach == null) return props
 
@@ -226,6 +241,8 @@ const STAGGER_FROM_OPTIONS = [
 
 const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 	return (props: any) => {
+		if (isExcludedBlock(props.name)) return <BlockEdit {...props} />
+
 		const { attributes, setAttributes, clientId } = props
 		const {
 			className = "",

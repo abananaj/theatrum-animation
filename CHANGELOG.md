@@ -7,6 +7,12 @@ All notable changes to this plugin are documented here, following
 ## [Unreleased]
 
 ### Fixed
+- `wpforms/*` blocks are now excluded from every animation filter (`blocks.registerBlockType`
+  attribute/stagger-attribute injection, `blocks.getSaveContent.extraProps`, and the
+  `editor.BlockEdit` inspector HOC) — these filters previously applied to every registered
+  block with no name check, unlike every other block-scoped filter in the codebase. Injecting
+  unexpected attributes into WPForms' block schema risked corrupting its editor preview. Wrap
+  a WPForms block in a Group block to animate it instead.
 - `prefers-reduced-motion` now disables all frontend animations (WCAG 2.3.3 / 2.2.2).
 - Three-way `scale-up`/`scale-down` class collision between Exit, Attention, and Basic
   categories — Attention's looping variants renamed to `attn-scale-*`; Exit's duplicate
