@@ -237,6 +237,22 @@ const STAGGER_FROM_OPTIONS = [
 	{ label: __("Random", "theatrum-animation"), value: "random" },
 ]
 
+// ─── Copy / Paste animation ─────────────────────────────────────────────────────
+//
+// A module-level "clipboard" — shared across every block's HOC instance since
+// this module is loaded once per page. In-memory only; cleared on reload.
+
+type AnimationClipboard = {
+	appliedClass: string
+	animationDuration: number | null
+	animationDelay: number | null
+	animationEasePower: string | null
+	animationEaseDir: string | null
+	animationTrigger: string | null
+} | null
+
+let animationClipboard: AnimationClipboard = null
+
 // ─── Inspector panel ───────────────────────────────────────────────────────────
 
 const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
@@ -353,6 +369,34 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 				animationEasePower: null,
 				animationEaseDir: null,
 				animationTrigger: null,
+			})
+		}
+
+		function handleCopy() {
+			if (!appliedClass) return
+			animationClipboard = {
+				appliedClass,
+				animationDuration,
+				animationDelay,
+				animationEasePower,
+				animationEaseDir,
+				animationTrigger,
+			}
+		}
+
+		function handlePaste() {
+			if (!animationClipboard) return
+			const base = stripAnimationClasses(className)
+			base.push(animationClipboard.appliedClass)
+			setUiCategory("")
+			setUiAnimation("")
+			setUiTrigger("")
+			commitClassName(base.join(" "), {
+				animationDuration: animationClipboard.animationDuration,
+				animationDelay: animationClipboard.animationDelay,
+				animationEasePower: animationClipboard.animationEasePower,
+				animationEaseDir: animationClipboard.animationEaseDir,
+				animationTrigger: animationClipboard.animationTrigger,
 			})
 		}
 
@@ -551,6 +595,60 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 								onChange={handleVariantChange}
 							/>
 						)}
+						{hasMultipleChildren && (
+							<>
+								<div
+									style={{
+										marginTop: "16px",
+										paddingTop: "16px",
+										borderTop: "1px solid #ddd",
+										fontWeight: 600,
+									}}
+								>
+									{__("Stagger", "theatrum-animation")}
+								</div>
+								<NumberControl
+									__next40pxDefaultSize
+									label={__("Stagger Each (ms)", "theatrum-animation")}
+									value={staggerEach != null ? String(staggerEach) : ""}
+									min={0}
+									step={50}
+									onChange={(val?: string) => {
+										// parseInt of intermediate input ("-", "5e") is NaN — store null, never NaN.
+										const n = parseInt(val ?? "", 10)
+										setAttributes({ staggerEach: Number.isNaN(n) ? null : n })
+									}}
+								/>
+								<SelectControl
+									__next40pxDefaultSize
+									label={__("Stagger From", "theatrum-animation")}
+									value={staggerFrom ?? "start"}
+									options={STAGGER_FROM_OPTIONS}
+									onChange={(val: string) => setAttributes({ staggerFrom: val })}
+								/>
+								{staggerEach != null && (
+									<Button
+										variant="secondary"
+										size="compact"
+										onClick={handleStaggerPreview}
+										style={{ marginTop: "8px" }}
+									>
+										{__("Preview Stagger", "theatrum-animation")}
+									</Button>
+								)}
+								{(staggerEach != null || staggerFrom != null) && (
+									<Button
+										variant="tertiary"
+										isDestructive
+										size="compact"
+										onClick={handleStaggerReset}
+										style={{ marginTop: "8px" }}
+									>
+										{__("Reset Stagger", "theatrum-animation")}
+									</Button>
+								)}
+							</>
+						)}
 						{showSettings && (
 							<>
 								<NumberControl
@@ -606,7 +704,25 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 								>
 									{__("Preview Animation", "theatrum-animation")}
 								</Button>
+								<Button
+									variant="secondary"
+									size="compact"
+									onClick={handleCopy}
+									style={{ marginTop: "8px" }}
+								>
+									{__("Copy Animation", "theatrum-animation")}
+								</Button>
 							</>
+						)}
+						{!!animationClipboard && (
+							<Button
+								variant="secondary"
+								size="compact"
+								onClick={handlePaste}
+								style={{ marginTop: "8px" }}
+							>
+								{__("Paste Animation", "theatrum-animation")}
+							</Button>
 						)}
 						{hasAnyAnimation && (
 							<Button
@@ -620,50 +736,6 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 							</Button>
 						)}
 					</PanelBody>
-					{hasMultipleChildren && (
-						<PanelBody title={__("Stagger", "theatrum-animation")} initialOpen={staggerEach != null}>
-							<NumberControl
-								__next40pxDefaultSize
-								label={__("Stagger Each (ms)", "theatrum-animation")}
-								value={staggerEach != null ? String(staggerEach) : ""}
-								min={0}
-								step={50}
-								onChange={(val?: string) => {
-									// parseInt of intermediate input ("-", "5e") is NaN — store null, never NaN.
-									const n = parseInt(val ?? "", 10)
-									setAttributes({ staggerEach: Number.isNaN(n) ? null : n })
-								}}
-							/>
-							<SelectControl
-								__next40pxDefaultSize
-								label={__("Stagger From", "theatrum-animation")}
-								value={staggerFrom ?? "start"}
-								options={STAGGER_FROM_OPTIONS}
-								onChange={(val: string) => setAttributes({ staggerFrom: val })}
-							/>
-							{staggerEach != null && (
-								<Button
-									variant="secondary"
-									size="compact"
-									onClick={handleStaggerPreview}
-									style={{ marginTop: "8px" }}
-								>
-									{__("Preview Stagger", "theatrum-animation")}
-								</Button>
-							)}
-							{(staggerEach != null || staggerFrom != null) && (
-								<Button
-									variant="tertiary"
-									isDestructive
-									size="compact"
-									onClick={handleStaggerReset}
-									style={{ marginTop: "8px" }}
-								>
-									{__("Reset Stagger", "theatrum-animation")}
-								</Button>
-							)}
-						</PanelBody>
-					)}
 				</InspectorControls>
 			</Fragment>
 		)
