@@ -62,7 +62,7 @@ function playOnLoad(el: Element, config: AnimationConfig, timing: Timing): void 
 
 /** On Hover: play while hovered, pause on leave. Touch has no hover → tap-to-toggle. */
 function playOnHover(el: Element, config: AnimationConfig, timing: Timing): void {
-	const anim = buildPaused(el, config, timing)
+	const anim = buildPaused(el, config, timing, false)
 	if (window.matchMedia("(hover: hover)").matches) {
 		el.addEventListener("mouseenter", () => anim.play())
 		el.addEventListener("mouseleave", () => anim.pause())

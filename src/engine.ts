@@ -42,10 +42,12 @@ export function resolveTrigger(el: Element, cls: string): TriggerId {
 /**
  * Build a config's animation paused, for triggers that decide when to play
  * (scroll-timeline, hover, stagger). `timeline()` creates its own timeline; from/to
- * become paused tweens (from-values still render immediately so the element
- * sits in its pre-animation state until played).
+ * become paused tweens. By default from-values render immediately so the element
+ * sits in its pre-animation state until played (scroll/load triggers rely on this).
+ * Hover triggers must pass `immediateRender: false` — the element should sit in its
+ * normal state until hovered, not its from-state.
  */
-export function buildPaused(el: Element, config: AnimationConfig, timing: Timing): gsap.core.Timeline | gsap.core.Tween {
+export function buildPaused(el: Element, config: AnimationConfig, timing: Timing, immediateRender = true): gsap.core.Timeline | gsap.core.Tween {
 	const { duration, ease, delay } = timing
 	const hasRepeat = config.repeat !== undefined
 	if (config.timeline) {
@@ -58,7 +60,7 @@ export function buildPaused(el: Element, config: AnimationConfig, timing: Timing
 	if (config.from) {
 		return gsap.from(el, {
 			...withPerspective(config.from),
-			duration, delay, ease, paused: true,
+			duration, delay, ease, paused: true, immediateRender,
 			...(hasRepeat
 				? { repeat: config.repeat, yoyo: config.yoyo }
 				: { clearProps: clearPropsFor(config.from) }),
