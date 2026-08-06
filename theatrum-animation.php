@@ -65,3 +65,48 @@ function theatrum_animation_enqueue_editor_scripts() {
   }
 }
 add_action('enqueue_block_editor_assets', 'theatrum_animation_enqueue_editor_scripts');
+
+/**
+ * Mirror the animation/stagger attributes that
+ * src/block-editor/inspector.tsx adds to every block on the client
+ * (via the `blocks.registerBlockType` filter) onto the server-side block
+ * type registration.
+ *
+ * Without this, a block's PHP-registered attribute schema doesn't include
+ * these keys, so any block using ServerSideRender (which round-trips
+ * attributes through the REST `block-renderer` endpoint, validated against
+ * this schema with additionalProperties:false) fails with "Invalid
+ * parameter(s): attributes" the moment the client sends staggerFrom/
+ * animationDuration/etc. Most blocks never notice because they don't use
+ * ServerSideRender, but theatrum/production-quotes and
+ * theatrum/performances-list do.
+ *
+ * Excludes wpforms/* for the same reason as the JS filter: its widgets
+ * measure their own size on mount and injecting attributes into a schema
+ * we don't control risks corrupting its ServerSideRender preview.
+ */
+function theatrum_animation_register_block_type_args($args, $name)
+{
+  if (is_string($name) && str_starts_with($name, 'wpforms/')) {
+    return $args;
+  }
+
+  // Numeric attributes are typed as [number, string]: their JS-side default
+  // is null, and a null value round-tripped through ServerSideRender's GET
+  // request (block-renderer's REST endpoint) serializes to an empty string
+  // (`attributes[animationDuration]=`) — there's no way to distinguish
+  // "null" from "" in a query string. A strict `type: number` would reject
+  // that empty string as invalid before it ever reaches sanitize_callback.
+  $args['attributes'] = array_merge($args['attributes'] ?? [], [
+    'animationDuration'  => ['type' => ['number', 'string'], 'default' => null],
+    'animationDelay'     => ['type' => ['number', 'string'], 'default' => null],
+    'animationEasePower' => ['type' => 'string', 'default' => null],
+    'animationEaseDir'   => ['type' => 'string', 'default' => null],
+    'animationTrigger'   => ['type' => 'string', 'default' => null],
+    'staggerEach'        => ['type' => ['number', 'string'], 'default' => null],
+    'staggerFrom'        => ['type' => 'string', 'default' => null],
+  ]);
+
+  return $args;
+}
+add_filter('register_block_type_args', 'theatrum_animation_register_block_type_args', 10, 2);
