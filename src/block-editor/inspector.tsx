@@ -481,7 +481,10 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 		}, [])
 
 		function handleStaggerPreview() {
-			if (staggerEach == null) return
+			// Preview works even before Stagger Each is set, using a sensible
+			// default — the button shouldn't require committing a value first
+			// just to see what stagger looks like.
+			const each = staggerEach ?? 100
 			const canvas = document.querySelector<HTMLIFrameElement>('iframe[name="editor-canvas"]')
 			const doc = canvas?.contentDocument ?? document
 
@@ -523,7 +526,7 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 			}
 			if (built.length === 0) return
 
-			const distribute = gsap.utils.distribute({ each: staggerEach / 1000, from })
+			const distribute = gsap.utils.distribute({ each: each / 1000, from })
 			const els = built.map((b) => b.el)
 
 			built.forEach(({ el, config, duration, ease, delay }, i) => {
@@ -626,16 +629,14 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 									options={STAGGER_FROM_OPTIONS}
 									onChange={(val: string) => setAttributes({ staggerFrom: val })}
 								/>
-								{staggerEach != null && (
-									<Button
-										variant="secondary"
-										size="compact"
-										onClick={handleStaggerPreview}
-										style={{ marginTop: "8px" }}
-									>
-										{__("Preview Stagger", "theatrum-animation")}
-									</Button>
-								)}
+								<Button
+									variant="secondary"
+									size="compact"
+									onClick={handleStaggerPreview}
+									style={{ marginTop: "8px" }}
+								>
+									{__("Preview Stagger", "theatrum-animation")}
+								</Button>
 								{(staggerEach != null || staggerFrom != null) && (
 									<Button
 										variant="tertiary"
