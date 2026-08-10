@@ -572,7 +572,7 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 			<Fragment>
 				<BlockEdit {...props} />
 				<InspectorControls>
-					<PanelBody title={__("Animation", "theatrum-animation")} initialOpen={!!activeCategory}>
+					<PanelBody title={__("Animation", "theatrum-animation")} initialOpen={false}>
 						<SelectControl
 							__next40pxDefaultSize
 							label={__("Category", "theatrum-animation")}
@@ -597,58 +597,6 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 								options={variantOptions(variants)}
 								onChange={handleVariantChange}
 							/>
-						)}
-						{hasMultipleChildren && (
-							<>
-								<div
-									style={{
-										marginTop: "16px",
-										paddingTop: "16px",
-										borderTop: "1px solid #ddd",
-										fontWeight: 600,
-									}}
-								>
-									{__("Stagger", "theatrum-animation")}
-								</div>
-								<NumberControl
-									__next40pxDefaultSize
-									label={__("Stagger Each (ms)", "theatrum-animation")}
-									value={staggerEach != null ? String(staggerEach) : ""}
-									min={0}
-									step={50}
-									onChange={(val?: string) => {
-										// parseInt of intermediate input ("-", "5e") is NaN — store null, never NaN.
-										const n = parseInt(val ?? "", 10)
-										setAttributes({ staggerEach: Number.isNaN(n) ? null : n })
-									}}
-								/>
-								<SelectControl
-									__next40pxDefaultSize
-									label={__("Stagger From", "theatrum-animation")}
-									value={staggerFrom ?? "start"}
-									options={STAGGER_FROM_OPTIONS}
-									onChange={(val: string) => setAttributes({ staggerFrom: val })}
-								/>
-								<Button
-									variant="secondary"
-									size="compact"
-									onClick={handleStaggerPreview}
-									style={{ marginTop: "8px" }}
-								>
-									{__("Preview Stagger", "theatrum-animation")}
-								</Button>
-								{(staggerEach != null || staggerFrom != null) && (
-									<Button
-										variant="tertiary"
-										isDestructive
-										size="compact"
-										onClick={handleStaggerReset}
-										style={{ marginTop: "8px" }}
-									>
-										{__("Reset Stagger", "theatrum-animation")}
-									</Button>
-								)}
-							</>
 						)}
 						{showSettings && (
 							<>
@@ -735,6 +683,58 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 							>
 								{__("Reset Animation", "theatrum-animation")}
 							</Button>
+						)}
+						{hasMultipleChildren && (
+							<>
+								<div
+									style={{
+										marginTop: "16px",
+										paddingTop: "16px",
+										borderTop: "1px solid #ddd",
+										fontWeight: 600,
+									}}
+								>
+									{__("Stagger", "theatrum-animation")}
+								</div>
+								<NumberControl
+									__next40pxDefaultSize
+									label={__("Stagger Each (ms)", "theatrum-animation")}
+									value={staggerEach != null ? String(staggerEach) : ""}
+									min={0}
+									step={50}
+									onChange={(val?: string) => {
+										// parseInt of intermediate input ("-", "5e") is NaN — store null, never NaN.
+										const n = parseInt(val ?? "", 10)
+										setAttributes({ staggerEach: Number.isNaN(n) ? null : n })
+									}}
+								/>
+								<SelectControl
+									__next40pxDefaultSize
+									label={__("Stagger From", "theatrum-animation")}
+									value={staggerFrom ?? "start"}
+									options={STAGGER_FROM_OPTIONS}
+									onChange={(val: string) => setAttributes({ staggerFrom: val })}
+								/>
+								<Button
+									variant="secondary"
+									size="compact"
+									onClick={handleStaggerPreview}
+									style={{ marginTop: "8px" }}
+								>
+									{__("Preview Stagger", "theatrum-animation")}
+								</Button>
+								{(staggerEach != null || staggerFrom != null) && (
+									<Button
+										variant="tertiary"
+										isDestructive
+										size="compact"
+										onClick={handleStaggerReset}
+										style={{ marginTop: "8px" }}
+									>
+										{__("Reset Stagger", "theatrum-animation")}
+									</Button>
+								)}
+							</>
 						)}
 					</PanelBody>
 				</InspectorControls>
