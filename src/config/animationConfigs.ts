@@ -12,12 +12,19 @@ const TRANSFORM_KEYS = new Set([
  * Build a `clearProps` list limited to the properties a tween actually animated.
  * Using GSAP's `clearProps: "all"` also strips inline styles WordPress applies
  * for block supports (padding, border, etc.), so we clear only what we set.
+ *
+ * `.has-parallax` cover blocks rely on `background-attachment: fixed`, which the
+ * browser re-resolves relative to the viewport the instant an inline `transform`
+ * is removed from that same element — visible as the background snapping/resizing
+ * right when the entrance animation ends. Leaving the (now-identity) transform in
+ * place keeps that containing-block context stable, so we skip clearing it there.
  */
-export function clearPropsFor(vars: gsap.TweenVars): string {
+export function clearPropsFor(vars: gsap.TweenVars, el?: Element): string {
 	const props = new Set<string>()
 	for (const key of Object.keys(vars)) {
 		props.add(TRANSFORM_KEYS.has(key) ? "transform" : key)
 	}
+	if (el?.classList.contains("has-parallax")) props.delete("transform")
 	return [...props].join(",")
 }
 

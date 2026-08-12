@@ -21,7 +21,7 @@ function playOneShot(el: Element, config: AnimationConfig, timing: Timing, scrol
 			...(scrollTrigger ? { scrollTrigger } : {}),
 			...(hasRepeat
 				? { repeat: config.repeat, yoyo: config.yoyo }
-				: { clearProps: clearPropsFor(config.from) }),
+				: { clearProps: clearPropsFor(config.from, el) }),
 		})
 	} else if (config.to) {
 		gsap.to(el, {

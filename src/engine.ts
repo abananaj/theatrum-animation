@@ -63,7 +63,7 @@ export function buildPaused(el: Element, config: AnimationConfig, timing: Timing
 			duration, delay, ease, paused: true, immediateRender,
 			...(hasRepeat
 				? { repeat: config.repeat, yoyo: config.yoyo }
-				: { clearProps: clearPropsFor(config.from) }),
+				: { clearProps: clearPropsFor(config.from, el) }),
 		})
 	}
 	return gsap.to(el, {
