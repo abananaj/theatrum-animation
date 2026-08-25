@@ -1,4 +1,5 @@
 import gsap from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { type AnimationConfig } from "./config/registry"
 import { clearPropsFor, withPerspective } from "./config/animationConfigs"
 import { getScrollTrigger, onScrollIntoView } from "./config/scrollTrigger"
@@ -116,6 +117,14 @@ export function initializeAnimations(): void {
 			}
 		}
 	}).observe(document.body, { childList: true, subtree: true })
+
+	// Web fonts and late-loading images can shift layout after DOMContentLoaded,
+	// when ScrollTrigger first measured each `once: true` trigger's boundary. A
+	// one-shot entrance animation whose boundary went stale that way never
+	// fires `onEnter` and sticks at its from-state (e.g. scale: 0) forever.
+	// window "load" fires once everything has settled, so refresh here corrects
+	// any boundary before the user scrolls that far.
+	window.addEventListener("load", () => ScrollTrigger.refresh())
 }
 
 if (document.readyState === "loading") {
