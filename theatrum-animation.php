@@ -15,6 +15,8 @@ if (! defined('ABSPATH')) {
   exit;
 }
 
+require_once __DIR__ . '/inc/render-block.php';
+
 /**
  * Enqueue the frontend animation script.
  */
@@ -98,13 +100,14 @@ function theatrum_animation_register_block_type_args($args, $name)
   // "null" from "" in a query string. A strict `type: number` would reject
   // that empty string as invalid before it ever reaches sanitize_callback.
   $args['attributes'] = array_merge($args['attributes'] ?? [], [
-    'animationDuration'  => ['type' => ['number', 'string'], 'default' => null],
-    'animationDelay'     => ['type' => ['number', 'string'], 'default' => null],
-    'animationEasePower' => ['type' => 'string', 'default' => null],
-    'animationEaseDir'   => ['type' => 'string', 'default' => null],
-    'animationTrigger'   => ['type' => 'string', 'default' => null],
-    'staggerEach'        => ['type' => ['number', 'string'], 'default' => null],
-    'staggerFrom'        => ['type' => 'string', 'default' => null],
+    'animationDuration'     => ['type' => ['number', 'string'], 'default' => null],
+    'animationDelay'        => ['type' => ['number', 'string'], 'default' => null],
+    'animationEasePower'    => ['type' => 'string', 'default' => null],
+    'animationEaseDir'      => ['type' => 'string', 'default' => null],
+    'animationTrigger'      => ['type' => 'string', 'default' => null],
+    'animationTriggerPoint' => ['type' => ['number', 'string'], 'default' => null],
+    'staggerEach'           => ['type' => ['number', 'string'], 'default' => null],
+    'staggerFrom'           => ['type' => 'string', 'default' => null],
   ]);
 
   return $args;

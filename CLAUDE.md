@@ -39,6 +39,10 @@ src/
 ├── config/registry.ts  # REGISTRY — single source of truth for editor + frontend
 ├── block-editor/inspector.tsx  # HOC: InspectorControls (Animation + Stagger panels)
 └── entrance/, exit/, attention/, text/, background/, basic/   # animation groups
+
+inc/
+└── render-block.php   # render_block filter: re-applies data-animation-*/data-stagger-*
+                        # overrides onto dynamic/server-rendered block output
 ```
 
 `REGISTRY` in `config/registry.ts` is the one place to add or change an animation — both the
@@ -48,9 +52,6 @@ a duplicate key silently desyncs editor and frontend).
 
 ## Known Open Issues (see README's "Next Steps" for full detail)
 
-- Dynamic (server-rendered) blocks lose Duration/Delay/Ease/Trigger overrides — only the CSS
-  animation class survives, not the `data-animation-*` attributes. Needs a `render_block` PHP
-  filter; not yet implemented.
 - `kenburns-*` transforms the whole block wrapper, not just an inner image layer.
 - `ping`'s timeline doesn't loop cleanly (visible jump on `repeat: -1`).
 

@@ -3,7 +3,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { type AnimationConfig } from "./config/registry"
 import { clearPropsFor, withPerspective } from "./config/animationConfigs"
 import { getScrollTrigger, onScrollIntoView } from "./config/scrollTrigger"
-import { ANIMATION_CONFIGS, processed, applyOverrides, resolveTrigger, buildPaused, type Timing } from "./engine"
+import { ANIMATION_CONFIGS, processed, applyOverrides, resolveTrigger, resolveTriggerPoint, buildPaused, type Timing } from "./engine"
 import { bindStaggerGroups } from "./stagger"
 import "./scss/utilities.scss"
 
@@ -36,13 +36,14 @@ function playOneShot(el: Element, config: AnimationConfig, timing: Timing, scrol
 
 /** On Scroll: fire once when the element scrolls into view. */
 function playOnScroll(el: Element, config: AnimationConfig, timing: Timing): void {
+	const point = resolveTriggerPoint(el)
 	if (config.timeline) {
 		// Timelines can't take the integrated scrollTrigger var — build paused, play on entry.
 		const tl = buildPaused(el, config, timing)
-		onScrollIntoView(el, () => tl.play())
+		onScrollIntoView(el, () => tl.play(), point)
 		return
 	}
-	playOneShot(el, config, timing, getScrollTrigger(el))
+	playOneShot(el, config, timing, getScrollTrigger(el, point))
 }
 
 /** On Load: fire immediately on page load, regardless of scroll position. */

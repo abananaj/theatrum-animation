@@ -29,7 +29,7 @@ src/
 ├── config/
 │   ├── animationConfigs.ts   ← AnimationConfig interface
 │   ├── registry.ts           ← REGISTRY (single source of truth for editor + frontend)
-│   └── scrollTrigger.ts      ← ScrollTrigger config (trigger: top 85%, once: true)
+│   └── scrollTrigger.ts      ← ScrollTrigger config (trigger: top {point}%, once: true — point from data-animation-trigger-point, default 85)
 ├── block-editor/
 │   └── inspector.tsx         ← HOC: InspectorControls panel (Animation + Stagger), block filters
 ├── entrance/                 ← 16 animation groups
@@ -85,7 +85,7 @@ One-shot tweens use `from`/`to` + ScrollTrigger. Looping/multi-step animations u
 
 Every CSS class key must be unique across the whole `REGISTRY` — `flattenConfigs()` (frontend) is last-category-wins and `buildClassIndex()` (inspector) is first-category-wins, so a duplicate key makes the frontend play one config while the inspector shows another. This bit us once: it was a **three-way** `scale-up`/`scale-down` collision across `exit`, `attention`, and `basic` — attention's looping variants are now namespaced `attn-scale-up-*` / `attn-scale-down-*`, and exit's duplicate one-shot definitions were deleted outright.
 
-**Dynamic blocks limitation:** `blocks.getSaveContent.extraProps` only writes `data-animation-*` overrides into statically-saved block HTML. Server-rendered blocks (most theatrum-blocks query/meta blocks) keep the animation class — so the animation still plays — but lose any custom Duration/Delay/Ease override, falling back to the animation's default timing. Fixing this needs a `render_block` PHP filter mapping the block's attributes onto the rendered wrapper; not yet implemented.
+**Dynamic blocks:** `blocks.getSaveContent.extraProps` only writes `data-animation-*` overrides into statically-saved block HTML — server-rendered blocks (most theatrum-blocks query/meta blocks) never pass through it. `inc/render-block.php`'s `render_block` filter closes this gap: it reads the same override attributes off `$block['attrs']`, and — gated on `WP_Block_Type::is_dynamic()` so static blocks are untouched — writes the equivalent `data-animation-*`/`data-stagger-*` attributes onto the block's outer wrapper via `WP_HTML_Tag_Processor`, matching the JS writer's value formats exactly.
 
 **Ken Burns caveat:** `kenburns-*` configs transform the block wrapper itself, so applying it to a Cover block scales the whole block (including any overlaid text), not just the background image. A true Ken Burns effect needs the transform on an inner image layer (e.g. `.wp-block-cover__image-background`) with `overflow: hidden` on the wrapper — not yet implemented.
 
@@ -102,12 +102,13 @@ Every CSS class key must be unique across the whole `REGISTRY` — `flattenConfi
 | **Variant** dropdown | Only if animation has >1 variant |
 | **Duration** (ms) | After a variant/animation is applied |
 | **Delay** (ms) | After a variant/animation is applied |
+| **Trigger Point** (%, 0–100) | After a variant/animation is applied, and only when the resolved trigger is **On Scroll** — meaningless for Load/Hover |
 | **Ease — Power** (`power1`–`power4`, `back`) | After a variant/animation is applied, and only for one-shot tweens (hidden for `timeline`-based animations, which have no single ease to override) |
 | **Ease — Direction** (`in`, `out`, `inOut`) | Same as above |
 | **Preview Animation** button | After a variant/animation is applied |
 | **Reset Animation** button | Any animation is active |
 
-Easing composed as `power1.out`, written to `data-animation-ease` on save. Duration/delay written to `data-animation-duration` / `data-animation-delay`. For `timeline`-based animations, Duration rescales the timeline's playback speed (`timeScale()`) and Delay restarts it with a `delay()`; there's no per-step ease to override.
+Easing composed as `power1.out`, written to `data-animation-ease` on save. Duration/delay written to `data-animation-duration` / `data-animation-delay`. Trigger Point written to `data-animation-trigger-point` (only when it differs from the 85% default). For `timeline`-based animations, Duration rescales the timeline's playback speed (`timeScale()`) and Delay restarts it with a `delay()`; there's no per-step ease to override.
 
 Undo/redo sync is implemented (`useEffect([className])` + a `suppressSync` ref in `withAnimationInspector`) — the ref is only raised when a handler's className write actually changes the value, so a no-op write (e.g. picking a category with no class yet applied) can't latch it and swallow the next real external change.
 
@@ -119,7 +120,7 @@ there is no separate trigger field.
 
 | Trigger | Categories | Frontend behavior | Saved? |
 |---|---|---|---|
-| **On Scroll** | Entrance, Text, Basic | one-shot when the block scrolls into view (`ScrollTrigger` top 85%, once) | nothing |
+| **On Scroll** | Entrance, Text, Basic | one-shot when the block scrolls into view (`ScrollTrigger` top `{point}`%, once — default 85) | `data-animation-trigger-point` (only if not 85) |
 | **On Load** | Entrance, Text, Basic | one-shot immediately on page load | `data-animation-trigger="load"` |
 | **On Hover** | Attention, Background | plays while hovered, pauses on mouseleave; touch → tap-to-toggle | nothing |
 
@@ -133,6 +134,13 @@ config-shape × trigger: one-shot `from`/`to` tweens use GSAP's integrated
 `scrollTrigger` for scroll or play immediately for load; `timeline`/looping configs
 are built paused and played on scroll-in or on hover.
 
+**Trigger Point:** the viewport % from the top that fires an On Scroll animation
+(GSAP's `top {point}%` shorthand) is per-block, resolved by `resolveTriggerPoint()`
+in `engine.ts` from `data-animation-trigger-point` (0–100, default 85 — the value
+every scroll trigger used before this control existed). A stagger group's shared
+boundary uses the **parent** block's own override (or 85 if unset); per-child
+overrides don't affect the group.
+
 ---
 
 ## Stagger
@@ -143,7 +151,7 @@ A parent block with 2+ inner blocks gets a **Stagger** inspector panel (below th
 
 On the frontend, `src/stagger.ts`'s `bindStaggerGroups()` runs before the normal per-element sweep in `index.ts`: for each `[data-stagger-each]` parent, it collects **direct children** whose resolved trigger is `scroll` or `load` (hover/attention children are excluded and animate independently), computes each one's delay offset via `gsap.utils.distribute({ each, from })`, builds them all paused (`buildPaused()` from `engine.ts`), and plays the whole group together — gated on the parent scrolling into view via `onScrollIntoView()`, or immediately if every member is Load-triggered.
 
-**Scope:** static blocks only (Group, Columns, Row, etc.) — server-rendered/dynamic parent blocks never get `data-stagger-*` written (same `blocks.getSaveContent.extraProps` limitation as `data-animation-*`, see Dynamic blocks limitation above). Direct children only, no recursion into grandchildren.
+**Scope:** static and dynamic parent blocks (Group, Columns, Row, etc., plus dynamic blocks via `inc/render-block.php`, see Dynamic blocks above) — `data-stagger-*` is written either way. Direct children only, no recursion into grandchildren.
 
 **Shared engine module:** `applyOverrides`, `resolveTrigger`, `buildPaused`, `ANIMATION_CONFIGS`, and the `processed` WeakSet moved out of `index.ts` into `src/engine.ts` so `stagger.ts` could import them without creating a circular import (`index.ts` calls `bindStaggerGroups()`, so `stagger.ts` importing back from `index.ts` would cycle). `buildPaused()` also picked up a fix while it moved: its `timeline`-based branch now calls `tl.delay(delay)`, which it previously never did — needed for stagger offsets to apply to timeline-based animations (e.g. `flicker-in`), and incidentally fixes the same silent no-op for any existing scroll/hover timeline animation's Delay override.
 
@@ -176,6 +184,11 @@ npm run deploy         # alias for build
 
 ## Next Steps 🔧
 
+Added 2026-08-31 (customizable trigger point + dynamic-block sync):
+
+- ✅ Per-block **Trigger Point** override (0–100%, default 85) for the ScrollTrigger boundary — see Triggers section above
+- ✅ `inc/render-block.php` `render_block` filter — dynamic/server-rendered blocks now keep their Duration/Delay/Ease/Trigger/Trigger Point/Stagger overrides (see Dynamic blocks above)
+
 Added 2026-07-08 (stagger + CSS utilities pass):
 
 - ✅ Stagger inspector panel + frontend `bindStaggerGroups()` — see Stagger section above
@@ -207,7 +220,7 @@ Remaining, in order of severity:
 
 1. **`ping` timeline doesn't loop cleanly** — After `opacity: 0` the element scales to `2.2` while invisible. On `repeat: -1`, GSAP resets to the `fromTo` start values (`scale: 0.2, opacity: 0.8`) — but the final `to` is outside the `fromTo` so the reset jump may be visible. Needs visual testing and likely a timeline restructure.
 
-2. **Dynamic blocks don't get duration/delay/ease/trigger overrides** — server-rendered blocks keep the animation class but lose `data-animation-*` attributes (see Architecture section above), including `data-animation-trigger`, so a dynamic block set to **On Load** falls back to its category default (scroll). Needs a `render_block` PHP filter.
+2. **Behavior changes from the trigger-grouping pass:**
 
    - **Exit category excluded from the picker** — `exit` stays in `REGISTRY` (default trigger `scroll`) so existing pages keep animating, but it's omitted from `TRIGGER_GROUPS`; an existing exit block's Category select therefore shows the placeholder (Reset still works). Add an "On Scroll → Exit (legacy)" group entry if editing old exit blocks becomes necessary.
    - **Attention & Background now trigger on hover** — they no longer auto-loop on page load. Any pre-existing use of those categories changes behavior accordingly.
@@ -228,14 +241,15 @@ Remaining, in order of severity:
 
 | File | Purpose |
 |---|---|
-| `theatrum-animation.php` | Plugin init, asset enqueue |
+| `theatrum-animation.php` | Plugin init, asset enqueue, `register_block_type_args` attribute mirroring |
+| `inc/render-block.php` | `render_block` filter — re-applies `data-animation-*`/`data-stagger-*` overrides onto dynamic/server-rendered block output |
 | `src/index.ts` | Frontend entry, `initializeAnimations()`, MutationObserver |
 | `src/engine.ts` | Shared animation state/helpers (`ANIMATION_CONFIGS`, `applyOverrides`, `resolveTrigger`, `buildPaused`) used by both `index.ts` and `stagger.ts` |
 | `src/stagger.ts` | `bindStaggerGroups()` — GSAP stagger for a parent block's entrance children |
 | `src/scss/utilities.scss` | Standalone `tm-*` CSS utility classes |
 | `src/config/registry.ts` | `REGISTRY` — single source of truth; `flattenConfigs()`, `buildClassIndex()` |
 | `src/config/animationConfigs.ts` | `AnimationConfig` interface |
-| `src/config/scrollTrigger.ts` | ScrollTrigger defaults |
+| `src/config/scrollTrigger.ts` | ScrollTrigger config — `getScrollTrigger()`/`onScrollIntoView()` take a per-block trigger-point % |
 | `src/block-editor/inspector.tsx` | Block editor HOC + all controls (Animation + Stagger panels) |
 | `vite.config.js` | Frontend build config |
 | `vite.config.editor.js` | Editor build config |

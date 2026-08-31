@@ -1,6 +1,6 @@
 import gsap from "gsap"
 import { onScrollIntoView } from "./config/scrollTrigger"
-import { ANIMATION_CONFIGS, processed, applyOverrides, resolveTrigger, buildPaused } from "./engine"
+import { ANIMATION_CONFIGS, processed, applyOverrides, resolveTrigger, resolveTriggerPoint, buildPaused } from "./engine"
 
 type StaggerFrom = "start" | "end" | "center" | "edges" | "random"
 const STAGGER_FROM_VALUES: readonly StaggerFrom[] = ["start", "end", "center", "edges", "random"]
@@ -47,8 +47,9 @@ function bindStaggerGroup(parent: Element): void {
 	const play = () => built.forEach(anim => anim.play())
 
 	// If every member is Load-triggered, play immediately; otherwise gate the
-	// whole group on the parent scrolling into view.
+	// whole group on the parent scrolling into view, using the parent's own
+	// trigger-point override (if any) as the shared boundary.
 	const allLoad = eligible.every(el => resolveTrigger(el, animationClassOf(el)!) === "load")
 	if (allLoad) play()
-	else onScrollIntoView(parent, play)
+	else onScrollIntoView(parent, play, resolveTriggerPoint(parent))
 }

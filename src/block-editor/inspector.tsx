@@ -1,7 +1,7 @@
 import gsap from "gsap"
 import { addFilter } from "@wordpress/hooks"
 import { InspectorControls } from "@wordpress/block-editor"
-import { PanelBody, SelectControl, __experimentalNumberControl as NumberControl, Button } from "@wordpress/components"
+import { PanelBody, SelectControl, RangeControl, __experimentalNumberControl as NumberControl, Button } from "@wordpress/components"
 import { createHigherOrderComponent } from "@wordpress/compose"
 import { useSelect, select as wpSelect } from "@wordpress/data"
 import { Fragment, useState, useEffect, useRef } from "@wordpress/element"
@@ -149,6 +149,7 @@ function addAnimationAttributes(settings: Record<string, any>, name?: string): R
 			// Only persisted for the non-default (Load) trigger; scroll/hover are
 			// derived on the frontend from the animation's category.
 			animationTrigger: { type: "string", default: null },
+			animationTriggerPoint: { type: "number", default: null },
 		},
 	}
 }
@@ -177,7 +178,7 @@ function addAnimationSaveProps(
 	attributes: Record<string, any>
 ): Record<string, any> {
 	if (isExcludedBlock(blockType?.name)) return props
-	const { className = "", animationDuration, animationDelay, animationEasePower, animationEaseDir, animationTrigger } = attributes
+	const { className = "", animationDuration, animationDelay, animationEasePower, animationEaseDir, animationTrigger, animationTriggerPoint } = attributes
 	const hasAnimation = (className || "").split(" ").some((cls: string) => cls in CLASS_INDEX)
 	if (!hasAnimation) return props
 
@@ -188,6 +189,7 @@ function addAnimationSaveProps(
 		result["data-animation-ease"] = `${animationEasePower}.${animationEaseDir}`
 	}
 	if (animationTrigger != null) result["data-animation-trigger"] = animationTrigger
+	if (animationTriggerPoint != null) result["data-animation-trigger-point"] = animationTriggerPoint
 	return result
 }
 addFilter("blocks.getSaveContent.extraProps", "theatrum-animation/save-props", addAnimationSaveProps)
@@ -249,6 +251,7 @@ type AnimationClipboard = {
 	animationEasePower: string | null
 	animationEaseDir: string | null
 	animationTrigger: string | null
+	animationTriggerPoint: number | null
 } | null
 
 let animationClipboard: AnimationClipboard = null
@@ -267,6 +270,7 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 			animationEasePower = null,
 			animationEaseDir = null,
 			animationTrigger = null,
+			animationTriggerPoint = null,
 			staggerEach = null,
 			staggerFrom = null,
 		} = attributes
@@ -369,6 +373,7 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 				animationEasePower: null,
 				animationEaseDir: null,
 				animationTrigger: null,
+				animationTriggerPoint: null,
 			})
 		}
 
@@ -381,6 +386,7 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 				animationEasePower,
 				animationEaseDir,
 				animationTrigger,
+				animationTriggerPoint,
 			}
 		}
 
@@ -397,6 +403,7 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 				animationEasePower: animationClipboard.animationEasePower,
 				animationEaseDir: animationClipboard.animationEaseDir,
 				animationTrigger: animationClipboard.animationTrigger,
+				animationTriggerPoint: animationClipboard.animationTriggerPoint,
 			})
 		}
 
@@ -623,6 +630,20 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 										setAttributes({ animationDelay: Number.isNaN(n) ? null : n })
 									}}
 								/>
+								{activeTrigger === "scroll" && (
+									<RangeControl
+										__next40pxDefaultSize
+										label={__("Trigger Point", "theatrum-animation")}
+										help={__("Viewport % from top that fires the animation.", "theatrum-animation")}
+										value={animationTriggerPoint ?? 85}
+										min={0}
+										max={100}
+										onChange={(val?: number) => {
+											const n = val ?? 85
+											setAttributes({ animationTriggerPoint: n === 85 ? null : n })
+										}}
+									/>
+								)}
 								{!isTimeline && (
 									<>
 										<SelectControl

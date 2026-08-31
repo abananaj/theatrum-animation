@@ -39,6 +39,13 @@ export function resolveTrigger(el: Element, cls: string): TriggerId {
 	return DEFAULT_TRIGGER[cls] ?? "scroll"
 }
 
+/** data-animation-trigger-point override (viewport % from top, 0-100), else the 85% default. */
+export function resolveTriggerPoint(el: Element): number {
+	const attr = parseInt(el.getAttribute("data-animation-trigger-point") ?? "", 10)
+	if (Number.isNaN(attr) || attr < 0 || attr > 100) return 85
+	return attr
+}
+
 /**
  * Build a config's animation paused, for triggers that decide when to play
  * (scroll-timeline, hover, stagger). `timeline()` creates its own timeline; from/to
