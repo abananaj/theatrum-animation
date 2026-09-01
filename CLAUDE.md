@@ -7,12 +7,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project Overview
 
 Theatrum Animation adds GSAP-powered animations to any block via the block inspector
-(scroll/load/hover triggers), plus a standalone JS-free `tm-*` CSS utility class layer and a
+(scroll/load/hover triggers), plus a standalone JS-free `tma-*` CSS utility class layer and a
 GSAP stagger option for cascading a parent block's entrance children.
 
 **This file stays intentionally thin — [README.md](README.md) is the real reference**: full
 architecture, all ~60 animations by category, the block editor panel's control-by-control
-behavior, stagger internals, the `tm-*` CSS utilities, and a live "Next Steps" list ordered
+behavior, stagger internals, the `tma-*` CSS utilities, and a live "Next Steps" list ordered
 by severity. Read it before making non-trivial changes here; this file only orients you and
 points at the code review for known issues.
 

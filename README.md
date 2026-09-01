@@ -1,7 +1,7 @@
 # theatrum-animation
 
-> WordPress plugin — adds GSAP animations to any block via the block inspector, triggered on scroll, load, or hover. Also ships a standalone, JS-free `tm-*` CSS utility layer and a GSAP-driven stagger option for cascading a parent block's entrance children.
-> **Updated: 2026-07-08** — stagger + `tm-*` CSS utilities added. See `docs/stagger-and-css-utilities-plan.md` for the design. Previously updated 2026-07-05, post code review — see `docs/jul5-code-review.md`.
+> WordPress plugin — adds GSAP animations to any block via the block inspector, triggered on scroll, load, or hover. Also ships a standalone, JS-free `tma-*` CSS utility layer and a GSAP-driven stagger option for cascading a parent block's entrance children.
+> **Updated: 2026-07-08** — stagger + `tma-*` CSS utilities added. See `docs/stagger-and-css-utilities-plan.md` for the design. Previously updated 2026-07-05, post code review — see `docs/jul5-code-review.md`.
 
 ---
 
@@ -25,7 +25,7 @@ src/
 ├── engine.ts                 ← shared animation state/helpers (ANIMATION_CONFIGS, buildPaused, etc.) — used by index.ts and stagger.ts
 ├── stagger.ts                ← bindStaggerGroups(): GSAP stagger for a parent's entrance children
 ├── scss/
-│   └── utilities.scss        ← standalone tm-* CSS utility classes (no GSAP/JS involved)
+│   └── utilities.scss        ← standalone tma-* CSS utility classes (no GSAP/JS involved)
 ├── config/
 │   ├── animationConfigs.ts   ← AnimationConfig interface
 │   ├── registry.ts           ← REGISTRY (single source of truth for editor + frontend)
@@ -157,16 +157,16 @@ On the frontend, `src/stagger.ts`'s `bindStaggerGroups()` runs before the normal
 
 ---
 
-## CSS Utilities (`tm-*`)
+## CSS Utilities (`tma-*`)
 
-`src/scss/utilities.scss` — a standalone, JS-free set of utility classes, separate from the GSAP `REGISTRY` (no inspector UI; apply via a block's **Additional CSS Class(es)** field). Prefixed `tm-` to avoid any collision with the GSAP registry's class keys.
+`src/scss/utilities.scss` — a standalone, JS-free set of utility classes, separate from the GSAP `REGISTRY` (no inspector UI; apply via a block's **Additional CSS Class(es)** field). Prefixed `tma-` to avoid any collision with the GSAP registry's class keys (renamed from `tm-` — that prefix collided in substring searches with unrelated `tm-*` classes shipped by theatrum-blocks, e.g. `.tm-table-advanced`, `.tm-slider`).
 
-- **Entrance** (fires on load/paint via `@keyframes` + `animation-fill-mode: both`, not scroll-gated): `.tm-slide-in-up`, `.tm-slide-in-down`, `.tm-slide-in-left`, `.tm-slide-in-right`, `.tm-fade-in`, `.tm-scale-in-subtle`.
-- **Hover/focus** (transition-based, `:focus-visible` alongside `:hover` for keyboard parity): `.tm-hover-lift`, `.tm-hover-grow`, `.tm-hover-shadow`, `.tm-hover-brighten`, `.tm-underline-grow`.
-- Motion tokens: `--tm-duration-{fast,base,slow}`, `--tm-ease-{standard,decelerate,accelerate}`.
+- **Entrance** (fires on load/paint via `@keyframes` + `animation-fill-mode: both`, not scroll-gated): `.tma-slide-in-up`, `.tma-slide-in-down`, `.tma-slide-in-left`, `.tma-slide-in-right`, `.tma-fade-in`, `.tma-scale-in-subtle`.
+- **Hover/focus** (transition-based, `:focus-visible` alongside `:hover` for keyboard parity): `.tma-hover-lift`, `.tma-hover-grow`, `.tma-hover-shadow`, `.tma-hover-brighten`, `.tma-underline-grow`.
+- Motion tokens: `--tma-duration-{fast,base,slow}`, `--tma-ease-{standard,decelerate,accelerate}`.
 - Respects `prefers-reduced-motion: reduce` (own `@media` block, independent of the GSAP frontend's reduced-motion gate).
 
-**Delivery:** no separate stylesheet is enqueued. This Vite build has no HTML entry point to extract CSS against (a plain `.ts` entry → IIFE), so Vite bundles `utilities.scss` into `dist/main.js` and injects it via `document.head.appendChild(<style>)` at script execution — `dist/main.css` is never created. This is why an earlier `dist/main.css` enqueue in this plugin's history was removed as dead code (see Next Steps below). Practical trade-off: the `tm-*` classes render only once `main.js` executes (already the case for every other animation in this plugin), and there's a theoretical brief FOUC window before injection on first paint.
+**Delivery:** no separate stylesheet is enqueued. This Vite build has no HTML entry point to extract CSS against (a plain `.ts` entry → IIFE), so Vite bundles `utilities.scss` into `dist/main.js` and injects it via `document.head.appendChild(<style>)` at script execution — `dist/main.css` is never created. This is why an earlier `dist/main.css` enqueue in this plugin's history was removed as dead code (see Next Steps below). Practical trade-off: the `tma-*` classes render only once `main.js` executes (already the case for every other animation in this plugin), and there's a theoretical brief FOUC window before injection on first paint.
 
 ---
 
@@ -192,7 +192,7 @@ Added 2026-08-31 (customizable trigger point + dynamic-block sync):
 Added 2026-07-08 (stagger + CSS utilities pass):
 
 - ✅ Stagger inspector panel + frontend `bindStaggerGroups()` — see Stagger section above
-- ✅ Standalone `tm-*` CSS utility classes — see CSS Utilities section above
+- ✅ Standalone `tma-*` CSS utility classes — see CSS Utilities section above
 - ✅ `buildPaused()` timeline branch now honors `delay` (`tl.delay(delay)`) — was previously silently dropped for any scroll/hover animation using a `timeline` config
 
 Fixed in the 2026-07-05 review pass:
@@ -246,7 +246,7 @@ Remaining, in order of severity:
 | `src/index.ts` | Frontend entry, `initializeAnimations()`, MutationObserver |
 | `src/engine.ts` | Shared animation state/helpers (`ANIMATION_CONFIGS`, `applyOverrides`, `resolveTrigger`, `buildPaused`) used by both `index.ts` and `stagger.ts` |
 | `src/stagger.ts` | `bindStaggerGroups()` — GSAP stagger for a parent block's entrance children |
-| `src/scss/utilities.scss` | Standalone `tm-*` CSS utility classes |
+| `src/scss/utilities.scss` | Standalone `tma-*` CSS utility classes |
 | `src/config/registry.ts` | `REGISTRY` — single source of truth; `flattenConfigs()`, `buildClassIndex()` |
 | `src/config/animationConfigs.ts` | `AnimationConfig` interface |
 | `src/config/scrollTrigger.ts` | ScrollTrigger config — `getScrollTrigger()`/`onScrollIntoView()` take a per-block trigger-point % |
@@ -255,5 +255,5 @@ Remaining, in order of severity:
 | `vite.config.editor.js` | Editor build config |
 | `docs/inspector-animation-options.md` | Diagnosis doc for inspector panel scope — resolved, kept for history |
 | `docs/jul5-code-review.md` | 2026-07-05 code review — source of the fixes in Next Steps above |
-| `docs/stagger-and-css-utilities-plan.md` | Design doc for the stagger + `tm-*` CSS utilities features |
+| `docs/stagger-and-css-utilities-plan.md` | Design doc for the stagger + `tma-*` CSS utilities features |
 | `animista/` | Original CSS keyframe sources (pre-migration, stale) |

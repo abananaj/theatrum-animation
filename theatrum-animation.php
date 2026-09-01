@@ -39,7 +39,7 @@ function theatrum_animation_enqueue_scripts()
 }
 add_action('wp_enqueue_scripts', 'theatrum_animation_enqueue_scripts');
 
-// Note: the tm-* CSS utility classes (src/scss/utilities.scss) are NOT enqueued
+// Note: the tma-* CSS utility classes (src/scss/utilities.scss) are NOT enqueued
 // as a separate stylesheet. Vite has no HTML entry point to extract CSS against
 // in this build (a plain .ts entry compiled to a standalone IIFE), so it bundles
 // the CSS into dist/main.js and injects it via a runtime <style> tag on script

@@ -5,7 +5,7 @@
 `theatrum-animation` is a GSAP-driven block-animation plugin: editors pick an animation from a `REGISTRY`-backed dropdown in the block inspector, which writes a CSS class onto the block plus `data-animation-*` override attributes, and a frontend script (`src/index.ts`) matches those classes and dispatches GSAP tweens on scroll/load/hover. Two gaps are being closed:
 
 1. **No stagger support.** When several sibling blocks (e.g. cards in a Group/Columns row) each have their own entrance animation, they currently fire independently based on each element's own scroll position — there's no way to deliberately cascade their entrances. GSAP's own stagger model (`each`, `from`) is the natural fit. A throwaway, unwired prototype (`src/stagger.ts`, `src/scss/stagger.scss`) already sketched the idea but isn't real groundwork — it hardcodes a single selector and isn't imported anywhere; it will be deleted and replaced.
-2. **No lightweight, JS-free motion primitives.** Every animation today — even a trivial button hover lift — goes through the full GSAP/ScrollTrigger machinery. A small set of pure-CSS utility classes (slide-in entrances, hover translate, etc.) gives editors/theme devs a zero-JS option for simple cases, and starts a motion-token foundation (`--tm-duration-*`, `--tm-ease-*`) other work can build on. Decided with the user: standalone utilities (not wired into the GSAP `REGISTRY`/inspector), prefixed **`tm-`** to guarantee no collision with existing GSAP registry class keys (`slide-in`, `fade-in`, `scale-up` etc. are already taken).
+2. **No lightweight, JS-free motion primitives.** Every animation today — even a trivial button hover lift — goes through the full GSAP/ScrollTrigger machinery. A small set of pure-CSS utility classes (slide-in entrances, hover translate, etc.) gives editors/theme devs a zero-JS option for simple cases, and starts a motion-token foundation (`--tma-duration-*`, `--tma-ease-*`) other work can build on. Decided with the user: standalone utilities (not wired into the GSAP `REGISTRY`/inspector), prefixed **`tma-`** to guarantee no collision with existing GSAP registry class keys (`slide-in`, `fade-in`, `scale-up` etc. are already taken). *(Originally shipped as `tm-`; renamed to `tma-` — the shorter prefix collided in substring searches with unrelated `tm-*` classes shipped by theatrum-blocks, e.g. `.tm-table-advanced`, `.tm-slider`. No content in the database referenced the old classes at rename time.)*
 
 Both features ship inside `theatrum-animation` (not the theme), following existing plugin conventions: global `blocks.registerBlockType`/`getSaveContent.extraProps`/`editor.BlockEdit` filters for editor-side work, `data-*` attributes as the editor→frontend handoff, GSAP utilities reused where they already exist (`buildPaused`, `onScrollIntoView`).
 
@@ -116,30 +116,30 @@ This reuses `buildPaused` (already handles both one-shot tweens and `timeline` c
 
 ---
 
-## Feature 2: Starter `tm-` CSS utility classes
+## Feature 2: Starter `tma-` CSS utility classes
 
 **New file:** `src/scss/utilities.scss` — imported from `src/index.ts` (`import "./scss/utilities.scss"`).
 
-**Implemented delivery mechanism (differs from the original plan):** the original assumption was that Vite's `cssCodeSplit: true` config would emit a separate `dist/main.css` asset to enqueue via `wp_enqueue_style`. In practice, this build has no HTML entry point (a plain `.ts` file compiled straight to an IIFE) for Vite to extract CSS against, so Vite falls back to its documented behavior for that situation: it bundles the CSS into `dist/main.js` and injects it via a runtime `document.head.appendChild(<style>)` call the moment the script executes — `dist/main.css` is never created. This matches the plugin's own history (see the code comment in `theatrum-animation.php` — an earlier `dist/main.css` enqueue was removed as dead code for exactly this reason). **No PHP enqueue was added for the CSS utilities** — they ship for free as part of the existing `theatrum-animation` script enqueue. Practical implications: the `tm-*` classes only render once `main.js` has executed (no-JS/blocked-JS visitors won't see them), and there's a theoretical brief FOUC window before injection on first paint — acceptable trade-offs since achieving true CSS extraction would require reworking the build to Vite `build.lib` mode, a larger, riskier change out of scope here.
+**Implemented delivery mechanism (differs from the original plan):** the original assumption was that Vite's `cssCodeSplit: true` config would emit a separate `dist/main.css` asset to enqueue via `wp_enqueue_style`. In practice, this build has no HTML entry point (a plain `.ts` file compiled straight to an IIFE) for Vite to extract CSS against, so Vite falls back to its documented behavior for that situation: it bundles the CSS into `dist/main.js` and injects it via a runtime `document.head.appendChild(<style>)` call the moment the script executes — `dist/main.css` is never created. This matches the plugin's own history (see the code comment in `theatrum-animation.php` — an earlier `dist/main.css` enqueue was removed as dead code for exactly this reason). **No PHP enqueue was added for the CSS utilities** — they ship for free as part of the existing `theatrum-animation` script enqueue. Practical implications: the `tma-*` classes only render once `main.js` has executed (no-JS/blocked-JS visitors won't see them), and there's a theoretical brief FOUC window before injection on first paint — acceptable trade-offs since achieving true CSS extraction would require reworking the build to Vite `build.lib` mode, a larger, riskier change out of scope here.
 
-**Design decision — CSS-only, no IntersectionObserver:** entrance utilities fire on load/paint via `@keyframes` + `animation-fill-mode: both`, not scroll-gated. Adding a companion observer would reintroduce the JS overhead this feature exists to avoid, and duplicates what the GSAP registry already does well. Document in the README that `tm-slide-in-*`/`tm-fade-in` are for above-the-fold/simple use — anything needing scroll-gated entrance should use the existing GSAP inspector panel instead.
+**Design decision — CSS-only, no IntersectionObserver:** entrance utilities fire on load/paint via `@keyframes` + `animation-fill-mode: both`, not scroll-gated. Adding a companion observer would reintroduce the JS overhead this feature exists to avoid, and duplicates what the GSAP registry already does well. Document in the README that `tma-slide-in-*`/`tma-fade-in` are for above-the-fold/simple use — anything needing scroll-gated entrance should use the existing GSAP inspector panel instead.
 
 **Tokens** (scoped to `:root`, freely composable across any block without a wrapper class):
 ```scss
 :root {
-  --tm-duration-fast: 150ms;
-  --tm-duration-base: 300ms;
-  --tm-duration-slow: 500ms;
-  --tm-ease-standard: cubic-bezier(.4, 0, .2, 1);
-  --tm-ease-decelerate: cubic-bezier(0, 0, .2, 1);
-  --tm-ease-accelerate: cubic-bezier(.4, 0, 1, 1);
+  --tma-duration-fast: 150ms;
+  --tma-duration-base: 300ms;
+  --tma-duration-slow: 500ms;
+  --tma-ease-standard: cubic-bezier(.4, 0, .2, 1);
+  --tma-ease-decelerate: cubic-bezier(0, 0, .2, 1);
+  --tma-ease-accelerate: cubic-bezier(.4, 0, 1, 1);
 }
 ```
 
 **Starter classes:**
-- Entrance (on-load keyframe animations): `.tm-slide-in-up`, `.tm-slide-in-down`, `.tm-slide-in-left`, `.tm-slide-in-right`, `.tm-fade-in`, `.tm-scale-in-subtle`.
-- Hover/focus (transition-based, each includes `:focus-visible` alongside `:hover` for keyboard parity): `.tm-hover-lift` (`translateY(-2px)`), `.tm-hover-grow` (slight `scale`), `.tm-hover-shadow` (elevate box-shadow), `.tm-hover-brighten` (`filter: brightness()`), `.tm-underline-grow` (for links/inline text — underline width transition).
-- Closing `@media (prefers-reduced-motion: reduce)` block disabling `animation`/`transition` for every `tm-*` class, matching the reduced-motion respect the GSAP frontend already has.
+- Entrance (on-load keyframe animations): `.tma-slide-in-up`, `.tma-slide-in-down`, `.tma-slide-in-left`, `.tma-slide-in-right`, `.tma-fade-in`, `.tma-scale-in-subtle`.
+- Hover/focus (transition-based, each includes `:focus-visible` alongside `:hover` for keyboard parity): `.tma-hover-lift` (`translateY(-2px)`), `.tma-hover-grow` (slight `scale`), `.tma-hover-shadow` (elevate box-shadow), `.tma-hover-brighten` (`filter: brightness()`), `.tma-underline-grow` (for links/inline text — underline width transition).
+- Closing `@media (prefers-reduced-motion: reduce)` block disabling `animation`/`transition` for every `tma-*` class, matching the reduced-motion respect the GSAP frontend already has.
 
 **PHP:** none needed — see "Implemented delivery mechanism" above.
 
@@ -163,5 +163,5 @@ This reuses `buildPaused` (already handles both one-shot tweens and `timeline` c
 1. `npm run build`; confirmed no separate CSS asset is emitted — `utilities.scss` is bundled into `dist/main.js` and injected via a runtime `<style>` tag (see Feature 2). No PHP path to adjust.
 2. **Stagger, editor:** add a Group block with 3+ children, give each a scroll-trigger entrance animation via the existing Animation panel, confirm the new Stagger panel only appears once ≥2 inner blocks exist, set Stagger Each = 150ms / From = Start, save, reload the editor and confirm attributes persist; test undo/redo across an inner-block add/remove that crosses the `>1` threshold.
 3. **Stagger, frontend:** load the page, scroll the Group into view, confirm children cascade in with increasing delay; try `From = random/center/edges` for order variation; add one hover-triggered child to the same group and confirm it's excluded and animates independently; test a lazily-inserted stagger group (if the site has infinite scroll/AJAX content) to confirm the `MutationObserver` path binds it correctly. Specifically include at least one timeline-based animation (e.g. `flicker-in`) as a stagger group member and confirm it respects its offset instead of firing simultaneously with the rest of the group (regression check for the `buildPaused` delay fix).
-4. **CSS utilities:** apply `tm-hover-lift` via a block's Additional CSS Class(es) field on a Button, verify hover *and* keyboard-focus lift; apply `tm-fade-in`/`tm-slide-in-up` to an above-the-fold element and confirm it animates on load.
-5. **Reduced motion:** enable OS-level `prefers-reduced-motion: reduce`; confirm both the GSAP stagger group and all `tm-*` utilities no-op/skip their animation cleanly.
+4. **CSS utilities:** apply `tma-hover-lift` via a block's Additional CSS Class(es) field on a Button, verify hover *and* keyboard-focus lift; apply `tma-fade-in`/`tma-slide-in-up` to an above-the-fold element and confirm it animates on load.
+5. **Reduced motion:** enable OS-level `prefers-reduced-motion: reduce`; confirm both the GSAP stagger group and all `tma-*` utilities no-op/skip their animation cleanly.
