@@ -4,6 +4,10 @@ Claude Code agent workflows specific to **theatrum-animation**. For site-wide ag
 workflows, see [wp_root AGENTS.md](../../../AGENTS.md). For architecture, see
 [CLAUDE.md](CLAUDE.md) and [README.md](README.md).
 
+## Code Comments
+
+One line, essential info only. No multi-line/wrapped comment blocks, no restating what the code does — if a comment needs more than one line, cut it down or drop it.
+
 ## Working in this plugin
 
 This is the best-documented submodule in the project — `README.md`'s "Next Steps" section is
