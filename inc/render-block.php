@@ -5,22 +5,9 @@ if (! defined('ABSPATH')) {
 }
 
 /**
- * Re-apply animation/stagger override attributes onto dynamic block output.
- *
- * The JS `blocks.getSaveContent.extraProps` filter (src/block-editor/inspector.tsx)
- * writes data-animation-* and data-stagger-* attributes into a block's saved HTML at
- * save time — but that filter only ever runs for statically-saved block
- * markup. Dynamic/server-rendered blocks (anything with a render.php, e.g.
- * theatrum/production-quotes, theatrum/performances-list, plus core dynamic
- * blocks like core/query) regenerate their markup from render.php on every
- * request and never pass through it, so their animation/stagger overrides
- * were silently dropped — the animation class survived (it's usually
- * hardcoded into render.php or added via block supports), but Duration/
- * Delay/Ease/Trigger/Trigger Point/Stagger overrides did not.
- *
- * This filter re-applies the same data-* attributes onto a dynamic block's
- * rendered wrapper element, sourced from the block's own attributes (which
- * *are* preserved — they're just never written into render.php's output).
+ * Re-applies animation/stagger override attributes onto dynamic block output.
+ * The JS `blocks.getSaveContent.extraProps` filter (src/block-editor/inspector.tsx) writes data-animation-* / data-stagger-* into saved HTML, but dynamic/server-rendered blocks (render.php, e.g. theatrum/production-quotes, core/query) regenerate markup and never pass through it — the animation class survives (hardcoded/block supports) but Duration/Delay/Ease/Trigger/Stagger overrides were silently dropped.
+ * Re-applies the same data-* attributes onto the dynamic block's rendered wrapper, sourced from the block's own attributes (preserved, just never written into render.php's output).
  */
 add_filter('render_block', 'theatrum_animation_render_block', 10, 2);
 
@@ -42,10 +29,7 @@ function theatrum_animation_render_block($block_content, $block)
     return $block_content;
   }
 
-  // Static blocks already got their data-* attributes at save time via
-  // blocks.getSaveContent.extraProps — skip the work here on every block on
-  // every page (this filter fires for every block, including inside query
-  // loops with many repeated blocks).
+  // Static blocks already got their data-* attrs at save time via blocks.getSaveContent.extraProps — skip here (this filter fires for every block, including inside query loops with many repeats).
   $block_type = WP_Block_Type_Registry::get_instance()->get_registered($block['blockName']);
   if (! $block_type || ! $block_type->is_dynamic()) {
     return $block_content;
@@ -56,10 +40,7 @@ function theatrum_animation_render_block($block_content, $block)
     return $block_content;
   }
 
-  // Assumes a single top-level wrapper element in $block_content, matching
-  // the same assumption blocks.getSaveContent.extraProps makes for static
-  // blocks — a render.php that emits multiple sibling root elements only
-  // gets attributes on the first one.
+  // Assumes a single top-level wrapper in $block_content (same assumption blocks.getSaveContent.extraProps makes for static blocks) — a render.php emitting multiple sibling roots only gets attributes on the first.
   $processor = new WP_HTML_Tag_Processor($block_content);
   if (! $processor->next_tag()) {
     return $block_content;
@@ -71,17 +52,8 @@ function theatrum_animation_render_block($block_content, $block)
 }
 
 /**
- * Build the data-animation-* and data-stagger-* attribute map for a block's
- * attributes, matching src/block-editor/inspector.tsx's
- * addAnimationSaveProps()/addStaggerSaveProps() value formats byte-for-byte
- * so the frontend's engine.ts/stagger.ts parse them identically regardless
- * of whether the block was saved statically or rendered dynamically.
- *
- * Gated on attribute presence rather than replicating the JS-side
- * CLASS_INDEX/className check: these attribute names are exclusive to this
- * plugin's inspector, so a non-null value can only exist because the user
- * applied an animation through it (which always sets the className in
- * tandem) — no server-side class list is needed to avoid false positives.
+ * Builds the data-animation-* / data-stagger-* attribute map for a block's attributes, matching inspector.tsx's addAnimationSaveProps()/addStaggerSaveProps() value formats byte-for-byte so engine.ts/stagger.ts parse them identically whether saved statically or rendered dynamically.
+ * Gated on attribute presence rather than replicating the JS-side CLASS_INDEX/className check: these attribute names are exclusive to this plugin's inspector, so a non-null value only exists because the user applied an animation (which always sets className too) — no server-side class list needed.
  *
  * @param array $attrs Block attributes.
  * @return array<string, string> data-* attribute name/value pairs.

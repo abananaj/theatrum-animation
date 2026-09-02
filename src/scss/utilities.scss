@@ -1,6 +1,5 @@
-// Standalone, JS-free motion utilities. Unlike the GSAP-driven `data-animation-*`
-// system, these are plain CSS classes applied via a block's Additional CSS
-// Class(es) field — no scroll-gating, no editor UI. See docs/stagger-and-css-utilities-plan.md.
+// Standalone, JS-free motion utilities: plain CSS classes applied via a block's Additional CSS Class(es) field — no scroll-gating, no editor UI, unlike the GSAP-driven `data-animation-*` system.
+// See docs/stagger-and-css-utilities-plan.md.
 
 :root {
 	--tma-duration-fast: 150ms;

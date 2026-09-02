@@ -86,11 +86,7 @@ export type { AnimationConfig }
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-/**
- * When an animation fires. Derived on the frontend from an element's category
- * (see `trigger` on Category), so scroll/hover need nothing saved on the block.
- * `load` is the one override the inspector persists (data-animation-trigger).
- */
+/** When an animation fires — derived on the frontend from an element's category (`trigger` on Category), so scroll/hover need nothing saved; `load` is the one override the inspector persists (data-animation-trigger). */
 export type TriggerId = "scroll" | "load" | "hover"
 
 /** One selectable animation: a human label + its variants keyed by CSS class. */
@@ -108,12 +104,7 @@ export interface Category {
 }
 
 // ─── The registry — single source of truth for editor + frontend ─────────────
-//
-// Every CSS class key must be unique across all categories. flattenConfigs()
-// is last-wins and buildClassIndex() is earliest-wins, so a duplicate key means
-// the frontend plays one config while the inspector attributes it to another.
-// Namespace new classes when a name would collide (e.g. attention uses
-// `attn-scale-*` because basic already owns `scale-*`).
+// Every CSS class key must be unique across all categories: flattenConfigs() is last-wins, buildClassIndex() is earliest-wins, so a duplicate key means the frontend plays one config while the inspector attributes it to another. Namespace new classes when a name would collide (e.g. attention uses `attn-scale-*` because basic already owns `scale-*`).
 
 export const REGISTRY: Record<string, Category> = {
 	entrance: {
@@ -138,8 +129,7 @@ export const REGISTRY: Record<string, Category> = {
 			"rotate-in-2":       { label: "Rotate In 2",         configs: rotateIn2 },
 		},
 	},
-	// Kept for backward compat (existing pages) but excluded from the inspector
-	// picker; plays on scroll like before.
+	// Kept for backward compat (existing pages), excluded from the inspector picker; plays on scroll like before.
 	exit: {
 		label: "Exit",
 		trigger: "scroll",

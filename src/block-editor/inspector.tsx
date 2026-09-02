@@ -22,19 +22,15 @@ const CATEGORY_DEFAULT_TRIGGER: Record<string, string> = Object.fromEntries(
 	Object.entries(REGISTRY).map(([id, cat]) => [id, cat.trigger])
 )
 
-// Which categories appear under each trigger header in the Category dropdown.
-// Entrance/Text/Basic list twice — under On Scroll (their default) and On Load;
-// picking from On Load persists a data-animation-trigger override. Exit is
-// deliberately excluded from the picker (kept in the registry for old content).
+// Categories appearing under each trigger header in the Category dropdown.
+// Entrance/Text/Basic list twice (On Scroll default + On Load, which persists a trigger override); Exit is excluded from the picker but kept in the registry for old content.
 const TRIGGER_GROUPS: { id: string; label: string; categories: string[] }[] = [
 	{ id: "scroll", label: __("On Scroll", "theatrum-animation"), categories: ["entrance", "text", "basic"] },
 	{ id: "load",   label: __("On Load", "theatrum-animation"),   categories: ["entrance", "text", "basic"] },
 	{ id: "hover",  label: __("On Hover", "theatrum-animation"),  categories: ["attention", "background"] },
 ]
 
-// Grouped options for the Category <SelectControl>. Trigger headers are rendered
-// as disabled rows (version-safe vs <optgroup>); selectable rows encode both the
-// trigger and category in their value as `${trigger}:${category}`.
+// Grouped Category <SelectControl> options: trigger headers are disabled rows (version-safe vs <optgroup>); selectable rows encode `${trigger}:${category}`.
 const CATEGORY_OPTIONS = [
 	SELECT_PLACEHOLDER,
 	...TRIGGER_GROUPS.flatMap((group) => [
@@ -89,8 +85,7 @@ function humanizeTokens(tokens: string[]): string {
 }
 
 /**
- * Build { value, label } options for an animation's variants by stripping the
- * tokens common to all of its class keys, then humanizing the remainder.
+ * Options for an animation's variants: strips the class-key tokens common to all variants, then humanizes the remainder.
  * e.g. ["slide-in-top","slide-in-tr"] → "Top", "Top Right"
  *      ["scale-down-center","scale-down-top"] → "Center", "Top"
  */
@@ -124,12 +119,7 @@ function stripAnimationClasses(className: string): string[] {
 }
 
 // ─── Blocks excluded from animation entirely ───────────────────────────────────
-//
-// WPForms' block (and any future wpforms/* block) is skipped everywhere below —
-// its preview/frontend widgets (reCAPTCHA, date pickers, etc.) measure their own
-// size on mount, and injecting unexpected attributes/props into a block whose
-// schema we don't control risks corrupting its ServerSideRender preview. Wrap it
-// in a Group block and animate that instead.
+// wpforms/* (and future wpforms/* blocks) is skipped everywhere below — its widgets (reCAPTCHA, date pickers) measure their own size on mount, and injecting attributes into a schema we don't control risks corrupting its ServerSideRender preview. Wrap it in a Group block and animate that instead.
 function isExcludedBlock(name: unknown): boolean {
 	return typeof name === "string" && name.startsWith("wpforms/")
 }
@@ -146,8 +136,7 @@ function addAnimationAttributes(settings: Record<string, any>, name?: string): R
 			animationDelay: { type: "number", default: null },
 			animationEasePower: { type: "string", default: null },
 			animationEaseDir: { type: "string", default: null },
-			// Only persisted for the non-default (Load) trigger; scroll/hover are
-			// derived on the frontend from the animation's category.
+			// Only persisted for the non-default (Load) trigger; scroll/hover derive from the animation's category on the frontend.
 			animationTrigger: { type: "string", default: null },
 			animationTriggerPoint: { type: "number", default: null },
 		},
@@ -240,9 +229,7 @@ const STAGGER_FROM_OPTIONS = [
 ]
 
 // ─── Copy / Paste animation ─────────────────────────────────────────────────────
-//
-// A module-level "clipboard" — shared across every block's HOC instance since
-// this module is loaded once per page. In-memory only; cleared on reload.
+// Module-level "clipboard", shared across every block's HOC instance (module loads once per page); in-memory only, cleared on reload.
 
 type AnimationClipboard = {
 	appliedClass: string
@@ -275,8 +262,7 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 			staggerFrom = null,
 		} = attributes
 
-		// getBlockOrder (child clientIds only) is much cheaper than getBlock
-		// (deep-clones the whole subtree) — this HOC wraps every block on the page.
+		// getBlockOrder (child clientIds only) is much cheaper than getBlock (deep-clones the whole subtree) — this HOC wraps every block on the page.
 		const hasMultipleChildren = useSelect(
 			(select: any) => select("core/block-editor").getBlockOrder(clientId).length > 1,
 			[clientId]
@@ -284,8 +270,7 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 
 		const parsed = parseAnimationClass(className)
 
-		// The trigger for a committed class = its saved override (Load) or its
-		// category default (scroll/hover).
+		// The trigger for a committed class = its saved override (Load) or category default (scroll/hover).
 		function triggerFor(category: string): string {
 			return category ? animationTrigger || CATEGORY_DEFAULT_TRIGGER[category] || "" : ""
 		}
@@ -295,22 +280,16 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 		const [uiAnimation, setUiAnimation] = useState(parsed.animation)
 		const [uiTrigger, setUiTrigger] = useState(triggerFor(parsed.category))
 
-		// Set to true in handlers before calling setAttributes so the effect
-		// below knows the className change came from us, not from an external source
-		// like undo/redo. After the effect fires it resets back to false.
+		// Set true in handlers before setAttributes so the effect below knows the className change came from us, not undo/redo; the effect resets it back to false.
 		const suppressSync = useRef(false)
 
-		// Commit a className change from a handler. Only raise the suppress flag
-		// when the value actually changes — the effect below only fires (and only
-		// resets the flag) on a real className change, so flagging a no-op write
-		// would leave the flag latched and swallow the next external change.
+		// Commits a className change. Only raises the suppress flag when the value actually changes — the effect below only fires (and resets the flag) on a real change, so flagging a no-op would latch the flag and swallow the next external change.
 		function commitClassName(next: string, extra: Record<string, any> = {}) {
 			if (next !== className) suppressSync.current = true
 			setAttributes({ className: next, ...extra })
 		}
 
-		// When className changes externally (undo/redo), reset pending UI state so
-		// the selects reflect the new reality instead of stale intermediate values.
+		// When className changes externally (undo/redo), reset pending UI state so selects reflect the new reality, not stale intermediate values.
 		useEffect(() => {
 			if (suppressSync.current) {
 				suppressSync.current = false
@@ -407,9 +386,7 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 			})
 		}
 
-		// The animation created by the last Preview click. killTweensOf() alone
-		// kills child tweens but leaves a repeat:-1 timeline container alive in
-		// GSAP's root ticker, leaking one per click — kill the container itself.
+		// The animation created by the last Preview click. killTweensOf() alone kills child tweens but leaves a repeat:-1 timeline container alive in GSAP's root ticker, leaking one per click — kill the container itself.
 		const previewAnim = useRef<gsap.core.Timeline | gsap.core.Tween | null>(null)
 		useEffect(() => () => {
 			previewAnim.current?.kill()
@@ -418,10 +395,8 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 
 		function handlePreview() {
 			if (!appliedClass) return
-			// The block canvas is rendered inside an iframe in modern WP; fall back to
-			// the top document for the non-iframed case. Scope the selector to the
-			// block-list wrapper so we don't match the List View row, which also
-			// carries data-block="<clientId>".
+			// Block canvas renders inside an iframe in modern WP; fall back to the top document otherwise.
+			// Scope to block-list wrapper so we don't match the List View row (also carries data-block="<clientId>").
 			const canvas = document.querySelector<HTMLIFrameElement>('iframe[name="editor-canvas"]')
 			const doc = canvas?.contentDocument ?? document
 			const blockEl = doc.querySelector(
@@ -488,9 +463,7 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 		}, [])
 
 		function handleStaggerPreview() {
-			// Preview works even before Stagger Each is set, using a sensible
-			// default — the button shouldn't require committing a value first
-			// just to see what stagger looks like.
+			// Preview works before Stagger Each is set, using a sensible default — no need to commit a value first just to see the stagger.
 			const each = staggerEach ?? 100
 			const canvas = document.querySelector<HTMLIFrameElement>('iframe[name="editor-canvas"]')
 			const doc = canvas?.contentDocument ?? document
@@ -498,11 +471,8 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 			staggerPreviewAnims.current.forEach((a) => a.kill())
 			staggerPreviewAnims.current = []
 
-			// Mirror the frontend's bindStaggerGroup(): direct children only, only
-			// scroll/load-triggered ones (hover children preview independently),
-			// reading each child's own applied class + overrides from its block
-			// attributes — the editor canvas never carries data-animation-* (that's
-			// only written into saved HTML), so we can't read it off the DOM.
+			// Mirrors the frontend's bindStaggerGroup(): direct children only, scroll/load-triggered only (hover previews independently), reading each child's applied class + overrides from block attributes.
+			// The editor canvas never carries data-animation-* (only written into saved HTML), so we can't read it off the DOM.
 			const childClientIds: string[] = wpSelect("core/block-editor").getBlockOrder(clientId) ?? []
 			const from = staggerFrom || "start"
 
@@ -571,8 +541,7 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 		const showAnimation = !!activeCategory && !!REGISTRY[activeCategory]
 		const showVariant = !!activeAnimation && variants.length > 1
 		const showSettings = !!appliedClass
-		// Multi-step timelines have no single ease to override; hide the controls
-		// rather than show settings that do nothing.
+		// Multi-step timelines have no single ease to override; hide controls that would do nothing.
 		const isTimeline = !!(appliedClass && FLAT_CONFIGS[appliedClass]?.timeline)
 
 		return (
@@ -611,16 +580,11 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 									__next40pxDefaultSize
 									label={__("Duration (ms)", "theatrum-animation")}
 									value={animationDuration != null ? String(animationDuration) : ""}
-									// Blank means "inherit the animation's own pace", so show that
-									// pace as the placeholder instead of leaving the field a mystery.
-									// 500 is the house default for anything that doesn't declare one
-									// (matches --ct-duration-slow-3). Deliberately a placeholder and
-									// not an attribute default: writing 500 into every block would
-									// override each animation's tuned pace.
+									// Blank = inherit the animation's own pace; placeholder shows that pace (500 default, matches --ct-duration-slow-3) rather than a mystery empty field.
+									// Deliberately a placeholder, not an attribute default — writing 500 into every block would override each animation's tuned pace.
 									placeholder={String(FLAT_CONFIGS[appliedClass]?.duration ?? 500)}
 									min={0}
-									// Walks the token scale (50ms apart at the fast end, 100ms at the
-									// slow end) without restricting typed values to it.
+									// Walks the token scale (50ms fast end, 100ms slow end) without restricting typed values to it.
 									step={50}
 									onChange={(val?: string) => {
 										// parseInt of intermediate input ("-", "5e") is NaN — store null, never NaN.

@@ -9,15 +9,8 @@ const TRANSFORM_KEYS = new Set([
 ])
 
 /**
- * Build a `clearProps` list limited to the properties a tween actually animated.
- * Using GSAP's `clearProps: "all"` also strips inline styles WordPress applies
- * for block supports (padding, border, etc.), so we clear only what we set.
- *
- * `.has-parallax` cover blocks rely on `background-attachment: fixed`, which the
- * browser re-resolves relative to the viewport the instant an inline `transform`
- * is removed from that same element — visible as the background snapping/resizing
- * right when the entrance animation ends. Leaving the (now-identity) transform in
- * place keeps that containing-block context stable, so we skip clearing it there.
+ * Builds a `clearProps` list limited to properties the tween actually animated (GSAP's `clearProps: "all"` would also strip WP block-support inline styles like padding/border).
+ * `.has-parallax` cover blocks need the inline transform left in place — removing it snaps `background-attachment: fixed` relative to the viewport right when the entrance animation ends, so we skip clearing transform there.
  */
 export function clearPropsFor(vars: gsap.TweenVars, el?: Element): string {
 	const props = new Set<string>()
@@ -28,11 +21,7 @@ export function clearPropsFor(vars: gsap.TweenVars, el?: Element): string {
 	return [...props].join(",")
 }
 
-/**
- * z-translation renders as no-op without a perspective on the element.
- * Inject `transformPerspective` into any tween vars that animate `z` so the
- * many fwd/bck variants actually move in depth.
- */
+/** z-translation is a no-op without perspective on the element; inject `transformPerspective` for tweens animating `z` so the fwd/bck variants actually move in depth. */
 export function withPerspective(vars: gsap.TweenVars): gsap.TweenVars {
 	return "z" in vars && !("transformPerspective" in vars)
 		? { transformPerspective: 800, ...vars }
@@ -47,11 +36,6 @@ export interface AnimationConfig {
 	to?: gsap.TweenVars
 	repeat?: number
 	yoyo?: boolean
-	/**
-	 * Looping / multi-step animations build their own timeline at the config's
-	 * native pace. Duration/delay overrides are applied by the caller via
-	 * timeScale()/delay(); a per-step ease can't be overridden, so the inspector
-	 * hides the ease controls for timeline animations.
-	 */
+	/** Looping/multi-step animations build their own timeline at native pace; duration/delay overrides apply via timeScale()/delay() (ease can't be overridden per-step, so the inspector hides ease controls for timeline animations). */
 	timeline?: (el: Element) => gsap.core.Timeline
 }

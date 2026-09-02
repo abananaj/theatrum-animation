@@ -39,14 +39,8 @@ function theatrum_animation_enqueue_scripts()
 }
 add_action('wp_enqueue_scripts', 'theatrum_animation_enqueue_scripts');
 
-// Note: the tma-* CSS utility classes (src/scss/utilities.scss) are NOT enqueued
-// as a separate stylesheet. Vite has no HTML entry point to extract CSS against
-// in this build (a plain .ts entry compiled to a standalone IIFE), so it bundles
-// the CSS into dist/main.js and injects it via a runtime <style> tag on script
-// execution instead of ever emitting a dist/main.css file. This mirrors why an
-// earlier dist/main.css enqueue in this plugin was removed as dead code — the
-// file simply never gets built. No PHP wiring is needed for the CSS utilities;
-// they ship for free as part of the existing theatrum-animation script enqueue.
+// Note: tma-* CSS utilities (src/scss/utilities.scss) are NOT enqueued separately — Vite has no HTML entry to extract CSS against here, so it bundles CSS into dist/main.js and injects it via a runtime <style> tag; dist/main.css never gets built (an earlier dist/main.css enqueue was removed as dead code for this reason).
+// No PHP wiring needed — CSS ships with the existing theatrum-animation script enqueue.
 
 /**
  * Enqueue the block editor inspector panel.
@@ -69,23 +63,9 @@ function theatrum_animation_enqueue_editor_scripts() {
 add_action('enqueue_block_editor_assets', 'theatrum_animation_enqueue_editor_scripts');
 
 /**
- * Mirror the animation/stagger attributes that
- * src/block-editor/inspector.tsx adds to every block on the client
- * (via the `blocks.registerBlockType` filter) onto the server-side block
- * type registration.
- *
- * Without this, a block's PHP-registered attribute schema doesn't include
- * these keys, so any block using ServerSideRender (which round-trips
- * attributes through the REST `block-renderer` endpoint, validated against
- * this schema with additionalProperties:false) fails with "Invalid
- * parameter(s): attributes" the moment the client sends staggerFrom/
- * animationDuration/etc. Most blocks never notice because they don't use
- * ServerSideRender, but theatrum/production-quotes and
- * theatrum/performances-list do.
- *
- * Excludes wpforms/* for the same reason as the JS filter: its widgets
- * measure their own size on mount and injecting attributes into a schema
- * we don't control risks corrupting its ServerSideRender preview.
+ * Mirrors the animation/stagger attributes src/block-editor/inspector.tsx adds client-side onto the server-side block type registration.
+ * Without this, ServerSideRender blocks (which validate attributes against this schema with additionalProperties:false) fail with "Invalid parameter(s): attributes" once the client sends staggerFrom/animationDuration/etc — affects theatrum/production-quotes and theatrum/performances-list.
+ * Excludes wpforms/* for the same reason as the JS filter: its widgets measure their own size on mount, so injecting attributes into a schema we don't control risks corrupting its ServerSideRender preview.
  */
 function theatrum_animation_register_block_type_args($args, $name)
 {
@@ -93,12 +73,8 @@ function theatrum_animation_register_block_type_args($args, $name)
     return $args;
   }
 
-  // Numeric attributes are typed as [number, string]: their JS-side default
-  // is null, and a null value round-tripped through ServerSideRender's GET
-  // request (block-renderer's REST endpoint) serializes to an empty string
-  // (`attributes[animationDuration]=`) — there's no way to distinguish
-  // "null" from "" in a query string. A strict `type: number` would reject
-  // that empty string as invalid before it ever reaches sanitize_callback.
+  // Typed [number, string]: JS-side default is null, but ServerSideRender's GET round-trip serializes null to "" (`attributes[animationDuration]=`) — no way to distinguish "null" from "" in a query string.
+  // A strict `type: number` would reject that empty string before it ever reaches sanitize_callback.
   $args['attributes'] = array_merge($args['attributes'] ?? [], [
     'animationDuration'     => ['type' => ['number', 'string'], 'default' => null],
     'animationDelay'        => ['type' => ['number', 'string'], 'default' => null],

@@ -7,8 +7,7 @@ export type { AnimationConfig, TriggerId }
 export const ANIMATION_CONFIGS: Record<string, AnimationConfig> = flattenConfigs()
 export const DEFAULT_TRIGGER: Record<string, TriggerId> = flattenTriggers()
 
-// Elements already wired up — the MutationObserver can re-visit a node (e.g. via
-// a parent's querySelectorAll), and hover listeners must not be bound twice.
+// Elements already wired up — the MutationObserver can re-visit a node (e.g. via a parent's querySelectorAll), and hover listeners must not be bound twice.
 export const processed = new WeakSet<Element>()
 
 export type Timing = { duration: number; ease: string; delay: number }
@@ -47,12 +46,8 @@ export function resolveTriggerPoint(el: Element): number {
 }
 
 /**
- * Build a config's animation paused, for triggers that decide when to play
- * (scroll-timeline, hover, stagger). `timeline()` creates its own timeline; from/to
- * become paused tweens. By default from-values render immediately so the element
- * sits in its pre-animation state until played (scroll/load triggers rely on this).
- * Hover triggers must pass `immediateRender: false` — the element should sit in its
- * normal state until hovered, not its from-state.
+ * Builds a config's animation paused, for triggers that decide when to play (scroll, hover, stagger). `timeline()` builds its own timeline (bypasses ScrollTrigger); from/to become paused tweens.
+ * Hover passes `immediateRender: false` so the element stays in its normal state (not its from-state) until hovered.
  */
 export function buildPaused(el: Element, config: AnimationConfig, timing: Timing, immediateRender = true): gsap.core.Timeline | gsap.core.Tween {
 	const { duration, ease, delay } = timing

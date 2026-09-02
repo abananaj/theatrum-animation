@@ -27,8 +27,7 @@ function bindStaggerGroup(parent: Element): void {
 
 	const children = Array.from(parent.querySelectorAll(":scope > *")).filter(el => animationClassOf(el))
 
-	// Hover/attention children aren't real entrances — exclude them from the
-	// group so they keep animating independently on their own trigger.
+	// Hover/attention children aren't real entrances — excluded so they keep animating independently on their own trigger.
 	const eligible = children.filter(el => resolveTrigger(el, animationClassOf(el)!) !== "hover")
 
 	processed.add(parent)
@@ -46,9 +45,7 @@ function bindStaggerGroup(parent: Element): void {
 
 	const play = () => built.forEach(anim => anim.play())
 
-	// If every member is Load-triggered, play immediately; otherwise gate the
-	// whole group on the parent scrolling into view, using the parent's own
-	// trigger-point override (if any) as the shared boundary.
+	// If every member is Load-triggered, play immediately; otherwise gate the whole group on the parent scrolling into view, using the parent's trigger-point override as the shared boundary.
 	const allLoad = eligible.every(el => resolveTrigger(el, animationClassOf(el)!) === "load")
 	if (allLoad) play()
 	else onScrollIntoView(parent, play, resolveTriggerPoint(parent))

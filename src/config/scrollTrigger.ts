@@ -12,11 +12,7 @@ export function getScrollTrigger(el: Element, point = 85): ScrollTrigger.Vars {
 	}
 }
 
-/**
- * Fire `cb` once when `el` scrolls into view. For animations that manage their
- * own timeline (which can't take the integrated `scrollTrigger` tween var), so
- * they can be built paused and played on entry at the same threshold.
- */
+/** Fires `cb` once when `el` scrolls into view — for timeline animations, which can't take the integrated `scrollTrigger` tween var, so they're built paused and played on entry at the same threshold. */
 export function onScrollIntoView(el: Element, cb: () => void, point = 85): void {
 	ScrollTrigger.create({ trigger: el, start: `top ${point}%`, once: true, onEnter: cb })
 }

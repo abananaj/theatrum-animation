@@ -93,9 +93,7 @@ function animateElement(el: Element): void {
 }
 
 export function initializeAnimations(): void {
-	// WCAG 2.3.3 / 2.2.2: honor the OS-level reduced-motion preference. Safe to
-	// skip entirely — pre-animation states are applied by GSAP itself (from-
-	// tweens), so untweened elements simply render in their final state.
+	// WCAG 2.3.3/2.2.2: honor the OS-level reduced-motion preference. Safe to skip entirely — GSAP's from-tweens apply pre-animation states, so untweened elements just render in their final state.
 	if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
 
 	bindStaggerGroups()
@@ -103,9 +101,7 @@ export function initializeAnimations(): void {
 
 	const animationKeys = Object.keys(ANIMATION_CONFIGS)
 
-	// Animation classes are server-rendered, so only watch for inserted nodes
-	// (e.g. lazy-loaded content) — observing class-attribute flips would fire
-	// on every unrelated UI toggle on the page.
+	// Animation classes are server-rendered; only watch for inserted nodes (e.g. lazy-loaded content) — observing class-attribute flips would fire on every unrelated UI toggle.
 	new MutationObserver((mutations) => {
 		bindStaggerGroups()
 		for (const mutation of mutations) {
@@ -119,12 +115,8 @@ export function initializeAnimations(): void {
 		}
 	}).observe(document.body, { childList: true, subtree: true })
 
-	// Web fonts and late-loading images can shift layout after DOMContentLoaded,
-	// when ScrollTrigger first measured each `once: true` trigger's boundary. A
-	// one-shot entrance animation whose boundary went stale that way never
-	// fires `onEnter` and sticks at its from-state (e.g. scale: 0) forever.
-	// window "load" fires once everything has settled, so refresh here corrects
-	// any boundary before the user scrolls that far.
+	// Web fonts/late images can shift layout after DOMContentLoaded (when ScrollTrigger first measured each `once: true` boundary); a stale boundary means a one-shot entrance never fires `onEnter` and sticks at its from-state (e.g. scale: 0) forever.
+	// window "load" fires once everything has settled, so refresh here corrects any boundary before the user scrolls that far.
 	window.addEventListener("load", () => ScrollTrigger.refresh())
 }
 
