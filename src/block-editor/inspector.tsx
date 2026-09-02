@@ -611,7 +611,16 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 									__next40pxDefaultSize
 									label={__("Duration (ms)", "theatrum-animation")}
 									value={animationDuration != null ? String(animationDuration) : ""}
+									// Blank means "inherit the animation's own pace", so show that
+									// pace as the placeholder instead of leaving the field a mystery.
+									// 500 is the house default for anything that doesn't declare one
+									// (matches --ct-duration-slow-3). Deliberately a placeholder and
+									// not an attribute default: writing 500 into every block would
+									// override each animation's tuned pace.
+									placeholder={String(FLAT_CONFIGS[appliedClass]?.duration ?? 500)}
 									min={0}
+									// Walks the token scale (50ms apart at the fast end, 100ms at the
+									// slow end) without restricting typed values to it.
 									step={50}
 									onChange={(val?: string) => {
 										// parseInt of intermediate input ("-", "5e") is NaN — store null, never NaN.
