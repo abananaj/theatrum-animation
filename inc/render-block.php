@@ -1,6 +1,6 @@
 <?php
 
-if (! defined('ABSPATH')) {
+if ( ! defined('ABSPATH')) {
   exit;
 }
 
@@ -19,8 +19,7 @@ add_filter('render_block', 'theatrum_animation_render_block', 10, 2);
  * @return string Block HTML with data-animation-* and data-stagger-* attributes
  *                added to its outer wrapper element when applicable.
  */
-function theatrum_animation_render_block($block_content, $block)
-{
+function theatrum_animation_render_block($block_content, $block) {
   if (empty($block_content) || empty($block['blockName'])) {
     return $block_content;
   }
@@ -31,7 +30,7 @@ function theatrum_animation_render_block($block_content, $block)
 
   // Static blocks already got their data-* attrs at save time via blocks.getSaveContent.extraProps — skip here (this filter fires for every block, including inside query loops with many repeats).
   $block_type = WP_Block_Type_Registry::get_instance()->get_registered($block['blockName']);
-  if (! $block_type || ! $block_type->is_dynamic()) {
+  if ( ! $block_type || ! $block_type->is_dynamic()) {
     return $block_content;
   }
 
@@ -42,7 +41,7 @@ function theatrum_animation_render_block($block_content, $block)
 
   // Assumes a single top-level wrapper in $block_content (same assumption blocks.getSaveContent.extraProps makes for static blocks) — a render.php emitting multiple sibling roots only gets attributes on the first.
   $processor = new WP_HTML_Tag_Processor($block_content);
-  if (! $processor->next_tag()) {
+  if ( ! $processor->next_tag()) {
     return $block_content;
   }
   foreach ($data_attrs as $name => $value) {
@@ -58,8 +57,7 @@ function theatrum_animation_render_block($block_content, $block)
  * @param array $attrs Block attributes.
  * @return array<string, string> data-* attribute name/value pairs.
  */
-function theatrum_animation_data_attrs_for($attrs)
-{
+function theatrum_animation_data_attrs_for($attrs) {
   $out = [];
 
   $duration = $attrs['animationDuration'] ?? null;
