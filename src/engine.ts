@@ -25,8 +25,9 @@ export function applyOverrides(el: Element, config: AnimationConfig): Timing {
 	const customDelay = parseInt(el.getAttribute("data-animation-delay") ?? "", 10)
 	if (!Number.isNaN(customDelay)) delay = customDelay
 
+	// Post content is the source; accept only GSAP's ease grammar ("power3.out", "back.inOut(1.7)", "steps(5)") so a stray string can't reach the tween.
 	const customEase = el.getAttribute("data-animation-ease")
-	if (customEase) ease = customEase
+	if (customEase && /^[a-zA-Z]+[0-9]?(\.(in|out|inOut))?(\([0-9.,\s]*\))?$/.test(customEase)) ease = customEase
 
 	return { duration: duration / 1000, ease, delay: delay / 1000 }
 }

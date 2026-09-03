@@ -65,6 +65,9 @@ function playOnLoad(el: Element, config: AnimationConfig, timing: Timing): void 
 /** On Hover: play while hovered, pause on leave. Touch has no hover → tap-to-toggle. */
 function playOnHover(el: Element, config: AnimationConfig, timing: Timing): void {
 	const anim = buildPaused(el, config, timing, false)
+	// Keyboard parity (WCAG 2.1.1): focus inside the element plays the same animation hover does.
+	el.addEventListener("focusin", () => anim.play())
+	el.addEventListener("focusout", () => anim.pause())
 	if (window.matchMedia("(hover: hover)").matches) {
 		el.addEventListener("mouseenter", () => anim.play())
 		el.addEventListener("mouseleave", () => anim.pause())
@@ -94,7 +97,16 @@ function animateElement(el: Element): void {
 
 export function initializeAnimations(): void {
 	// WCAG 2.3.3/2.2.2: honor the OS-level reduced-motion preference. Safe to skip entirely — GSAP's from-tweens apply pre-animation states, so untweened elements just render in their final state.
-	if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
+	const reduced = window.matchMedia("(prefers-reduced-motion: reduce)")
+	if (reduced.matches) return
+
+	// Preference flipped mid-session: stop everything and reset inline styles so elements land in their final state (opting back in takes a reload).
+	reduced.addEventListener("change", (e) => {
+		if (!e.matches) return
+		ScrollTrigger.getAll().forEach(t => t.kill())
+		gsap.globalTimeline.clear()
+		gsap.set(document.querySelectorAll(selector), { clearProps: "all" })
+	})
 
 	bindStaggerGroups()
 	document.querySelectorAll(selector).forEach(animateElement)
