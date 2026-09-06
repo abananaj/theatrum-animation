@@ -71,7 +71,7 @@ export function resolveTrigger(el: Element, cls: string): TriggerId {
 }
 
 /**
- * data-animation-trigger-point override (viewport % from top, 0-100), else the 85% default.
+ * data-animation-trigger-point override (viewport % from top, 0-100), else the 50% default.
  * @param el
  */
 export function resolveTriggerPoint(el: Element): number {
@@ -80,7 +80,7 @@ export function resolveTriggerPoint(el: Element): number {
 		10
 	);
 	if (Number.isNaN(attr) || attr < 0 || attr > 100) {
-		return 85;
+		return 50;
 	}
 	return attr;
 }

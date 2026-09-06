@@ -882,14 +882,14 @@ const withAnimationInspector = createHigherOrderComponent((BlockEdit) => {
 											'Viewport % from top that fires the animation.',
 											'theatrum-animation'
 										)}
-										value={animationTriggerPoint ?? 85}
+										value={animationTriggerPoint ?? 50}
 										min={0}
 										max={100}
 										onChange={(val?: number) => {
-											const n = val ?? 85;
+											const n = val ?? 50;
 											setAttributes({
 												animationTriggerPoint:
-													n === 85 ? null : n,
+													n === 50 ? null : n,
 											});
 										}}
 									/>
