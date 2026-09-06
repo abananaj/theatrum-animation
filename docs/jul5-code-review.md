@@ -1,9 +1,6 @@
 # Code Review — theatrum-animation
 
-**Date:** 2026-07-05
-**Branch:** `fable-exp` (clean at `bc4a0de`)
-**Scope:** All source (`src/`, PHP, build configs), documentation (`README.md`, `docs/`), and project hygiene.
-**Review lenses:** WordPress coding standards; plus the web resources saved in Notion:
+**Date:** 2026-07-05 **Branch:** `fable-exp` (clean at `bc4a0de`) **Scope:** All source (`src/`, PHP, build configs), documentation (`README.md`, `docs/`), and project hygiene. **Review lenses:** WordPress coding standards; plus the web resources saved in Notion:
 
 - [The Complete Guide to Using Animation in Web Design for Better UX and SEO](https://www.zachsean.com/post/the-complete-guide-to-using-animation-in-web-design-for-better-ux-and-seo) (Zach Sean) — performance ("every kilobyte should earn its keep"), Core Web Vitals, `prefers-reduced-motion`
 - [Stop Describing Animations by "Feelings"](https://medium.com/@kkatanono/stop-describing-animations-with-feelings-8395bb99b160) (K. Katano) — precise, named motion vocabulary
@@ -113,12 +110,12 @@ All four handlers set `suppressSync.current = true` before `setAttributes` (insp
 
 ## 3. Accessibility summary
 
-| Issue | Guideline | Status |
-|---|---|---|
-| No reduced-motion handling | WCAG 2.3.3 (AAA), broadly treated as baseline practice | ❌ missing (see 1.2) |
-| Infinite loops with no pause mechanism | WCAG 2.2.2 (A) — pause/stop/hide for >5 s motion | ❌ missing |
-| Flashing animations (`flicker`, `blink`, `text-flicker`) | WCAG 2.3.1 — three flashes threshold | ⚠️ review the actual flash rates; keep below 3/s |
-| Scroll entrances hiding content from keyboard/AT users | — | ✅ OK — `gsap.from` never leaves elements hidden if JS fails, since the pre-animation state is applied by JS itself |
+| Issue                                                    | Guideline                                              | Status                                                                                                             |
+| -------------------------------------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| No reduced-motion handling                               | WCAG 2.3.3 (AAA), broadly treated as baseline practice | ❌ missing (see 1.2)                                                                                                |
+| Infinite loops with no pause mechanism                   | WCAG 2.2.2 (A) — pause/stop/hide for >5 s motion       | ❌ missing                                                                                                          |
+| Flashing animations (`flicker`, `blink`, `text-flicker`) | WCAG 2.3.1 — three flashes threshold                   | ⚠️ review the actual flash rates; keep below 3/s                                                                   |
+| Scroll entrances hiding content from keyboard/AT users   | —                                                      | ✅ OK — `gsap.from` never leaves elements hidden if JS fails, since the pre-animation state is applied by JS itself |
 
 ---
 
@@ -126,14 +123,14 @@ All four handlers set `suppressSync.current = true` before `setAttributes` (insp
 
 The README is unusually good — honest, specific, and it correctly predicted most of what this review confirmed. But it has drifted from the code, in both directions:
 
-| README claim | Reality |
-|---|---|
-| Bug #1: undo/redo leaves stale inspector state | **Already fixed** — the `useEffect([className])` + `suppressSync` mechanism it prescribes exists at inspector.tsx:163-174 (modulo finding 1.7) |
-| Bug #3: `NaN` stored | **Half-fixed** — empty-string guarded; `parseInt` NaN path remains (finding 1.4) |
-| Tech debt #11: `ALL_ANIMATION_CLASSES` O(n) scan | **Already fixed** — `stripAnimationClasses` uses `CLASS_INDEX`, the constant is gone |
-| Tech debt #6: collision labeled "Attention", two-way | Collision is **three-way** (exit too) and the index labels it **Exit** (finding 1.1) |
-| Tech debt #13: "looping animations skip ScrollTrigger (attention, background)" | Only **timeline-based** ones skip it. Tween-based loopers (`kenburns-*`, `bounce-*`, attention `scale-*`) go through ScrollTrigger with `once: true` |
-| "No `npm run start`" (#9), `main` field (#8), `tsconfig.node.json` (#5), orphaned drafts (#4/#7 numbering) | All still true and outstanding |
+| README claim                                                                                               | Reality                                                                                                                                              |
+| ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Bug #1: undo/redo leaves stale inspector state                                                             | **Already fixed** — the `useEffect([className])` + `suppressSync` mechanism it prescribes exists at inspector.tsx:163-174 (modulo finding 1.7)       |
+| Bug #3: `NaN` stored                                                                                       | **Half-fixed** — empty-string guarded; `parseInt` NaN path remains (finding 1.4)                                                                     |
+| Tech debt #11: `ALL_ANIMATION_CLASSES` O(n) scan                                                           | **Already fixed** — `stripAnimationClasses` uses `CLASS_INDEX`, the constant is gone                                                                 |
+| Tech debt #6: collision labeled "Attention", two-way                                                       | Collision is **three-way** (exit too) and the index labels it **Exit** (finding 1.1)                                                                 |
+| Tech debt #13: "looping animations skip ScrollTrigger (attention, background)"                             | Only **timeline-based** ones skip it. Tween-based loopers (`kenburns-*`, `bounce-*`, attention `scale-*`) go through ScrollTrigger with `once: true` |
+| "No `npm run start`" (#9), `main` field (#8), `tsconfig.node.json` (#5), orphaned drafts (#4/#7 numbering) | All still true and outstanding                                                                                                                       |
 
 Other documentation issues:
 
@@ -175,18 +172,18 @@ Other documentation issues:
 
 ## 7. Prioritized action list
 
-| # | Action | Effort | Impact |
-|---|---|---|---|
-| 1 | Add `prefers-reduced-motion` gate to `initializeAnimations()` | ~5 lines | Accessibility compliance, real users |
-| 2 | Resolve the 3-way `scale-*` class collision | Medium (rename or dedupe + content check) | Unbreaks attention loops, fixes editor mislabeling |
-| 3 | Externalize GSAP from `editor.js` (or drop the canvas enqueue after verifying iframe behavior) | Small | −70 KB admin, kills dual-instance conflicts |
-| 4 | `NaN` guards in inspector + `applyOverrides` | ~4 lines | Data integrity |
-| 5 | Timeline ref + `.kill()` in `handlePreview` | Small | Editor perf/leak |
-| 6 | `transformPerspective` on all `z`-animating configs (fade + text) | Small | ~10 dead variants start working |
-| 7 | Delete 4 orphan drafts; add `strict` + `typecheck` script | Small | Hygiene, future safety |
-| 8 | Update README Next Steps (remove fixed bugs, fix numbering); mark diagnosis doc resolved | Small | Docs trustworthy again |
-| 9 | Honor or hide duration/delay/ease for timeline animations | Medium | UI honesty |
-| 10 | Conditional/deferred frontend enqueue; consider `ta-` class prefix | Medium–Large | Core Web Vitals, collision safety |
+| #   | Action                                                                                         | Effort                                    | Impact                                             |
+| --- | ---------------------------------------------------------------------------------------------- | ----------------------------------------- | -------------------------------------------------- |
+| 1   | Add `prefers-reduced-motion` gate to `initializeAnimations()`                                  | ~5 lines                                  | Accessibility compliance, real users               |
+| 2   | Resolve the 3-way `scale-*` class collision                                                    | Medium (rename or dedupe + content check) | Unbreaks attention loops, fixes editor mislabeling |
+| 3   | Externalize GSAP from `editor.js` (or drop the canvas enqueue after verifying iframe behavior) | Small                                     | −70 KB admin, kills dual-instance conflicts        |
+| 4   | `NaN` guards in inspector + `applyOverrides`                                                   | ~4 lines                                  | Data integrity                                     |
+| 5   | Timeline ref + `.kill()` in `handlePreview`                                                    | Small                                     | Editor perf/leak                                   |
+| 6   | `transformPerspective` on all `z`-animating configs (fade + text)                              | Small                                     | ~10 dead variants start working                    |
+| 7   | Delete 4 orphan drafts; add `strict` + `typecheck` script                                      | Small                                     | Hygiene, future safety                             |
+| 8   | Update README Next Steps (remove fixed bugs, fix numbering); mark diagnosis doc resolved       | Small                                     | Docs trustworthy again                             |
+| 9   | Honor or hide duration/delay/ease for timeline animations                                      | Medium                                    | UI honesty                                         |
+| 10  | Conditional/deferred frontend enqueue; consider `ta-` class prefix                             | Medium–Large                              | Core Web Vitals, collision safety                  |
 
 ---
 

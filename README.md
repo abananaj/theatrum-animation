@@ -7,13 +7,13 @@
 
 ## Overview
 
-| | |
-|---|---|
-| **Plugin file** | `theatrum-animation.php` |
-| **Build** | Vite (two configs) — `dist/main.js` (frontend) + `dist/editor.js` (block editor) |
-| **Animation engine** | [GSAP 3](https://gsap.com/) + ScrollTrigger |
-| **Editor integration** | WordPress block filter (`editor.BlockEdit` HOC) |
-| **CSS class model** | Animation applied as a CSS class on the block wrapper (e.g. `slide-in-top`, `fade-in`, `heartbeat`) |
+|                        |                                                                                                     |
+| ---------------------- | --------------------------------------------------------------------------------------------------- |
+| **Plugin file**        | `theatrum-animation.php`                                                                            |
+| **Build**              | Vite (two configs) — `dist/main.js` (frontend) + `dist/editor.js` (block editor)                    |
+| **Animation engine**   | [GSAP 3](https://gsap.com/) + ScrollTrigger                                                         |
+| **Editor integration** | WordPress block filter (`editor.BlockEdit` HOC)                                                     |
+| **CSS class model**    | Animation applied as a CSS class on the block wrapper (e.g. `slide-in-top`, `fade-in`, `heartbeat`) |
 
 ---
 
@@ -48,8 +48,7 @@ src/
 - `wp_enqueue_scripts` → `main.js` (frontend, loaded with `strategy: 'defer'`)
 - `enqueue_block_editor_assets` → `editor.js` (block editor sidebar)
 
-Frontend animations honor `prefers-reduced-motion: reduce` — `initializeAnimations()`
-no-ops entirely when the user has that OS preference set (WCAG 2.3.3 / 2.2.2).
+Frontend animations honor `prefers-reduced-motion: reduce` — `initializeAnimations()` no-ops entirely when the user has that OS preference set (WCAG 2.3.3 / 2.2.2).
 
 ---
 
@@ -57,14 +56,14 @@ no-ops entirely when the user has that OS preference set (WCAG 2.3.3 / 2.2.2).
 
 ~60 animations across 6 categories, all driven by `REGISTRY` in `config/registry.ts`.
 
-| Category | Count | Notes |
-|---|---|---|
-| 🚪 **Entrance** | 16 groups | slide-in, fade-in, rotate-in, bounce-in, flicker-in, puff-in, roll-in, scale-in, swing-in, swirl-in, tilt-in + variants |
-| 🚶 **Exit** | 19 groups | slide-out, fade-out, rotate-out, bounce-out, flip-out, puff-out, slit-out, swing-out, swirl-out + variants |
-| ⚠️ **Attention** | 12 groups | heartbeat, shake, vibrate, wobble, jello, ping, pulsate, blink, bounce, flicker, scale-up/down |
-| ⌨️ **Text** | 8 groups | tracking-in/out, text-shadow-drop/pop, text-pop, text-flicker, blur-out, focus-in |
-| 🖼️ **Background** | 3 groups | color-change (2x–5x), kenburns (8 directions), bg-pan (6 directions) |
-| ✨ **Basic** | 20 groups | swing, slide, shadow-drop/pop/inset, scale, rotate, flip + variants |
+| Category           | Count     | Notes                                                                                                                   |
+| ------------------ | --------- | ----------------------------------------------------------------------------------------------------------------------- |
+| 🚪 **Entrance**    | 16 groups | slide-in, fade-in, rotate-in, bounce-in, flicker-in, puff-in, roll-in, scale-in, swing-in, swirl-in, tilt-in + variants |
+| 🚶 **Exit**        | 19 groups | slide-out, fade-out, rotate-out, bounce-out, flip-out, puff-out, slit-out, swing-out, swirl-out + variants              |
+| ⚠️ **Attention**   | 12 groups | heartbeat, shake, vibrate, wobble, jello, ping, pulsate, blink, bounce, flicker, scale-up/down                          |
+| ⌨️ **Text**        | 8 groups  | tracking-in/out, text-shadow-drop/pop, text-pop, text-flicker, blur-out, focus-in                                       |
+| 🖼️ **Background** | 3 groups  | color-change (2x–5x), kenburns (8 directions), bg-pan (6 directions)                                                    |
+| ✨ **Basic**        | 20 groups | swing, slide, shadow-drop/pop/inset, scale, rotate, flip + variants                                                     |
 
 ### AnimationConfig shape
 
@@ -95,18 +94,18 @@ Every CSS class key must be unique across the whole `REGISTRY` — `flattenConfi
 
 `src/block-editor/inspector.tsx` — fully auto-generated from `REGISTRY`:
 
-| Control | When shown |
-|---|---|
-| **Category** dropdown (trigger-grouped) | Always |
-| **Animation** dropdown | After category is selected |
-| **Variant** dropdown | Only if animation has >1 variant |
-| **Duration** (ms) | After a variant/animation is applied |
-| **Delay** (ms) | After a variant/animation is applied |
-| **Trigger Point** (%, 0–100) | After a variant/animation is applied, and only when the resolved trigger is **On Scroll** — meaningless for Load/Hover |
+| Control                                      | When shown                                                                                                                                         |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Category** dropdown (trigger-grouped)      | Always                                                                                                                                             |
+| **Animation** dropdown                       | After category is selected                                                                                                                         |
+| **Variant** dropdown                         | Only if animation has >1 variant                                                                                                                   |
+| **Duration** (ms)                            | After a variant/animation is applied                                                                                                               |
+| **Delay** (ms)                               | After a variant/animation is applied                                                                                                               |
+| **Trigger Point** (%, 0–100)                 | After a variant/animation is applied, and only when the resolved trigger is **On Scroll** — meaningless for Load/Hover                             |
 | **Ease — Power** (`power1`–`power4`, `back`) | After a variant/animation is applied, and only for one-shot tweens (hidden for `timeline`-based animations, which have no single ease to override) |
-| **Ease — Direction** (`in`, `out`, `inOut`) | Same as above |
-| **Preview Animation** button | After a variant/animation is applied |
-| **Reset Animation** button | Any animation is active |
+| **Ease — Direction** (`in`, `out`, `inOut`)  | Same as above                                                                                                                                      |
+| **Preview Animation** button                 | After a variant/animation is applied                                                                                                               |
+| **Reset Animation** button                   | Any animation is active                                                                                                                            |
 
 Easing composed as `power1.out`, written to `data-animation-ease` on save. Duration/delay written to `data-animation-duration` / `data-animation-delay`. Trigger Point written to `data-animation-trigger-point` (only when it differs from the 85% default). For `timeline`-based animations, Duration rescales the timeline's playback speed (`timeScale()`) and Delay restarts it with a `delay()`; there's no per-step ease to override.
 
@@ -114,32 +113,17 @@ Undo/redo sync is implemented (`useEffect([className])` + a `suppressSync` ref i
 
 ### Triggers
 
-The **Category** dropdown groups its options under three trigger headers (disabled
-rows, version-safe vs `<optgroup>`); the trigger is implied by which group you pick —
-there is no separate trigger field.
+The **Category** dropdown groups its options under three trigger headers (disabled rows, version-safe vs `<optgroup>`); the trigger is implied by which group you pick — there is no separate trigger field.
 
-| Trigger | Categories | Frontend behavior | Saved? |
-|---|---|---|---|
+| Trigger       | Categories            | Frontend behavior                                                                             | Saved?                                          |
+| ------------- | --------------------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------- |
 | **On Scroll** | Entrance, Text, Basic | one-shot when the block scrolls into view (`ScrollTrigger` top `{point}`%, once — default 85) | `data-animation-trigger-point` (only if not 85) |
-| **On Load** | Entrance, Text, Basic | one-shot immediately on page load | `data-animation-trigger="load"` |
-| **On Hover** | Attention, Background | plays while hovered, pauses on mouseleave; touch → tap-to-toggle | nothing |
+| **On Load**   | Entrance, Text, Basic | one-shot immediately on page load                                                             | `data-animation-trigger="load"`                 |
+| **On Hover**  | Attention, Background | plays while hovered, pauses on mouseleave; touch → tap-to-toggle                              | nothing                                         |
 
-Trigger is resolved on the frontend (`src/index.ts` `resolveTrigger`) as
-`data-animation-trigger` attribute → else the class's **category default**
-(`flattenTriggers()` in `registry.ts`, keyed off each `Category.trigger`). Because
-scroll and hover come from the category default, only the Load override is ever
-persisted — via the `animationTrigger` block attribute written by the inspector when
-you pick an animation from the **On Load** group. The frontend dispatches per
-config-shape × trigger: one-shot `from`/`to` tweens use GSAP's integrated
-`scrollTrigger` for scroll or play immediately for load; `timeline`/looping configs
-are built paused and played on scroll-in or on hover.
+Trigger is resolved on the frontend (`src/index.ts` `resolveTrigger`) as `data-animation-trigger` attribute → else the class's **category default** (`flattenTriggers()` in `registry.ts`, keyed off each `Category.trigger`). Because scroll and hover come from the category default, only the Load override is ever persisted — via the `animationTrigger` block attribute written by the inspector when you pick an animation from the **On Load** group. The frontend dispatches per config-shape × trigger: one-shot `from`/`to` tweens use GSAP's integrated `scrollTrigger` for scroll or play immediately for load; `timeline`/looping configs are built paused and played on scroll-in or on hover.
 
-**Trigger Point:** the viewport % from the top that fires an On Scroll animation
-(GSAP's `top {point}%` shorthand) is per-block, resolved by `resolveTriggerPoint()`
-in `engine.ts` from `data-animation-trigger-point` (0–100, default 85 — the value
-every scroll trigger used before this control existed). A stagger group's shared
-boundary uses the **parent** block's own override (or 85 if unset); per-child
-overrides don't affect the group.
+**Trigger Point:** the viewport % from the top that fires an On Scroll animation (GSAP's `top {point}%` shorthand) is per-block, resolved by `resolveTriggerPoint()` in `engine.ts` from `data-animation-trigger-point` (0–100, default 85 — the value every scroll trigger used before this control existed). A stagger group's shared boundary uses the **parent** block's own override (or 85 if unset); per-child overrides don't affect the group.
 
 ---
 
@@ -210,9 +194,7 @@ Fixed in the 2026-07-05 review pass:
 - ✅ Dead `dist/main.css` enqueue removed; frontend script loads with `strategy: 'defer'`
 - ✅ `enqueue_block_assets` canvas-preview hook removed (the iframed editor canvas never executed it; removing it also eliminates the dual-GSAP-instance risk between `main.js` and `editor.js`)
 - ✅ i18n: all inspector strings wrapped in `__()`, `wp_set_script_translations()` wired up
-- ✅ `attention/flicker.ts`'s `flicker-2`–`flicker-5` exceeded WCAG 2.3.1's 3-flashes/sec
-  threshold while looping forever (up to 5/sec); loop duration widened per variant to
-  bring all under 3/sec while preserving the flicker pattern
+- ✅ `attention/flicker.ts`'s `flicker-2`–`flicker-5` exceeded WCAG 2.3.1's 3-flashes/sec threshold while looping forever (up to 5/sec); loop duration widened per variant to bring all under 3/sec while preserving the flicker pattern
 
 Remaining, in order of severity:
 
@@ -239,21 +221,21 @@ Remaining, in order of severity:
 
 ## File Reference
 
-| File | Purpose |
-|---|---|
-| `theatrum-animation.php` | Plugin init, asset enqueue, `register_block_type_args` attribute mirroring |
-| `inc/render-block.php` | `render_block` filter — re-applies `data-animation-*`/`data-stagger-*` overrides onto dynamic/server-rendered block output |
-| `src/index.ts` | Frontend entry, `initializeAnimations()`, MutationObserver |
-| `src/engine.ts` | Shared animation state/helpers (`ANIMATION_CONFIGS`, `applyOverrides`, `resolveTrigger`, `buildPaused`) used by both `index.ts` and `stagger.ts` |
-| `src/stagger.ts` | `bindStaggerGroups()` — GSAP stagger for a parent block's entrance children |
-| `src/scss/utilities.scss` | Standalone `tma-*` CSS utility classes |
-| `src/config/registry.ts` | `REGISTRY` — single source of truth; `flattenConfigs()`, `buildClassIndex()` |
-| `src/config/animationConfigs.ts` | `AnimationConfig` interface |
-| `src/config/scrollTrigger.ts` | ScrollTrigger config — `getScrollTrigger()`/`onScrollIntoView()` take a per-block trigger-point % |
-| `src/block-editor/inspector.tsx` | Block editor HOC + all controls (Animation + Stagger panels) |
-| `vite.config.js` | Frontend build config |
-| `vite.config.editor.js` | Editor build config |
-| `docs/inspector-animation-options.md` | Diagnosis doc for inspector panel scope — resolved, kept for history |
-| `docs/jul5-code-review.md` | 2026-07-05 code review — source of the fixes in Next Steps above |
-| `docs/stagger-and-css-utilities-plan.md` | Design doc for the stagger + `tma-*` CSS utilities features |
-| `animista/` | Original CSS keyframe sources (pre-migration, stale) |
+| File                                     | Purpose                                                                                                                                          |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `theatrum-animation.php`                 | Plugin init, asset enqueue, `register_block_type_args` attribute mirroring                                                                       |
+| `inc/render-block.php`                   | `render_block` filter — re-applies `data-animation-*`/`data-stagger-*` overrides onto dynamic/server-rendered block output                       |
+| `src/index.ts`                           | Frontend entry, `initializeAnimations()`, MutationObserver                                                                                       |
+| `src/engine.ts`                          | Shared animation state/helpers (`ANIMATION_CONFIGS`, `applyOverrides`, `resolveTrigger`, `buildPaused`) used by both `index.ts` and `stagger.ts` |
+| `src/stagger.ts`                         | `bindStaggerGroups()` — GSAP stagger for a parent block's entrance children                                                                      |
+| `src/scss/utilities.scss`                | Standalone `tma-*` CSS utility classes                                                                                                           |
+| `src/config/registry.ts`                 | `REGISTRY` — single source of truth; `flattenConfigs()`, `buildClassIndex()`                                                                     |
+| `src/config/animationConfigs.ts`         | `AnimationConfig` interface                                                                                                                      |
+| `src/config/scrollTrigger.ts`            | ScrollTrigger config — `getScrollTrigger()`/`onScrollIntoView()` take a per-block trigger-point %                                                |
+| `src/block-editor/inspector.tsx`         | Block editor HOC + all controls (Animation + Stagger panels)                                                                                     |
+| `vite.config.js`                         | Frontend build config                                                                                                                            |
+| `vite.config.editor.js`                  | Editor build config                                                                                                                              |
+| `docs/inspector-animation-options.md`    | Diagnosis doc for inspector panel scope — resolved, kept for history                                                                             |
+| `docs/jul5-code-review.md`               | 2026-07-05 code review — source of the fixes in Next Steps above                                                                                 |
+| `docs/stagger-and-css-utilities-plan.md` | Design doc for the stagger + `tma-*` CSS utilities features                                                                                      |
+| `animista/`                              | Original CSS keyframe sources (pre-migration, stale)                                                                                             |

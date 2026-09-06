@@ -6,19 +6,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Markdown Formatting
 
-Write prose as one line per paragraph — never hard-wrap sentences across multiple lines. Tables, code blocks, and lists are unaffected.
+Write prose as one line per paragraph — never hard-wrap sentences across multiple lines. In tables, pad every cell with spaces so the `|` columns line up visually in the raw text. Code blocks and lists are otherwise unaffected.
 
 ## Project Overview
 
-Theatrum Animation adds GSAP-powered animations to any block via the block inspector
-(scroll/load/hover triggers), plus a standalone JS-free `tma-*` CSS utility class layer and a
-GSAP stagger option for cascading a parent block's entrance children.
+Theatrum Animation adds GSAP-powered animations to any block via the block inspector (scroll/load/hover triggers), plus a standalone JS-free `tma-*` CSS utility class layer and a GSAP stagger option for cascading a parent block's entrance children.
 
-**This file stays intentionally thin — [README.md](README.md) is the real reference**: full
-architecture, all ~60 animations by category, the block editor panel's control-by-control
-behavior, stagger internals, the `tma-*` CSS utilities, and a live "Next Steps" list ordered
-by severity. Read it before making non-trivial changes here; this file only orients you and
-points at the code review for known issues.
+**This file stays intentionally thin — [README.md](README.md) is the real reference**: full architecture, all ~60 animations by category, the block editor panel's control-by-control behavior, stagger internals, the `tma-*` CSS utilities, and a live "Next Steps" list ordered by severity. Read it before making non-trivial changes here; this file only orients you and points at the code review for known issues.
 
 ## Build & Development Commands
 
@@ -30,8 +24,7 @@ npm run typecheck       # tsc --noEmit
 npm run deploy           # alias for build
 ```
 
-Two Vite builds: `vite.config.js` → `dist/main.js` (frontend, bundles GSAP) and
-`vite.config.editor.js` → `dist/editor.js` (block editor, externalizes React/`@wordpress/*`).
+Two Vite builds: `vite.config.js` → `dist/main.js` (frontend, bundles GSAP) and `vite.config.editor.js` → `dist/editor.js` (block editor, externalizes React/`@wordpress/*`).
 
 ## Architecture (orientation only — see README for depth)
 
@@ -49,10 +42,7 @@ inc/
                         # overrides onto dynamic/server-rendered block output
 ```
 
-`REGISTRY` in `config/registry.ts` is the one place to add or change an animation — both the
-inspector dropdowns and the frontend player are generated from it. Every CSS class key must
-stay unique across the whole registry (see README's "AnimationConfig shape" section for why
-a duplicate key silently desyncs editor and frontend).
+`REGISTRY` in `config/registry.ts` is the one place to add or change an animation — both the inspector dropdowns and the frontend player are generated from it. Every CSS class key must stay unique across the whole registry (see README's "AnimationConfig shape" section for why a duplicate key silently desyncs editor and frontend).
 
 ## Known Open Issues (see README's "Next Steps" for full detail)
 

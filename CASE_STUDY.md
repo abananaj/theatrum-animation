@@ -2,8 +2,7 @@
 
 > First draft. Component deep-dive; project-level story lives in the [root case study](../../../CASE_STUDY.md).
 
-A GSAP-backed animation library any block can use from the inspector.
-82 TypeScript animation definitions, no code required to apply one.
+A GSAP-backed animation library any block can use from the inspector. 82 TypeScript animation definitions, no code required to apply one.
 
 ---
 
@@ -30,14 +29,14 @@ A GSAP-backed animation library any block can use from the inspector.
 
 `src/` — TypeScript, one file per animation
 
-| Category | Count | Examples |
-|---|---|---|
-| `entrance/` | 16 | fade/slide/scale in |
-| `exit/` | 17 | fade/slide/scale out |
-| `attention/` | 12 | bounce, shake, pulsate, heartbeat, jello, wobble, flicker, ping |
-| `basic/` | 20 | flip, rotate, scale, shadow, slide, swing families |
-| `text/` | 8 | text-specific reveals |
-| `background/` | 3 | pan, Ken Burns |
+| Category      | Count | Examples                                                        |
+| ------------- | ----- | --------------------------------------------------------------- |
+| `entrance/`   | 16    | fade/slide/scale in                                             |
+| `exit/`       | 17    | fade/slide/scale out                                            |
+| `attention/`  | 12    | bounce, shake, pulsate, heartbeat, jello, wobble, flicker, ping |
+| `basic/`      | 20    | flip, rotate, scale, shadow, slide, swing families              |
+| `text/`       | 8     | text-specific reveals                                           |
+| `background/` | 3     | pan, Ken Burns                                                  |
 
 - `engine.ts` — the GSAP runtime; reads data attributes off the DOM and builds timelines
 - `stagger.ts` — sequenced animation across a block's children
