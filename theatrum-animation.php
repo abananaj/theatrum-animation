@@ -2,9 +2,9 @@
 
 /**
  * Plugin Name: Theatrum Animation
- * Description: Add animations to blocks from a dropdown in the block inspector
+ * Description: Add GSAP animations to blocks from a dropdown in the block inspector.
  * Version: 1.0.0
- * Author: Chance Theater
+ * Author:      Anna Jennings (Theatrum Mundi)
  * License: GPL-2.0-or-later
  * Text Domain: theatrum-animation
  *
