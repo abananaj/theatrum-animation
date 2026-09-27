@@ -24,6 +24,7 @@ const TRANSFORM_KEYS = new Set([
 /**
  * Builds a `clearProps` list limited to properties the tween actually animated (GSAP's `clearProps: "all"` would also strip WP block-support inline styles like padding/border).
  * `.has-parallax` cover blocks need the inline transform left in place — removing it snaps `background-attachment: fixed` relative to the viewport right when the entrance animation ends, so we skip clearing transform there.
+ * The same applies when the animated element merely *contains* a parallax cover (e.g. a slide-in group wrapping a page header): any transformed ancestor turns the descendant's fixed background into a scrolling one until the transform is removed.
  * @param vars
  * @param el
  */
@@ -32,7 +33,7 @@ export function clearPropsFor(vars: gsap.TweenVars, el?: Element): string {
 	for (const key of Object.keys(vars)) {
 		props.add(TRANSFORM_KEYS.has(key) ? 'transform' : key);
 	}
-	if (el?.classList.contains('has-parallax')) {
+	if (el?.matches('.has-parallax') || el?.querySelector('.has-parallax')) {
 		props.delete('transform');
 	}
 	return [...props].join(',');
