@@ -11,6 +11,7 @@ import flickerIn from '../entrance/flicker-in';
 import puffIn from '../entrance/puff-in';
 import rollIn from '../entrance/roll-in';
 import scaleIn from '../entrance/scale-in';
+import scaleFadeIn from '../entrance/scale-fade-in';
 import swingIn from '../entrance/swing-in';
 import swirlIn from '../entrance/swirl-in';
 import tiltIn from '../entrance/tilt-in';
@@ -128,6 +129,7 @@ export const REGISTRY: Record<string, Category> = {
 			'puff-in': { label: 'Puff In', configs: puffIn },
 			'roll-in': { label: 'Roll In', configs: rollIn },
 			'scale-in': { label: 'Scale In', configs: scaleIn },
+			'scale-fade-in': { label: 'Scale + Fade', configs: scaleFadeIn },
 			'swing-in': { label: 'Swing In', configs: swingIn },
 			'swirl-in': { label: 'Swirl In', configs: swirlIn },
 			'tilt-in': { label: 'Tilt In', configs: tiltIn },
