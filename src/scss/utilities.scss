@@ -159,3 +159,17 @@
 		transition: none;
 	}
 }
+
+// ─── Site-wide switch ───────────────────────────────────────────────────────
+// inc/settings.php adds .tma-off to <html> when animations are switched off; entrances land in their final state, hover transitions stay.
+.tma-off {
+
+	.tma-slide-in-up,
+	.tma-slide-in-down,
+	.tma-slide-in-left,
+	.tma-slide-in-right,
+	.tma-fade-in,
+	.tma-scale-in-subtle {
+		animation: none;
+	}
+}

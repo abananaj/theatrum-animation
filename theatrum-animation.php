@@ -16,6 +16,7 @@ if ( ! defined('ABSPATH')) {
 }
 
 require_once __DIR__ . '/inc/render-block.php';
+require_once __DIR__ . '/inc/settings.php';
 
 /**
  * Enqueue the frontend animation script.

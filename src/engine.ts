@@ -9,8 +9,29 @@ import { clearPropsFor, withPerspective } from './config/animationConfigs';
 
 export type { AnimationConfig, TriggerId };
 
+/** Site-wide switch printed by inc/settings.php (Settings → Animations); absent means everything plays. */
+type SiteSettings = { enabled: boolean; allow: string[] };
+const site = (window as unknown as { theatrumAnimation?: SiteSettings })
+	.theatrumAnimation;
+
+/**
+ * Drop disallowed classes when animations are switched off, so index.ts and stagger.ts never see them and those blocks render in their final state (nothing is pre-hidden).
+ * @param configs
+ */
+function applySiteSwitch(
+	configs: Record<string, AnimationConfig>
+): Record<string, AnimationConfig> {
+	if (!site || site.enabled) {
+		return configs;
+	}
+	const allow = new Set(site.allow);
+	return Object.fromEntries(
+		Object.entries(configs).filter(([cls]) => allow.has(cls))
+	);
+}
+
 export const ANIMATION_CONFIGS: Record<string, AnimationConfig> =
-	flattenConfigs();
+	applySiteSwitch(flattenConfigs());
 export const DEFAULT_TRIGGER: Record<string, TriggerId> = flattenTriggers();
 
 // Elements already wired up — the MutationObserver can re-visit a node (e.g. via a parent's querySelectorAll), and hover listeners must not be bound twice.

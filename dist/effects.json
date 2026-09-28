@@ -1,0 +1,1300 @@
+[
+	{
+		"id": "slide-in",
+		"label": "Slide In",
+		"category": "Entrance",
+		"categoryId": "entrance",
+		"classes": [
+			"slide-in-top",
+			"slide-in-right",
+			"slide-in-bottom",
+			"slide-in-left",
+			"slide-in-bl",
+			"slide-in-br",
+			"slide-in-tl",
+			"slide-in-tr"
+		]
+	},
+	{
+		"id": "slide-in-fwd",
+		"label": "Slide In Forward",
+		"category": "Entrance",
+		"categoryId": "entrance",
+		"classes": [
+			"slide-in-fwd-center",
+			"slide-in-fwd-top",
+			"slide-in-fwd-right",
+			"slide-in-fwd-bottom",
+			"slide-in-fwd-left",
+			"slide-in-fwd-tr",
+			"slide-in-fwd-br",
+			"slide-in-fwd-bl",
+			"slide-in-fwd-tl"
+		]
+	},
+	{
+		"id": "slide-in-bck",
+		"label": "Slide In Back",
+		"category": "Entrance",
+		"categoryId": "entrance",
+		"classes": [
+			"slide-in-bck-center",
+			"slide-in-bck-top",
+			"slide-in-bck-right",
+			"slide-in-bck-bottom",
+			"slide-in-bck-left",
+			"slide-in-bck-tr",
+			"slide-in-bck-br",
+			"slide-in-bck-bl",
+			"slide-in-bck-tl"
+		]
+	},
+	{
+		"id": "slide-in-blurred",
+		"label": "Slide In Blurred",
+		"category": "Entrance",
+		"categoryId": "entrance",
+		"classes": [
+			"slide-in-blurred-top",
+			"slide-in-blurred-tr",
+			"slide-in-blurred-right",
+			"slide-in-blurred-br",
+			"slide-in-blurred-bottom",
+			"slide-in-blurred-bl",
+			"slide-in-blurred-left",
+			"slide-in-blurred-tl"
+		]
+	},
+	{
+		"id": "slide-in-elliptic",
+		"label": "Slide In Elliptic",
+		"category": "Entrance",
+		"categoryId": "entrance",
+		"classes": [
+			"slide-in-elliptic-top-fwd",
+			"slide-in-elliptic-top-bck",
+			"slide-in-elliptic-right-fwd",
+			"slide-in-elliptic-right-bck",
+			"slide-in-elliptic-bottom-fwd",
+			"slide-in-elliptic-bottom-bck",
+			"slide-in-elliptic-left-fwd",
+			"slide-in-elliptic-left-bck"
+		]
+	},
+	{
+		"id": "bounce-in",
+		"label": "Bounce In",
+		"category": "Entrance",
+		"categoryId": "entrance",
+		"classes": [
+			"bounce-in-top",
+			"bounce-in-right",
+			"bounce-in-bottom",
+			"bounce-in-left",
+			"bounce-in-fwd",
+			"bounce-in-bck"
+		]
+	},
+	{
+		"id": "fade-in",
+		"label": "Fade In",
+		"category": "Entrance",
+		"categoryId": "entrance",
+		"classes": [
+			"fade-in",
+			"fade-in-top",
+			"fade-in-bottom",
+			"fade-in-left",
+			"fade-in-right",
+			"fade-in-tl",
+			"fade-in-tr",
+			"fade-in-bl",
+			"fade-in-br",
+			"fade-in-fwd",
+			"fade-in-bck"
+		]
+	},
+	{
+		"id": "flicker-in",
+		"label": "Flicker In",
+		"category": "Entrance",
+		"categoryId": "entrance",
+		"classes": [
+			"flicker-in-1",
+			"flicker-in-2"
+		]
+	},
+	{
+		"id": "puff-in",
+		"label": "Puff In",
+		"category": "Entrance",
+		"categoryId": "entrance",
+		"classes": [
+			"puff-in-center",
+			"puff-in-top",
+			"puff-in-bottom",
+			"puff-in-left",
+			"puff-in-right",
+			"puff-in-tl",
+			"puff-in-tr",
+			"puff-in-bl",
+			"puff-in-br",
+			"puff-in-ver",
+			"puff-in-hor"
+		]
+	},
+	{
+		"id": "roll-in",
+		"label": "Roll In",
+		"category": "Entrance",
+		"categoryId": "entrance",
+		"classes": [
+			"roll-in-left",
+			"roll-in-right",
+			"roll-in-top",
+			"roll-in-bottom",
+			"roll-in-blurred-left",
+			"roll-in-blurred-right",
+			"roll-in-blurred-top",
+			"roll-in-blurred-bottom"
+		]
+	},
+	{
+		"id": "scale-in",
+		"label": "Scale In",
+		"category": "Entrance",
+		"categoryId": "entrance",
+		"classes": [
+			"scale-in-center",
+			"scale-in-top",
+			"scale-in-bottom",
+			"scale-in-left",
+			"scale-in-right",
+			"scale-in-tl",
+			"scale-in-tr",
+			"scale-in-bl",
+			"scale-in-br",
+			"scale-in-ver-top",
+			"scale-in-ver-center",
+			"scale-in-ver-bottom",
+			"scale-in-hor-center",
+			"scale-in-hor-left",
+			"scale-in-hor-right"
+		]
+	},
+	{
+		"id": "scale-fade-in",
+		"label": "Scale + Fade",
+		"category": "Entrance",
+		"categoryId": "entrance",
+		"classes": [
+			"scale-fade-in-center",
+			"scale-fade-in-top",
+			"scale-fade-in-bottom",
+			"scale-fade-in-left",
+			"scale-fade-in-right"
+		]
+	},
+	{
+		"id": "swing-in",
+		"label": "Swing In",
+		"category": "Entrance",
+		"categoryId": "entrance",
+		"classes": [
+			"swing-in-top-fwd",
+			"swing-in-top-bck",
+			"swing-in-left-fwd",
+			"swing-in-left-bck",
+			"swing-in-right-fwd",
+			"swing-in-right-bck",
+			"swing-in-bottom-fwd",
+			"swing-in-bottom-bck"
+		]
+	},
+	{
+		"id": "swirl-in",
+		"label": "Swirl In",
+		"category": "Entrance",
+		"categoryId": "entrance",
+		"classes": [
+			"swirl-in-fwd",
+			"swirl-in-bck",
+			"swirl-in-top-fwd",
+			"swirl-in-top-bck",
+			"swirl-in-bottom-fwd",
+			"swirl-in-bottom-bck",
+			"swirl-in-left-fwd",
+			"swirl-in-left-bck",
+			"swirl-in-right-fwd",
+			"swirl-in-right-bck",
+			"swirl-in-tl-fwd",
+			"swirl-in-tl-bck",
+			"swirl-in-tr-fwd",
+			"swirl-in-tr-bck",
+			"swirl-in-bl-fwd",
+			"swirl-in-bl-bck",
+			"swirl-in-br-fwd",
+			"swirl-in-br-bck"
+		]
+	},
+	{
+		"id": "tilt-in",
+		"label": "Tilt In",
+		"category": "Entrance",
+		"categoryId": "entrance",
+		"classes": [
+			"tilt-in-top-1",
+			"tilt-in-top-2",
+			"tilt-in-bottom-1",
+			"tilt-in-bottom-2",
+			"tilt-in-right-1",
+			"tilt-in-right-2",
+			"tilt-in-left-1",
+			"tilt-in-left-2",
+			"tilt-in-tr",
+			"tilt-in-tl",
+			"tilt-in-br",
+			"tilt-in-bl",
+			"tilt-in-fwd-tl",
+			"tilt-in-fwd-tr",
+			"tilt-in-fwd-bl",
+			"tilt-in-fwd-br"
+		]
+	},
+	{
+		"id": "rotate-in",
+		"label": "Rotate In",
+		"category": "Entrance",
+		"categoryId": "entrance",
+		"classes": [
+			"rotate-in-center",
+			"rotate-in-top",
+			"rotate-in-right",
+			"rotate-in-bottom",
+			"rotate-in-left",
+			"rotate-in-tr",
+			"rotate-in-tl",
+			"rotate-in-br",
+			"rotate-in-bl",
+			"rotate-in-hor",
+			"rotate-in-ver",
+			"rotate-in-diag-1",
+			"rotate-in-diag-2"
+		]
+	},
+	{
+		"id": "rotate-in-2",
+		"label": "Rotate In 2",
+		"category": "Entrance",
+		"categoryId": "entrance",
+		"classes": [
+			"rotate-in-2-cw",
+			"rotate-in-2-tr-cw",
+			"rotate-in-2-tl-cw",
+			"rotate-in-2-br-cw",
+			"rotate-in-2-bl-cw",
+			"rotate-in-2-fwd-cw",
+			"rotate-in-2-bck-cw",
+			"rotate-in-2-ccw",
+			"rotate-in-2-tr-ccw",
+			"rotate-in-2-tl-ccw",
+			"rotate-in-2-br-ccw",
+			"rotate-in-2-bl-ccw",
+			"rotate-in-2-fwd-ccw",
+			"rotate-in-2-bck-ccw"
+		]
+	},
+	{
+		"id": "bounce-out",
+		"label": "Bounce Out",
+		"category": "Exit",
+		"categoryId": "exit",
+		"classes": [
+			"bounce-out-top",
+			"bounce-out-bottom",
+			"bounce-out-left",
+			"bounce-out-right",
+			"bounce-out-fwd",
+			"bounce-out-bck"
+		]
+	},
+	{
+		"id": "fade-out",
+		"label": "Fade Out",
+		"category": "Exit",
+		"categoryId": "exit",
+		"classes": [
+			"fade-out-top",
+			"fade-out-right",
+			"fade-out-bottom",
+			"fade-out-left",
+			"fade-out-tl",
+			"fade-out-tr",
+			"fade-out-bl",
+			"fade-out-br",
+			"fade-out-fwd",
+			"fade-out-bck"
+		]
+	},
+	{
+		"id": "flicker-out",
+		"label": "Flicker Out",
+		"category": "Exit",
+		"categoryId": "exit",
+		"classes": [
+			"flicker-out-1",
+			"flicker-out-2"
+		]
+	},
+	{
+		"id": "flip-out",
+		"label": "Flip Out",
+		"category": "Exit",
+		"categoryId": "exit",
+		"classes": [
+			"flip-out-hor-top",
+			"flip-out-hor-bottom",
+			"flip-out-ver-left",
+			"flip-out-diag-1-tr",
+			"flip-out-diag-1-bl",
+			"flip-out-diag-2-br",
+			"flip-out-diag-2-tl"
+		]
+	},
+	{
+		"id": "puff-out",
+		"label": "Puff Out",
+		"category": "Exit",
+		"categoryId": "exit",
+		"classes": [
+			"puff-out-center",
+			"puff-out-top",
+			"puff-out-right",
+			"puff-out-left",
+			"puff-out-tl",
+			"puff-out-tr",
+			"puff-out-bl",
+			"puff-out-br",
+			"puff-out-ver",
+			"puff-out-hor"
+		]
+	},
+	{
+		"id": "roll-out",
+		"label": "Roll Out",
+		"category": "Exit",
+		"categoryId": "exit",
+		"classes": [
+			"roll-out-top",
+			"roll-out-right",
+			"roll-out-bottom",
+			"roll-out-left",
+			"roll-out-blurred-top",
+			"roll-out-blurred-right",
+			"roll-out-blurred-bottom",
+			"roll-out-blurred-left"
+		]
+	},
+	{
+		"id": "slit-out",
+		"label": "Slit Out",
+		"category": "Exit",
+		"categoryId": "exit",
+		"classes": [
+			"slit-out-vertical",
+			"slit-out-horizontal",
+			"slit-out-diagonal-1",
+			"slit-out-diagonal-2"
+		]
+	},
+	{
+		"id": "swing-out",
+		"label": "Swing Out",
+		"category": "Exit",
+		"categoryId": "exit",
+		"classes": [
+			"swing-out-top-fwd",
+			"swing-out-top-bck",
+			"swing-out-right-fwd",
+			"swing-out-right-bck",
+			"swing-out-left-fwd",
+			"swing-out-left-bck",
+			"swing-out-bottom-fwd",
+			"swing-out-bottom-bck"
+		]
+	},
+	{
+		"id": "swirl-out",
+		"label": "Swirl Out",
+		"category": "Exit",
+		"categoryId": "exit",
+		"classes": [
+			"swirl-out-fwd",
+			"swirl-out-bck",
+			"swirl-out-top-fwd",
+			"swirl-out-top-bck",
+			"swirl-out-right-fwd",
+			"swirl-out-right-bck",
+			"swirl-out-left-fwd",
+			"swirl-out-left-bck",
+			"swirl-out-tl-fwd",
+			"swirl-out-tl-bck",
+			"swirl-out-tr-fwd",
+			"swirl-out-tr-bck",
+			"swirl-out-bl-fwd",
+			"swirl-out-bl-bck",
+			"swirl-out-br-fwd",
+			"swirl-out-br-bck",
+			"swirl-out-bottom-fwd",
+			"swirl-out-bottom-bck"
+		]
+	},
+	{
+		"id": "scale-out",
+		"label": "Scale Out",
+		"category": "Exit",
+		"categoryId": "exit",
+		"classes": [
+			"scale-out-center",
+			"scale-out-top",
+			"scale-out-right",
+			"scale-out-bottom",
+			"scale-out-left",
+			"scale-out-tl",
+			"scale-out-tr",
+			"scale-out-bl",
+			"scale-out-br",
+			"scale-out-horizontal",
+			"scale-out-vertical",
+			"scale-out-ver-top",
+			"scale-out-ver-bottom",
+			"scale-out-hor-right",
+			"scale-out-hor-left"
+		]
+	},
+	{
+		"id": "rotate-out",
+		"label": "Rotate Out",
+		"category": "Exit",
+		"categoryId": "exit",
+		"classes": [
+			"rotate-out-center",
+			"rotate-out-top",
+			"rotate-out-right",
+			"rotate-out-bottom",
+			"rotate-out-left",
+			"rotate-out-tl",
+			"rotate-out-tr",
+			"rotate-out-bl",
+			"rotate-out-br",
+			"rotate-out-hor",
+			"rotate-out-ver",
+			"rotate-out-diag-1",
+			"rotate-out-diag-2"
+		]
+	},
+	{
+		"id": "rotate-out-max",
+		"label": "Rotate Out Max",
+		"category": "Exit",
+		"categoryId": "exit",
+		"classes": [
+			"rotate-out-2-cw",
+			"rotate-out-2-tr-cw",
+			"rotate-out-2-tl-cw",
+			"rotate-out-2-br-cw",
+			"rotate-out-2-bl-cw",
+			"rotate-out-2-fwd",
+			"rotate-out-2-ccw",
+			"rotate-out-2-tr-ccw",
+			"rotate-out-2-tl-ccw",
+			"rotate-out-2-br-ccw",
+			"rotate-out-2-bl-ccw",
+			"rotate-out-2-bck"
+		]
+	},
+	{
+		"id": "slide-out",
+		"label": "Slide Out",
+		"category": "Exit",
+		"categoryId": "exit",
+		"classes": [
+			"slide-out-top",
+			"slide-out-right",
+			"slide-out-bottom",
+			"slide-out-left",
+			"slide-out-tl",
+			"slide-out-tr",
+			"slide-out-bl",
+			"slide-out-br"
+		]
+	},
+	{
+		"id": "slide-out-fwd",
+		"label": "Slide Out Forward",
+		"category": "Exit",
+		"categoryId": "exit",
+		"classes": [
+			"slide-out-fwd-center",
+			"slide-out-fwd-top",
+			"slide-out-fwd-right",
+			"slide-out-fwd-bottom",
+			"slide-out-fwd-left",
+			"slide-out-fwd-tl",
+			"slide-out-fwd-tr",
+			"slide-out-fwd-bl",
+			"slide-out-fwd-br"
+		]
+	},
+	{
+		"id": "slide-out-bck",
+		"label": "Slide Out Back",
+		"category": "Exit",
+		"categoryId": "exit",
+		"classes": [
+			"slide-out-bck-center",
+			"slide-out-bck-top",
+			"slide-out-bck-right",
+			"slide-out-bck-bottom",
+			"slide-out-bck-left",
+			"slide-out-bck-tl",
+			"slide-out-bck-tr",
+			"slide-out-bck-bl",
+			"slide-out-bck-br"
+		]
+	},
+	{
+		"id": "slide-out-blurred",
+		"label": "Slide Out Blurred",
+		"category": "Exit",
+		"categoryId": "exit",
+		"classes": [
+			"slide-out-blurred-top",
+			"slide-out-blurred-bottom",
+			"slide-out-blurred-left",
+			"slide-out-blurred-right",
+			"slide-out-blurred-tl",
+			"slide-out-blurred-tr",
+			"slide-out-blurred-bl",
+			"slide-out-blurred-br"
+		]
+	},
+	{
+		"id": "slide-out-elliptic",
+		"label": "Slide Out Elliptic",
+		"category": "Exit",
+		"categoryId": "exit",
+		"classes": [
+			"slide-out-elliptic-top-fwd",
+			"slide-out-elliptic-top-bck",
+			"slide-out-elliptic-right-fwd",
+			"slide-out-elliptic-right-bck",
+			"slide-out-elliptic-bottom-fwd",
+			"slide-out-elliptic-bottom-bck",
+			"slide-out-elliptic-left-fwd",
+			"slide-out-elliptic-left-bck"
+		]
+	},
+	{
+		"id": "heartbeat",
+		"label": "Heartbeat",
+		"category": "Attention",
+		"categoryId": "attention",
+		"classes": [
+			"heartbeat"
+		]
+	},
+	{
+		"id": "flicker",
+		"label": "Flicker",
+		"category": "Attention",
+		"categoryId": "attention",
+		"classes": [
+			"flicker-1",
+			"flicker-2",
+			"flicker-3",
+			"flicker-4",
+			"flicker-5"
+		]
+	},
+	{
+		"id": "bounce",
+		"label": "Bounce",
+		"category": "Attention",
+		"categoryId": "attention",
+		"classes": [
+			"bounce-top",
+			"bounce-bottom",
+			"bounce-left",
+			"bounce-right"
+		]
+	},
+	{
+		"id": "blink",
+		"label": "Blink",
+		"category": "Attention",
+		"categoryId": "attention",
+		"classes": [
+			"blink-1",
+			"blink-2"
+		]
+	},
+	{
+		"id": "jello",
+		"label": "Jello",
+		"category": "Attention",
+		"categoryId": "attention",
+		"classes": [
+			"jello-horizontal",
+			"jello-vertical",
+			"jello-diagonal-1",
+			"jello-diagonal-2"
+		]
+	},
+	{
+		"id": "ping",
+		"label": "Ping",
+		"category": "Attention",
+		"categoryId": "attention",
+		"classes": [
+			"ping"
+		]
+	},
+	{
+		"id": "pulsate",
+		"label": "Pulsate",
+		"category": "Attention",
+		"categoryId": "attention",
+		"classes": [
+			"pulsate-fwd",
+			"pulsate-bck"
+		]
+	},
+	{
+		"id": "scale-down",
+		"label": "Scale Down",
+		"category": "Attention",
+		"categoryId": "attention",
+		"classes": [
+			"attn-scale-down-center",
+			"attn-scale-down-top",
+			"attn-scale-down-right",
+			"attn-scale-down-bottom",
+			"attn-scale-down-left",
+			"attn-scale-down-tl",
+			"attn-scale-down-tr",
+			"attn-scale-down-bl",
+			"attn-scale-down-br",
+			"attn-scale-down-hor-center",
+			"attn-scale-down-hor-left",
+			"attn-scale-down-hor-right",
+			"attn-scale-down-ver-center",
+			"attn-scale-down-ver-top",
+			"attn-scale-down-ver-bottom"
+		]
+	},
+	{
+		"id": "scale-up",
+		"label": "Scale Up",
+		"category": "Attention",
+		"categoryId": "attention",
+		"classes": [
+			"attn-scale-up-center",
+			"attn-scale-up-top",
+			"attn-scale-up-right",
+			"attn-scale-up-bottom",
+			"attn-scale-up-left",
+			"attn-scale-up-tl",
+			"attn-scale-up-tr",
+			"attn-scale-up-bl",
+			"attn-scale-up-br",
+			"attn-scale-up-hor-center",
+			"attn-scale-up-hor-left",
+			"attn-scale-up-hor-right",
+			"attn-scale-up-ver-center",
+			"attn-scale-up-ver-top",
+			"attn-scale-up-ver-bottom"
+		]
+	},
+	{
+		"id": "shake",
+		"label": "Shake",
+		"category": "Attention",
+		"categoryId": "attention",
+		"classes": [
+			"shake-horizontal",
+			"shake-vertical",
+			"shake-top",
+			"shake-bottom",
+			"shake-left",
+			"shake-right",
+			"shake-tl",
+			"shake-tr",
+			"shake-bl",
+			"shake-br",
+			"shake-lr"
+		]
+	},
+	{
+		"id": "vibrate",
+		"label": "Vibrate",
+		"category": "Attention",
+		"categoryId": "attention",
+		"classes": [
+			"vibrate-1",
+			"vibrate-2",
+			"vibrate-3"
+		]
+	},
+	{
+		"id": "wobble",
+		"label": "Wobble",
+		"category": "Attention",
+		"categoryId": "attention",
+		"classes": [
+			"wobble-hor-bottom",
+			"wobble-hor-top",
+			"wobble-ver-left",
+			"wobble-ver-right"
+		]
+	},
+	{
+		"id": "tracking-in",
+		"label": "Tracking In",
+		"category": "Text",
+		"categoryId": "text",
+		"classes": [
+			"tracking-in-expand",
+			"tracking-in-contract",
+			"tracking-in-contract-bck",
+			"tracking-in-contract-bck-top",
+			"tracking-in-contract-bck-bottom",
+			"tracking-in-expand-fwd",
+			"tracking-in-expand-fwd-top",
+			"tracking-in-expand-fwd-bottom"
+		]
+	},
+	{
+		"id": "tracking-out",
+		"label": "Tracking Out",
+		"category": "Text",
+		"categoryId": "text",
+		"classes": [
+			"tracking-out-contract",
+			"tracking-out-expand",
+			"tracking-out-expand-fwd",
+			"tracking-out-expand-fwd-top",
+			"tracking-out-expand-fwd-bottom",
+			"tracking-out-contract-bck",
+			"tracking-out-contract-bck-top",
+			"tracking-out-contract-bck-bottom"
+		]
+	},
+	{
+		"id": "text-shadow-drop",
+		"label": "Text Shadow Drop",
+		"category": "Text",
+		"categoryId": "text",
+		"classes": [
+			"text-shadow-drop-center",
+			"text-shadow-drop-top",
+			"text-shadow-drop-right",
+			"text-shadow-drop-bottom",
+			"text-shadow-drop-left",
+			"text-shadow-drop-tl",
+			"text-shadow-drop-tr",
+			"text-shadow-drop-bl",
+			"text-shadow-drop-br"
+		]
+	},
+	{
+		"id": "text-shadow-pop",
+		"label": "Text Shadow Pop",
+		"category": "Text",
+		"categoryId": "text",
+		"classes": [
+			"text-shadow-pop-top",
+			"text-shadow-pop-right",
+			"text-shadow-pop-bottom",
+			"text-shadow-pop-left",
+			"text-shadow-pop-tl",
+			"text-shadow-pop-tr",
+			"text-shadow-pop-bl",
+			"text-shadow-pop-br"
+		]
+	},
+	{
+		"id": "text-pop",
+		"label": "Text Pop",
+		"category": "Text",
+		"categoryId": "text",
+		"classes": [
+			"text-pop-up-top",
+			"text-pop-up-right",
+			"text-pop-up-bottom",
+			"text-pop-up-left",
+			"text-pop-up-tl",
+			"text-pop-up-tr",
+			"text-pop-up-bl",
+			"text-pop-up-br"
+		]
+	},
+	{
+		"id": "text-flicker",
+		"label": "Text Flicker",
+		"category": "Text",
+		"categoryId": "text",
+		"classes": [
+			"text-flicker-in-glow",
+			"text-flicker-out-glow"
+		]
+	},
+	{
+		"id": "blur-out",
+		"label": "Blur Out",
+		"category": "Text",
+		"categoryId": "text",
+		"classes": [
+			"text-blur-out",
+			"blur-out-contract",
+			"blur-out-expand",
+			"blur-out-contract-bck",
+			"blur-out-expand-fwd"
+		]
+	},
+	{
+		"id": "focus-in",
+		"label": "Focus In",
+		"category": "Text",
+		"categoryId": "text",
+		"classes": [
+			"text-focus-in",
+			"focus-in-expand",
+			"focus-in-contract",
+			"focus-in-contract-bck",
+			"focus-in-expand-fwd"
+		]
+	},
+	{
+		"id": "color-change",
+		"label": "Color Change",
+		"category": "Background",
+		"categoryId": "background",
+		"classes": [
+			"color-change-2x",
+			"color-change-3x",
+			"color-change-4x",
+			"color-change-5x"
+		]
+	},
+	{
+		"id": "kenburns",
+		"label": "Ken Burns",
+		"category": "Background",
+		"categoryId": "background",
+		"classes": [
+			"kenburns-top",
+			"kenburns-right",
+			"kenburns-bottom",
+			"kenburns-left",
+			"kenburns-top-right",
+			"kenburns-top-left",
+			"kenburns-bottom-right",
+			"kenburns-bottom-left"
+		]
+	},
+	{
+		"id": "bg-pan",
+		"label": "Background Pan",
+		"category": "Background",
+		"categoryId": "background",
+		"classes": [
+			"bg-pan-left",
+			"bg-pan-right",
+			"bg-pan-top",
+			"bg-pan-bottom",
+			"bg-pan-tl",
+			"bg-pan-tr",
+			"bg-pan-bl",
+			"bg-pan-br"
+		]
+	},
+	{
+		"id": "swing-left",
+		"label": "Swing Left",
+		"category": "Basic",
+		"categoryId": "basic",
+		"classes": [
+			"swing-left-fwd",
+			"swing-left-bck"
+		]
+	},
+	{
+		"id": "swing-right",
+		"label": "Swing Right",
+		"category": "Basic",
+		"categoryId": "basic",
+		"classes": [
+			"swing-right-fwd",
+			"swing-right-bck"
+		]
+	},
+	{
+		"id": "swing-top",
+		"label": "Swing Top",
+		"category": "Basic",
+		"categoryId": "basic",
+		"classes": [
+			"swing-top-fwd",
+			"swing-top-bck",
+			"swing-top-left-fwd",
+			"swing-top-left-bck",
+			"swing-top-right-fwd",
+			"swing-top-right-bck"
+		]
+	},
+	{
+		"id": "swing-bottom",
+		"label": "Swing Bottom",
+		"category": "Basic",
+		"categoryId": "basic",
+		"classes": [
+			"swing-bottom-fwd",
+			"swing-bottom-bck",
+			"swing-bottom-left-fwd",
+			"swing-bottom-left-bck",
+			"swing-bottom-right-fwd",
+			"swing-bottom-right-bck"
+		]
+	},
+	{
+		"id": "slide",
+		"label": "Slide",
+		"category": "Basic",
+		"categoryId": "basic",
+		"classes": [
+			"slide-top",
+			"slide-right",
+			"slide-bottom",
+			"slide-left",
+			"slide-tl",
+			"slide-tr",
+			"slide-bl",
+			"slide-br"
+		]
+	},
+	{
+		"id": "slide-fwd",
+		"label": "Slide Forward",
+		"category": "Basic",
+		"categoryId": "basic",
+		"classes": [
+			"slide-fwd-center",
+			"slide-fwd-top",
+			"slide-fwd-right",
+			"slide-fwd-bottom",
+			"slide-fwd-left",
+			"slide-fwd-tl",
+			"slide-fwd-tr",
+			"slide-fwd-bl",
+			"slide-fwd-br"
+		]
+	},
+	{
+		"id": "slide-bck",
+		"label": "Slide Back",
+		"category": "Basic",
+		"categoryId": "basic",
+		"classes": [
+			"slide-bck-center",
+			"slide-bck-top",
+			"slide-bck-right",
+			"slide-bck-bottom",
+			"slide-bck-left",
+			"slide-bck-tl",
+			"slide-bck-tr",
+			"slide-bck-bl",
+			"slide-bck-br"
+		]
+	},
+	{
+		"id": "slide-rotate",
+		"label": "Slide Rotate",
+		"category": "Basic",
+		"categoryId": "basic",
+		"classes": [
+			"slide-rotate-hor-top",
+			"slide-rotate-hor-bottom",
+			"slide-rotate-ver-right",
+			"slide-rotate-ver-left",
+			"slide-rotate-hor-t-fwd",
+			"slide-rotate-hor-b-fwd",
+			"slide-rotate-hor-t-bck",
+			"slide-rotate-hor-b-bck",
+			"slide-rotate-ver-r-fwd",
+			"slide-rotate-ver-l-fwd",
+			"slide-rotate-ver-r-bck",
+			"slide-rotate-ver-l-bck"
+		]
+	},
+	{
+		"id": "shadow-drop",
+		"label": "Shadow Drop",
+		"category": "Basic",
+		"categoryId": "basic",
+		"classes": [
+			"shadow-drop-center",
+			"shadow-drop-top",
+			"shadow-drop-right",
+			"shadow-drop-bottom",
+			"shadow-drop-left",
+			"shadow-drop-tl",
+			"shadow-drop-tr",
+			"shadow-drop-bl",
+			"shadow-drop-br",
+			"shadow-drop-lr",
+			"shadow-drop-tb"
+		]
+	},
+	{
+		"id": "shadow-inset",
+		"label": "Shadow Inset",
+		"category": "Basic",
+		"categoryId": "basic",
+		"classes": [
+			"shadow-inset-center",
+			"shadow-inset-top",
+			"shadow-inset-right",
+			"shadow-inset-bottom",
+			"shadow-inset-left",
+			"shadow-inset-tl",
+			"shadow-inset-tr",
+			"shadow-inset-bl",
+			"shadow-inset-br",
+			"shadow-inset-lr",
+			"shadow-inset-tb"
+		]
+	},
+	{
+		"id": "shadow-drop-max",
+		"label": "Shadow Drop Max",
+		"category": "Basic",
+		"categoryId": "basic",
+		"classes": [
+			"shadow-drop-2-center",
+			"shadow-drop-2-top",
+			"shadow-drop-2-right",
+			"shadow-drop-2-bottom",
+			"shadow-drop-2-left",
+			"shadow-drop-2-tl",
+			"shadow-drop-2-tr",
+			"shadow-drop-2-bl",
+			"shadow-drop-2-br",
+			"shadow-drop-2-lr",
+			"shadow-drop-2-tb"
+		]
+	},
+	{
+		"id": "shadow-pop",
+		"label": "Shadow Pop",
+		"category": "Basic",
+		"categoryId": "basic",
+		"classes": [
+			"shadow-pop-tr",
+			"shadow-pop-tl",
+			"shadow-pop-bl",
+			"shadow-pop-br"
+		]
+	},
+	{
+		"id": "scale-up",
+		"label": "Scale Up",
+		"category": "Basic",
+		"categoryId": "basic",
+		"classes": [
+			"scale-up-center",
+			"scale-up-top",
+			"scale-up-right",
+			"scale-up-bottom",
+			"scale-up-left",
+			"scale-up-tl",
+			"scale-up-tr",
+			"scale-up-bl",
+			"scale-up-br",
+			"scale-up-hor-center",
+			"scale-up-hor-left",
+			"scale-up-hor-right",
+			"scale-up-ver-center",
+			"scale-up-ver-top",
+			"scale-up-ver-bottom"
+		]
+	},
+	{
+		"id": "scale-down",
+		"label": "Scale Down",
+		"category": "Basic",
+		"categoryId": "basic",
+		"classes": [
+			"scale-down-center",
+			"scale-down-top",
+			"scale-down-right",
+			"scale-down-bottom",
+			"scale-down-left",
+			"scale-down-tl",
+			"scale-down-tr",
+			"scale-down-bl",
+			"scale-down-br",
+			"scale-down-hor-center",
+			"scale-down-hor-left",
+			"scale-down-hor-right",
+			"scale-down-ver-center",
+			"scale-down-ver-top",
+			"scale-down-ver-bottom"
+		]
+	},
+	{
+		"id": "rotate",
+		"label": "Rotate",
+		"category": "Basic",
+		"categoryId": "basic",
+		"classes": [
+			"rotate-center",
+			"rotate-top",
+			"rotate-right",
+			"rotate-bottom",
+			"rotate-left",
+			"rotate-tl",
+			"rotate-tr",
+			"rotate-bl",
+			"rotate-br",
+			"rotate-hor-center",
+			"rotate-hor-top",
+			"rotate-hor-bottom",
+			"rotate-vert-center",
+			"rotate-vert-left",
+			"rotate-vert-right",
+			"rotate-diagonal-1",
+			"rotate-diagonal-2",
+			"rotate-diagonal-tr",
+			"rotate-diagonal-bl",
+			"rotate-diagonal-tl",
+			"rotate-diagonal-br"
+		]
+	},
+	{
+		"id": "rotate-90",
+		"label": "Rotate 90",
+		"category": "Basic",
+		"categoryId": "basic",
+		"classes": [
+			"rotate-90-cw",
+			"rotate-90-ccw",
+			"rotate-90-top-cw",
+			"rotate-90-top-ccw",
+			"rotate-90-right-cw",
+			"rotate-90-right-ccw",
+			"rotate-90-bottom-cw",
+			"rotate-90-bottom-ccw",
+			"rotate-90-left-cw",
+			"rotate-90-left-ccw",
+			"rotate-90-tr-cw",
+			"rotate-90-tr-ccw",
+			"rotate-90-tl-cw",
+			"rotate-90-tl-ccw",
+			"rotate-90-br-cw",
+			"rotate-90-br-ccw",
+			"rotate-90-bl-cw",
+			"rotate-90-bl-ccw",
+			"rotate-90-horizontal-fwd",
+			"rotate-90-horizontal-bck",
+			"rotate-90-vertical-fwd",
+			"rotate-90-vertical-bck"
+		]
+	},
+	{
+		"id": "rotate-scale",
+		"label": "Rotate Scale",
+		"category": "Basic",
+		"categoryId": "basic",
+		"classes": [
+			"rotate-scale-up",
+			"rotate-scale-down",
+			"rotate-scale-up-ver",
+			"rotate-scale-down-ver",
+			"rotate-scale-up-hor",
+			"rotate-scale-down-hor",
+			"rotate-scale-up-diag-1",
+			"rotate-scale-down-diag-1",
+			"rotate-scale-up-diag-2",
+			"rotate-scale-down-diag-2"
+		]
+	},
+	{
+		"id": "flip",
+		"label": "Flip",
+		"category": "Basic",
+		"categoryId": "basic",
+		"classes": [
+			"flip-horizontal-top",
+			"flip-horizontal-bottom",
+			"flip-horizontal-fwd",
+			"flip-horizontal-bck",
+			"flip-vertical-right",
+			"flip-vertical-left",
+			"flip-vertical-fwd",
+			"flip-vertical-bck",
+			"flip-diagonal-1-tr",
+			"flip-diagonal-1-bl",
+			"flip-diagonal-1-fwd",
+			"flip-diagonal-1-bck",
+			"flip-diagonal-2-tl",
+			"flip-diagonal-2-br",
+			"flip-diagonal-2-fwd",
+			"flip-diagonal-2-bck"
+		]
+	},
+	{
+		"id": "flip-arc",
+		"label": "Flip Arc",
+		"category": "Basic",
+		"categoryId": "basic",
+		"classes": [
+			"flip-2-hor-top-1",
+			"flip-2-hor-top-2",
+			"flip-2-hor-top-fwd",
+			"flip-2-hor-top-bck",
+			"flip-2-hor-bottom-1",
+			"flip-2-hor-bottom-2",
+			"flip-2-hor-bottom-fwd",
+			"flip-2-hor-bottom-bck",
+			"flip-2-ver-right-1",
+			"flip-2-ver-right-2",
+			"flip-2-ver-right-fwd",
+			"flip-2-ver-right-bck",
+			"flip-2-ver-left-1",
+			"flip-2-ver-left-2",
+			"flip-2-ver-left-fwd",
+			"flip-2-ver-left-bck"
+		]
+	},
+	{
+		"id": "flip-scale",
+		"label": "Flip Scale",
+		"category": "Basic",
+		"categoryId": "basic",
+		"classes": [
+			"flip-scale-up-hor",
+			"flip-scale-down-hor",
+			"flip-scale-up-ver",
+			"flip-scale-down-ver",
+			"flip-scale-up-diag-1",
+			"flip-scale-down-diag-1",
+			"flip-scale-up-diag-2",
+			"flip-scale-down-diag-2",
+			"flip-scale-2-hor-top",
+			"flip-scale-2-hor-bottom",
+			"flip-scale-2-ver-right",
+			"flip-scale-2-ver-left"
+		]
+	}
+]

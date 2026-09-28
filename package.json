@@ -8,7 +8,7 @@
 		"start": "npm-run-all --parallel watch:main watch:editor",
 		"watch:main": "vite build --watch",
 		"watch:editor": "vite build --config vite.config.editor.js --watch",
-		"build": "vite build && vite build --config vite.config.editor.js",
+		"build": "vite build && vite build --config vite.config.editor.js && node scripts/export-effects.mjs",
 		"build:watch": "vite build --watch && vite build --config vite.config.editor.js --watch",
 		"build:editor": "vite build --config vite.config.editor.js",
 		"typecheck": "tsc --noEmit",
