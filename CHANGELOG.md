@@ -29,7 +29,7 @@ All notable changes to this plugin are documented here, following [Keep a Change
 - `tsconfig.node.json`, which referenced a nonexistent `vite.config.ts`.
 
 ### Added
-- **Scale + Fade** entrance animation (`scale-fade-in-*`: center, top, bottom, left, right) — scales from 0.85 while fading in; the existing Scale In has no fade.
+- **Slide & Fade In** entrance animation (`slide-fade-in-*`: top, right, bottom, left, and the four corners) — Slide In's 100px travel paired with a fade; the existing Slide In has no fade.
 - Per-block **Trigger Point** override (0–100%, default 85) for the ScrollTrigger boundary, via a new inspector `RangeControl` (`data-animation-trigger-point`), shown only when the resolved trigger is On Scroll.
 - `render_block` PHP filter (`inc/render-block.php`) so dynamic/server-rendered blocks now retain Duration/Delay/Ease/Trigger/Trigger Point/Stagger overrides that were previously silently dropped.
 - `strict: true` in `tsconfig.json` and an `npm run typecheck` script.

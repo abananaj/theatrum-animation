@@ -1,6 +1,7 @@
 import { type AnimationConfig } from './animationConfigs';
 // Entrance
 import slideIn from '../entrance/slide-in/slide-in';
+import slideFadeIn from '../entrance/slide-in/slide-fade-in';
 import slideInFwd from '../entrance/slide-in/slide-in-fwd';
 import slideInBck from '../entrance/slide-in/slide-in-bck';
 import slideInBlurred from '../entrance/slide-in/slide-in-blurred';
@@ -11,7 +12,6 @@ import flickerIn from '../entrance/flicker-in';
 import puffIn from '../entrance/puff-in';
 import rollIn from '../entrance/roll-in';
 import scaleIn from '../entrance/scale-in';
-import scaleFadeIn from '../entrance/scale-fade-in';
 import swingIn from '../entrance/swing-in';
 import swirlIn from '../entrance/swirl-in';
 import tiltIn from '../entrance/tilt-in';
@@ -113,6 +113,7 @@ export const REGISTRY: Record<string, Category> = {
 		trigger: 'scroll',
 		animations: {
 			'slide-in': { label: 'Slide In', configs: slideIn },
+			'slide-fade-in': { label: 'Slide & Fade In', configs: slideFadeIn },
 			'slide-in-fwd': { label: 'Slide In Forward', configs: slideInFwd },
 			'slide-in-bck': { label: 'Slide In Back', configs: slideInBck },
 			'slide-in-blurred': {
@@ -129,7 +130,6 @@ export const REGISTRY: Record<string, Category> = {
 			'puff-in': { label: 'Puff In', configs: puffIn },
 			'roll-in': { label: 'Roll In', configs: rollIn },
 			'scale-in': { label: 'Scale In', configs: scaleIn },
-			'scale-fade-in': { label: 'Scale + Fade', configs: scaleFadeIn },
 			'swing-in': { label: 'Swing In', configs: swingIn },
 			'swirl-in': { label: 'Swirl In', configs: swirlIn },
 			'tilt-in': { label: 'Tilt In', configs: tiltIn },

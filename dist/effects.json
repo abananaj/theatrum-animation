@@ -16,6 +16,22 @@
 		]
 	},
 	{
+		"id": "slide-fade-in",
+		"label": "Slide & Fade In",
+		"category": "Entrance",
+		"categoryId": "entrance",
+		"classes": [
+			"slide-fade-in-top",
+			"slide-fade-in-right",
+			"slide-fade-in-bottom",
+			"slide-fade-in-left",
+			"slide-fade-in-bl",
+			"slide-fade-in-br",
+			"slide-fade-in-tl",
+			"slide-fade-in-tr"
+		]
+	},
+	{
 		"id": "slide-in-fwd",
 		"label": "Slide In Forward",
 		"category": "Entrance",
@@ -180,19 +196,6 @@
 			"scale-in-hor-center",
 			"scale-in-hor-left",
 			"scale-in-hor-right"
-		]
-	},
-	{
-		"id": "scale-fade-in",
-		"label": "Scale + Fade",
-		"category": "Entrance",
-		"categoryId": "entrance",
-		"classes": [
-			"scale-fade-in-center",
-			"scale-fade-in-top",
-			"scale-fade-in-bottom",
-			"scale-fade-in-left",
-			"scale-fade-in-right"
 		]
 	},
 	{
