@@ -1,11 +1,14 @@
 import gsap from 'gsap';
 import { onScrollIntoView } from './config/scrollTrigger';
+import { BRAND_STAGGER } from './config/brand';
 import {
 	ANIMATION_CONFIGS,
 	processed,
 	applyOverrides,
+	resolveAnimation,
 	resolveTrigger,
 	resolveTriggerPoint,
+	triggeredOnArrival,
 	buildPaused,
 } from './engine';
 
@@ -47,42 +50,51 @@ function bindStaggerGroup(parent: Element): void {
 	}
 	const fromMode = parseStaggerFrom(parent.getAttribute('data-stagger-from'));
 
-	const children = Array.from(parent.querySelectorAll(':scope > *')).filter(
-		(el) => animationClassOf(el)
-	);
+	const point = resolveTriggerPoint(parent);
+	const arrived = triggeredOnArrival(parent, point);
 
 	// Hover/attention children aren't real entrances — excluded so they keep animating independently on their own trigger.
-	const eligible = children.filter(
-		(el) => resolveTrigger(el, animationClassOf(el)!) !== 'hover'
-	);
+	// Static brand children (heroes, or already in view on arrival) drop out too; animateElement() leaves them in place.
+	const eligible = Array.from(parent.querySelectorAll(':scope > *'))
+		.map((el) => {
+			const cls = animationClassOf(el);
+			const resolved = cls ? resolveAnimation(el, cls) : null;
+			return { el, cls: cls!, resolved: resolved! };
+		})
+		.filter(
+			({ el, cls, resolved }) =>
+				resolved &&
+				resolveTrigger(el, cls) !== 'hover' &&
+				!(resolved.brand && arrived)
+		);
 
 	processed.add(parent);
 	if (eligible.length < 2) {
 		return;
 	} // nothing to stagger
 
+	const allBrand = eligible.every(({ resolved }) => resolved.brand);
 	const distribute = gsap.utils.distribute({
-		each: each / 1000,
+		each: (allBrand ? BRAND_STAGGER : each) / 1000,
 		from: fromMode,
 	});
-	const built = eligible.map((el, i) => {
-		const cls = animationClassOf(el)!;
-		const config = ANIMATION_CONFIGS[cls];
-		const timing = applyOverrides(el, config);
-		timing.delay += distribute(i, el, eligible);
+	const els = eligible.map(({ el }) => el);
+	const built = eligible.map(({ el, resolved }, i) => {
+		const timing = applyOverrides(el, resolved.config, resolved.brand);
+		timing.delay += distribute(i, el, els);
 		processed.add(el);
-		return buildPaused(el, config, timing);
+		return buildPaused(el, resolved.config, timing);
 	});
 
 	const play = () => built.forEach((anim) => anim.play());
 
 	// If every member is Load-triggered, play immediately; otherwise gate the whole group on the parent scrolling into view, using the parent's trigger-point override as the shared boundary.
 	const allLoad = eligible.every(
-		(el) => resolveTrigger(el, animationClassOf(el)!) === 'load'
+		({ el, cls }) => resolveTrigger(el, cls) === 'load'
 	);
 	if (allLoad) {
 		play();
 	} else {
-		onScrollIntoView(parent, play, resolveTriggerPoint(parent));
+		onScrollIntoView(parent, play, point);
 	}
 }

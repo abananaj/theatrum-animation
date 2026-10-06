@@ -141,6 +141,26 @@ On the frontend, `src/stagger.ts`'s `bindStaggerGroups()` runs before the normal
 
 ---
 
+## Brand Motion (alias layer)
+
+`src/config/brand.ts` (added 2026-10-05) maps the entrance effects content actually uses onto a small house vocabulary, at runtime only — saved content keeps its old classes until a later content migration. `engine.ts`'s `resolveAnimation()` runs every element through it before playing.
+
+| Old effect(s)                                                                    | Plays as   | Motion                                                     |
+| -------------------------------------------------------------------------------- | ---------- | ---------------------------------------------------------- |
+| `slide-in*`, `slide-fade-in`, `slide-in-fwd/bck/blurred/elliptic`, `fade-in*`, `scale-in*`, `tracking-in*` | `ct-enter` | fade in + 32px from the left, `slow-4` (600ms)             |
+| any effect on an image/featured image/video/embed                                | unchanged  | photo effects are hand-picked — they play their own config |
+| `scale-in-hor-*`                                                                 | `ct-rule`  | clip-path wipe left→right, `slow-3` (500ms)                |
+| `scale-in-ver-*`, a `.wp-block-cover` itself, anything inside `.ct-page-header`  | static     | no animation                                               |
+
+- **One curve and scale:** durations and the ease are read from theme.json's motion tokens (`--wp--custom--motion--duration--slow-4/-slow-3`, `--wp--custom--motion--ease--power-3` turned into a GSAP `CustomEase`), so tweens and CSS transitions share them. Without the theme: 600/500ms and `power3.out`.
+- **Locked timing:** brand motions ignore per-block Duration/Ease overrides; Delay, Trigger, Trigger Point and Stagger From still apply. Groups whose children are all brand motions stagger at the house 70ms.
+- **Arrive composed:** a brand element already past its trigger line when bound (`triggeredOnArrival()`) stays static — page headers on every template and the first screen never animate, which also removes the visible→hidden→animate flash a deferred script would otherwise cause above the fold. Below-fold elements get their from-state long before they're scrolled to, so no CSS pre-hide is needed.
+- Everything enters from the left only: an off-left start can't create horizontal scroll on mobile.
+- Unaliased effects (attention, text-pop, hover effects…) play their own registry configs exactly as before.
+- The editor's Preview still plays the original effect — the alias is frontend-only until the content migration.
+
+---
+
 ## CSS Utilities (`tma-*`)
 
 `src/scss/utilities.scss` — a standalone, JS-free set of utility classes, separate from the GSAP `REGISTRY` (no inspector UI; apply via a block's **Additional CSS Class(es)** field). Prefixed `tma-` to avoid any collision with the GSAP registry's class keys (renamed from `tm-` — that prefix collided in substring searches with unrelated `tm-*` classes shipped by theatrum-blocks, e.g. `.tm-table-advanced`, `.tm-slider`).

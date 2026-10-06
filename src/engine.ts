@@ -4,8 +4,10 @@ import {
 	type TriggerId,
 	flattenConfigs,
 	flattenTriggers,
+	buildClassIndex,
 } from './config/registry';
 import { clearPropsFor, withPerspective } from './config/animationConfigs';
+import { brandConfigs, brandRole } from './config/brand';
 
 export type { AnimationConfig, TriggerId };
 
@@ -39,12 +41,48 @@ export const processed = new WeakSet<Element>();
 
 export type Timing = { duration: number; ease: string; delay: number };
 
+const CLASS_INDEX = buildClassIndex();
+
+/** What an element plays: its brand motion (timing locked), its own config, or nothing (static). */
+export type Resolved = { config: AnimationConfig; brand: boolean } | null;
+
 /**
- * Read per-element overrides written by the block inspector (data-animation-*).
+ * Resolve an element's animation class through the brand alias layer (config/brand.ts).
+ * @param el
+ * @param cls
+ */
+export function resolveAnimation(el: Element, cls: string): Resolved {
+	const role = brandRole(el, cls, CLASS_INDEX[cls]?.animation ?? '');
+	if (role === 'static') {
+		return null;
+	}
+	if (role) {
+		return { config: brandConfigs()[role], brand: true };
+	}
+	return { config: ANIMATION_CONFIGS[cls], brand: false };
+}
+
+/**
+ * Already past its trigger line when bound — it would fire at once, so brand motions leave it static (page headers and the first screen arrive composed, with no flash).
+ * @param el
+ * @param point
+ */
+export function triggeredOnArrival(el: Element, point: number): boolean {
+	const rect = el.getBoundingClientRect();
+	return rect.top < (window.innerHeight * point) / 100 && rect.bottom > 0;
+}
+
+/**
+ * Read per-element overrides written by the block inspector (data-animation-*). Brand motions ignore Duration/Ease so every alias moves alike; Delay still applies.
  * @param el
  * @param config
+ * @param brand
  */
-export function applyOverrides(el: Element, config: AnimationConfig): Timing {
+export function applyOverrides(
+	el: Element,
+	config: AnimationConfig,
+	brand = false
+): Timing {
 	let duration = config.duration;
 	let ease = config.ease;
 	let delay = 0;
@@ -54,7 +92,7 @@ export function applyOverrides(el: Element, config: AnimationConfig): Timing {
 		el.getAttribute('data-animation-duration') ?? '',
 		10
 	);
-	if (!Number.isNaN(customDuration)) {
+	if (!brand && !Number.isNaN(customDuration)) {
 		duration = customDuration;
 	}
 
@@ -69,6 +107,7 @@ export function applyOverrides(el: Element, config: AnimationConfig): Timing {
 	// Post content is the source; accept only GSAP's ease grammar ("power3.out", "back.inOut(1.7)", "steps(5)") so a stray string can't reach the tween.
 	const customEase = el.getAttribute('data-animation-ease');
 	if (
+		!brand &&
 		customEase &&
 		/^[a-zA-Z]+[0-9]?(\.(in|out|inOut))?(\([0-9.,\s]*\))?$/.test(customEase)
 	) {

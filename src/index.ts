@@ -7,8 +7,10 @@ import {
 	ANIMATION_CONFIGS,
 	processed,
 	applyOverrides,
+	resolveAnimation,
 	resolveTrigger,
 	resolveTriggerPoint,
+	triggeredOnArrival,
 	buildPaused,
 	type Timing,
 } from './engine';
@@ -16,6 +18,9 @@ import { bindStaggerGroups } from './stagger';
 import './scss/utilities.scss';
 
 export type { AnimationConfig };
+
+// One GSAP per page: the theme's header.js reads these globals instead of bundling its own copy.
+Object.assign(window, { gsap, ScrollTrigger });
 
 const selector = Object.keys(ANIMATION_CONFIGS)
 	.map((k) => `.${k}`)
@@ -149,10 +154,22 @@ function animateElement(el: Element): void {
 	}
 	processed.add(el);
 
-	const config = ANIMATION_CONFIGS[cls];
-	const timing = applyOverrides(el, config);
+	const resolved = resolveAnimation(el, cls);
+	if (!resolved) {
+		return;
+	}
+	const { config, brand } = resolved;
+	const timing = applyOverrides(el, config, brand);
+	const trigger = resolveTrigger(el, cls);
+	if (
+		brand &&
+		trigger !== 'hover' &&
+		triggeredOnArrival(el, resolveTriggerPoint(el))
+	) {
+		return;
+	}
 
-	switch (resolveTrigger(el, cls)) {
+	switch (trigger) {
 		case 'load':
 			return playOnLoad(el, config, timing);
 		case 'hover':
@@ -163,6 +180,11 @@ function animateElement(el: Element): void {
 }
 
 export function initializeAnimations(): void {
+	// Site switch off with nothing kept: no classes to match, and querySelectorAll('') throws.
+	if (!selector) {
+		return;
+	}
+
 	// WCAG 2.3.3/2.2.2: honor the OS-level reduced-motion preference. Safe to skip entirely — GSAP's from-tweens apply pre-animation states, so untweened elements just render in their final state.
 	const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
 	if (reduced.matches) {

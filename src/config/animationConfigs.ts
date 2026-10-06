@@ -31,6 +31,11 @@ const TRANSFORM_KEYS = new Set([
 export function clearPropsFor(vars: gsap.TweenVars, el?: Element): string {
 	const props = new Set<string>();
 	for (const key of Object.keys(vars)) {
+		if (key === 'autoAlpha') {
+			// Not a CSS property — clear the two it writes.
+			props.add('opacity').add('visibility');
+			continue;
+		}
 		props.add(TRANSFORM_KEYS.has(key) ? 'transform' : key);
 	}
 	if (el?.matches('.has-parallax') || el?.querySelector('.has-parallax')) {

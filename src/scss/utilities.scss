@@ -1,13 +1,14 @@
 // Standalone, JS-free motion utilities: plain CSS classes applied via a block's Additional CSS Class(es) field — no scroll-gating, no editor UI, unlike the GSAP-driven `data-animation-*` system.
 // See docs/stagger-and-css-utilities-plan.md.
 
+// Aliases of the theme's motion tokens (theme.json → --ct-*); fallbacks are what those tokens resolve to, for when the theme isn't active.
 :root {
-	--tma-duration-fast: 150ms;
-	--tma-duration-base: 300ms;
-	--tma-duration-slow: 500ms;
-	--tma-ease-standard: cubic-bezier(.4, 0, .2, 1);
-	--tma-ease-decelerate: cubic-bezier(0, 0, .2, 1);
-	--tma-ease-accelerate: cubic-bezier(.4, 0, 1, 1);
+	--tma-duration-fast: var(--ct-duration-fast-2, 150ms);
+	--tma-duration-base: var(--ct-duration-slow-1, 300ms);
+	--tma-duration-slow: var(--ct-duration-slow-3, 500ms);
+	--tma-ease-standard: var(--ct-ease-standard, ease);
+	--tma-ease-decelerate: var(--ct-ease-entrance, ease-out);
+	--tma-ease-accelerate: var(--ct-ease-exit, ease-in);
 }
 
 // ─── Entrance (on-load keyframe animations) ────────────────────────────────
