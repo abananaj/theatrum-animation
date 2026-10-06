@@ -94,23 +94,31 @@ function theatrum_animation_usage($refresh = false) {
   }
 
   global $wpdb;
-  $rows  = $wpdb->get_results("SELECT ID, post_title, post_content FROM {$wpdb->posts} WHERE post_status = 'publish' AND post_type NOT IN ('revision', 'nav_menu_item', 'attachment') AND post_content <> ''");
-  $usage = [];
-  foreach ($rows as $row) {
-    // Saved markup carries the classes in class="…"; className covers blocks whose saved HTML is empty (dynamic).
-    preg_match_all('/(?:class="|"className":")([^"]*)"/', $row->post_content, $matches);
-    $found = [];
-    foreach ($matches[1] as $list) {
-      foreach (preg_split('/\s+/', $list) as $token) {
-        if (isset($class_to_effect[$token])) {
-          $found[$class_to_effect[$token]] = true;
+  $usage   = [];
+  $last_id = 0;
+  // Keyset-paged in batches of 200 so a cache miss never holds every post_content in memory.
+  while (true) {
+    $rows = $wpdb->get_results($wpdb->prepare("SELECT ID, post_title, post_content FROM {$wpdb->posts} WHERE ID > %d AND post_status = 'publish' AND post_type NOT IN ('revision', 'nav_menu_item', 'attachment') AND post_content <> '' ORDER BY ID ASC LIMIT 200", $last_id)); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name only.
+    if (empty($rows)) {
+      break;
+    }
+    $last_id = (int) end($rows)->ID;
+    foreach ($rows as $row) {
+      // Saved markup carries the classes in class="…"; className covers blocks whose saved HTML is empty (dynamic).
+      preg_match_all('/(?:class="|"className":")([^"]*)"/', $row->post_content, $matches);
+      $found = [];
+      foreach ($matches[1] as $list) {
+        foreach (preg_split('/\s+/', $list) as $token) {
+          if (isset($class_to_effect[$token])) {
+            $found[$class_to_effect[$token]] = true;
+          }
         }
       }
-    }
-    foreach (array_keys($found) as $effect_id) {
-      $usage[$effect_id]['count'] = ($usage[$effect_id]['count'] ?? 0) + 1;
-      if (count($usage[$effect_id]['titles'] ?? []) < 4) {
-        $usage[$effect_id]['titles'][] = '' !== $row->post_title ? $row->post_title : "#{$row->ID}";
+      foreach (array_keys($found) as $effect_id) {
+        $usage[$effect_id]['count'] = ($usage[$effect_id]['count'] ?? 0) + 1;
+        if (count($usage[$effect_id]['titles'] ?? []) < 4) {
+          $usage[$effect_id]['titles'][] = '' !== $row->post_title ? $row->post_title : "#{$row->ID}";
+        }
       }
     }
   }
